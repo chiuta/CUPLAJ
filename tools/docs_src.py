@@ -804,3 +804,123 @@ D["hu"] = dict(
   line="vonal", eras="Három korszak", coffee="Hívj meg egy kávéra", rights="MIT licenc",
  ),
 )
+
+# ---------------------------------------------------------------- v1.1.0 additions
+_V11 = {
+"en": dict(
+ feat=["**Internet and mobile data (1.1)** — connect with `host` or `host:port`; optional AES‑128‑GCM network key; automatic G.711 compression off the local network; keepalive.",
+       "**Direct P2P calls (1.1)** — audio goes phone‑to‑phone over UDP with hole punching, falling back to the hub relay; the control can set it off, local‑only (default) or anywhere.",
+       "**VoIP / SIP gateway (1.1)** — the control phone registers with a SIP provider or PBX; the crew dials `0`+number to call out, incoming SIP calls ring an internal number.",
+       "**Mobile network (1.1)** — SMS gateway through the control phone's SIM (send and receive), a *real call* cue that opens the dialler, and a Wi‑Fi / mobile indicator."],
+ sec=("Internet, VoIP and mobile network (1.1)", [
+  "**Network key** — on the start screen switch *Encrypted link* on; the control shows a key (xxxx‑xxxx‑xxxx‑xxxx). Type it in the *Network key* field on every other phone. Without the right key the hub refuses the connection. Use it whenever traffic leaves your local network.",
+  "**From the internet** — forward TCP 8470 and UDP 8472 on the router to the control phone and give the public address (`host` or `host:port`) in the *Hub address* field. On mobile data nothing else is needed.",
+  "**P2P** — in the Control tab the *Direct calls* option cycles off / local network only / anywhere. *Anywhere* lets two phones learn each other's public IP; the control cannot monitor, mute or break into a call while it is direct (it switches back to the relay automatically when it needs to).",
+  "**SIP line** — Settings → *VoIP / SIP line…*: server, user, password, optional domain and the internal number for incoming calls (default 100). Restart the hub to apply. Staff dial `0` + external number; spectators cannot place outside calls. Each call is limited to 15 minutes. SIP and RTP are not encrypted.",
+  "**SMS** — Settings → *SMS gateway* (needs a SIM and the SMS permissions). Staff pick *SMS to a real phone number* in the Messages tab; incoming SMS appear to staff as messages from *SMS*. Limit: 20 per minute. Operator charges apply.",
+  "**Real call** — the *real phone call* cue opens the phone's dialler with the number. Android does not allow an app to route a cellular call into the party line, so GSM call audio cannot be bridged; use the SIP line for that.",
+ ]),
+ status=" Version 1.1 networking (encryption, P2P, SIP, SMS) is covered by hub tests against a simulated SIP server, but has **not** been tried on real operators, NATs or SIM cards."),
+"ro": dict(
+ feat=["**Internet și date mobile (1.1)** — conectare cu `host` sau `host:port`; cheie de rețea opțională AES‑128‑GCM; compresie G.711 automată în afara rețelei locale; keepalive.",
+       "**Apeluri directe P2P (1.1)** — sunetul merge de la telefon la telefon prin UDP cu hole punching, cu revenire la releul hubului; Regia le poate opri, limita la rețeaua locală (implicit) sau permite oriunde.",
+       "**Poartă VoIP / SIP (1.1)** — telefonul Regiei se înregistrează la un furnizor SIP sau o centrală; echipa formează `0`+număr pentru exterior, apelurile SIP primite sună la un număr intern.",
+       "**Rețea mobilă (1.1)** — poartă SMS prin SIM‑ul telefonului Regiei (trimitere și primire), cue de *apel real* care deschide formatorul și indicator Wi‑Fi / mobil."],
+ sec=("Internet, VoIP și rețea mobilă (1.1)", [
+  "**Cheia de rețea** — pe ecranul de start pornește *Legătură cifrată*; Regia afișează o cheie (xxxx‑xxxx‑xxxx‑xxxx). Scrie‑o în câmpul *Cheie de rețea* pe fiecare alt telefon. Fără cheia corectă hubul refuză conexiunea. Folosește‑o oricând traficul iese din rețeaua locală.",
+  "**Din internet** — redirecționează TCP 8470 și UDP 8472 în router către telefonul Regiei și dă adresa publică (`host` sau `host:port`) în câmpul de adresă. Pe date mobile nu mai trebuie nimic.",
+  "**P2P** — în fila Regie, opțiunea *Apeluri directe* alternează oprite / doar rețea locală / oriunde. *Oriunde* lasă două telefoane să‑și afle IP‑ul public; Regia nu poate monitoriza, amuți sau intra într‑un apel cât timp e direct (revine automat pe releu când are nevoie).",
+  "**Linia SIP** — Setări → *Linie VoIP / SIP…*: server, utilizator, parolă, domeniu opțional și numărul intern pentru apeluri primite (implicit 100). Repornește hubul pentru aplicare. Echipa formează `0` + număr extern; spectatorii nu pot suna în afară. Fiecare apel e limitat la 15 minute. SIP și RTP nu sunt cifrate.",
+  "**SMS** — Setări → *Poartă SMS* (necesită SIM și permisiunile SMS). Echipa alege *SMS către un număr real* în fila Mesaje; SMS‑urile primite apar echipei ca mesaje de la *SMS*. Limită: 20 pe minut. Se aplică tarifele operatorului.",
+  "**Apel real** — cue‑ul *apel real* deschide formatorul telefonului cu numărul. Android nu permite unei aplicații să ducă un apel celular în cuplaj, deci sunetul apelurilor GSM nu poate fi legat; pentru asta folosește linia SIP.",
+ ]),
+ status=" Rețelistica din versiunea 1.1 (cifrare, P2P, SIP, SMS) e acoperită de teste de hub contra unui server SIP simulat, dar **nu** a fost încercată pe operatori, NAT‑uri sau SIM‑uri reale."),
+"fr": dict(
+ feat=["**Internet et données mobiles (1.1)** — connexion par `hôte` ou `hôte:port` ; clé réseau AES‑128‑GCM facultative ; compression G.711 automatique hors réseau local ; keepalive.",
+       "**Appels directs P2P (1.1)** — l'audio circule de téléphone à téléphone en UDP avec traversée de NAT, avec repli sur le relais du hub ; la régie peut le désactiver, le limiter au réseau local (défaut) ou l'ouvrir partout.",
+       "**Passerelle VoIP / SIP (1.1)** — le téléphone de la régie s'enregistre chez un opérateur SIP ou un PBX ; l'équipe compose `0`+numéro pour sortir, les appels SIP entrants sonnent à un numéro interne.",
+       "**Réseau mobile (1.1)** — passerelle SMS via la SIM du téléphone de la régie (envoi et réception), cue *appel réel* qui ouvre le numéroteur, indicateur Wi‑Fi / mobile."],
+ sec=("Internet, VoIP et réseau mobile (1.1)", [
+  "**Clé réseau** — sur l'écran de départ, activez *Liaison chiffrée* ; la régie affiche une clé (xxxx‑xxxx‑xxxx‑xxxx). Saisissez‑la dans le champ *Clé réseau* de chaque autre téléphone. Sans la bonne clé, le hub refuse la connexion. À utiliser dès que le trafic quitte le réseau local.",
+  "**Depuis Internet** — redirigez TCP 8470 et UDP 8472 sur le routeur vers le téléphone de la régie et indiquez l'adresse publique (`hôte` ou `hôte:port`). En données mobiles, rien d'autre n'est nécessaire.",
+  "**P2P** — dans l'onglet Régie, l'option *Appels directs* alterne désactivés / réseau local seulement / partout. *Partout* permet à deux téléphones de connaître leur IP publique mutuelle ; la régie ne peut ni écouter, ni couper, ni s'insérer tant que l'appel est direct (retour automatique au relais si nécessaire).",
+  "**Ligne SIP** — Réglages → *Ligne VoIP / SIP…* : serveur, utilisateur, mot de passe, domaine facultatif et numéro interne pour les appels entrants (100 par défaut). Redémarrez le hub pour appliquer. L'équipe compose `0` + numéro externe ; les spectateurs ne peuvent pas appeler à l'extérieur. Chaque appel est limité à 15 minutes. SIP et RTP ne sont pas chiffrés.",
+  "**SMS** — Réglages → *Passerelle SMS* (SIM et permissions SMS requises). L'équipe choisit *SMS vers un vrai numéro* dans l'onglet Messages ; les SMS reçus apparaissent comme messages de *SMS*. Limite : 20 par minute. Les tarifs de l'opérateur s'appliquent.",
+  "**Appel réel** — le cue *appel réel* ouvre le numéroteur avec le numéro. Android interdit à une application d'injecter un appel cellulaire dans la ligne partagée : l'audio GSM ne peut pas être relayé ; utilisez la ligne SIP pour cela.",
+ ]),
+ status=" Le réseau de la version 1.1 (chiffrement, P2P, SIP, SMS) est couvert par des tests du hub contre un serveur SIP simulé, mais **n'a pas** été essayé sur de vrais opérateurs, NAT ou cartes SIM."),
+"it": dict(
+ feat=["**Internet e dati mobili (1.1)** — connessione con `host` o `host:porta`; chiave di rete AES‑128‑GCM opzionale; compressione G.711 automatica fuori dalla rete locale; keepalive.",
+       "**Chiamate dirette P2P (1.1)** — l'audio va da telefono a telefono via UDP con hole punching, con ripiego sul relay dell'hub; la regia può disattivarlo, limitarlo alla rete locale (predefinito) o aprirlo ovunque.",
+       "**Gateway VoIP / SIP (1.1)** — il telefono della regia si registra presso un provider SIP o un PBX; la squadra compone `0`+numero per uscire, le chiamate SIP in arrivo squillano a un numero interno.",
+       "**Rete mobile (1.1)** — gateway SMS tramite la SIM del telefono della regia (invio e ricezione), cue *chiamata reale* che apre il tastierino, indicatore Wi‑Fi / mobile."],
+ sec=("Internet, VoIP e rete mobile (1.1)", [
+  "**Chiave di rete** — nella schermata iniziale attiva *Collegamento cifrato*; la regia mostra una chiave (xxxx‑xxxx‑xxxx‑xxxx). Inseriscila nel campo *Chiave di rete* su ogni altro telefono. Senza la chiave giusta l'hub rifiuta la connessione. Usala ogni volta che il traffico esce dalla rete locale.",
+  "**Da internet** — inoltra TCP 8470 e UDP 8472 sul router verso il telefono della regia e indica l'indirizzo pubblico (`host` o `host:porta`). Con i dati mobili non serve altro.",
+  "**P2P** — nella scheda Regia l'opzione *Chiamate dirette* alterna spente / solo rete locale / ovunque. *Ovunque* permette a due telefoni di conoscere l'IP pubblico reciproco; la regia non può monitorare, silenziare o intervenire finché la chiamata è diretta (torna al relay automaticamente se serve).",
+  "**Linea SIP** — Impostazioni → *Linea VoIP / SIP…*: server, utente, password, dominio opzionale e numero interno per le chiamate in arrivo (predefinito 100). Riavvia l'hub per applicare. La squadra compone `0` + numero esterno; gli spettatori non possono chiamare fuori. Ogni chiamata è limitata a 15 minuti. SIP e RTP non sono cifrati.",
+  "**SMS** — Impostazioni → *Gateway SMS* (servono SIM e permessi SMS). La squadra sceglie *SMS a un numero reale* nella scheda Messaggi; gli SMS ricevuti compaiono come messaggi da *SMS*. Limite: 20 al minuto. Si applicano le tariffe dell'operatore.",
+  "**Chiamata reale** — il cue *chiamata reale* apre il tastierino con il numero. Android non consente a un'app di portare una chiamata cellulare nella linea condivisa: l'audio GSM non può essere instradato; per questo usa la linea SIP.",
+ ]),
+ status=" La rete della versione 1.1 (cifratura, P2P, SIP, SMS) è coperta da test dell'hub contro un server SIP simulato, ma **non** è stata provata su operatori, NAT o SIM reali."),
+"es": dict(
+ feat=["**Internet y datos móviles (1.1)** — conexión con `host` o `host:puerto`; clave de red AES‑128‑GCM opcional; compresión G.711 automática fuera de la red local; keepalive.",
+       "**Llamadas directas P2P (1.1)** — el audio va de teléfono a teléfono por UDP con perforación de NAT, con respaldo en el relé del hub; la regiduría puede desactivarlo, limitarlo a la red local (por defecto) o abrirlo a cualquier lugar.",
+       "**Pasarela VoIP / SIP (1.1)** — el teléfono de la regiduría se registra en un proveedor SIP o una PBX; el equipo marca `0`+número para salir, las llamadas SIP entrantes suenan en un número interno.",
+       "**Red móvil (1.1)** — pasarela SMS mediante la SIM del teléfono de la regiduría (envío y recepción), cue de *llamada real* que abre el marcador e indicador Wi‑Fi / móvil."],
+ sec=("Internet, VoIP y red móvil (1.1)", [
+  "**Clave de red** — en la pantalla de inicio activa *Enlace cifrado*; la regiduría muestra una clave (xxxx‑xxxx‑xxxx‑xxxx). Escríbela en el campo *Clave de red* de cada otro teléfono. Sin la clave correcta el hub rechaza la conexión. Úsala siempre que el tráfico salga de la red local.",
+  "**Desde internet** — redirige TCP 8470 y UDP 8472 en el router al teléfono de la regiduría e indica la dirección pública (`host` o `host:puerto`). Con datos móviles no hace falta nada más.",
+  "**P2P** — en la pestaña Regiduría la opción *Llamadas directas* alterna desactivadas / solo red local / en cualquier lugar. *En cualquier lugar* deja que dos teléfonos conozcan la IP pública del otro; la regiduría no puede monitorizar, silenciar ni intervenir mientras la llamada es directa (vuelve al relé automáticamente cuando hace falta).",
+  "**Línea SIP** — Ajustes → *Línea VoIP / SIP…*: servidor, usuario, contraseña, dominio opcional y número interno para llamadas entrantes (100 por defecto). Reinicia el hub para aplicar. El equipo marca `0` + número externo; los espectadores no pueden llamar al exterior. Cada llamada se limita a 15 minutos. SIP y RTP no van cifrados.",
+  "**SMS** — Ajustes → *Pasarela SMS* (requiere SIM y permisos SMS). El equipo elige *SMS a un número real* en la pestaña Mensajes; los SMS recibidos aparecen como mensajes de *SMS*. Límite: 20 por minuto. Se aplican las tarifas del operador.",
+  "**Llamada real** — el cue *llamada real* abre el marcador con el número. Android no permite a una app meter una llamada celular en la línea compartida: el audio GSM no se puede enlazar; para eso usa la línea SIP.",
+ ]),
+ status=" La red de la versión 1.1 (cifrado, P2P, SIP, SMS) está cubierta por pruebas del hub contra un servidor SIP simulado, pero **no** se ha probado con operadores, NAT ni SIM reales."),
+"pt": dict(
+ feat=["**Internet e dados móveis (1.1)** — ligação com `host` ou `host:porta`; chave de rede AES‑128‑GCM opcional; compressão G.711 automática fora da rede local; keepalive.",
+       "**Chamadas diretas P2P (1.1)** — o áudio vai de telemóvel a telemóvel por UDP com perfuração de NAT, com recurso ao relé do hub; a régie pode desligar, limitar à rede local (predefinição) ou abrir a qualquer lado.",
+       "**Porta VoIP / SIP (1.1)** — o telemóvel da régie regista‑se num fornecedor SIP ou PBX; a equipa marca `0`+número para sair, as chamadas SIP recebidas tocam num número interno.",
+       "**Rede móvel (1.1)** — porta SMS através do SIM do telemóvel da régie (envio e receção), cue de *chamada real* que abre o marcador e indicador Wi‑Fi / móvel."],
+ sec=("Internet, VoIP e rede móvel (1.1)", [
+  "**Chave de rede** — no ecrã inicial ativa *Ligação cifrada*; a régie mostra uma chave (xxxx‑xxxx‑xxxx‑xxxx). Escreve‑a no campo *Chave de rede* de cada outro telemóvel. Sem a chave certa o hub recusa a ligação. Usa‑a sempre que o tráfego saia da rede local.",
+  "**Pela internet** — reencaminha TCP 8470 e UDP 8472 no router para o telemóvel da régie e indica o endereço público (`host` ou `host:porta`). Com dados móveis não é preciso mais nada.",
+  "**P2P** — no separador Régie a opção *Chamadas diretas* alterna desligadas / só rede local / em qualquer lado. *Em qualquer lado* deixa dois telemóveis conhecer o IP público um do outro; a régie não pode monitorizar, silenciar nem intervir enquanto a chamada é direta (volta ao relé automaticamente quando precisa).",
+  "**Linha SIP** — Definições → *Linha VoIP / SIP…*: servidor, utilizador, palavra‑passe, domínio opcional e número interno para chamadas recebidas (100 por omissão). Reinicia o hub para aplicar. A equipa marca `0` + número externo; os espectadores não podem chamar para fora. Cada chamada é limitada a 15 minutos. SIP e RTP não são cifrados.",
+  "**SMS** — Definições → *Porta SMS* (requer SIM e permissões SMS). A equipa escolhe *SMS para um número real* no separador Mensagens; os SMS recebidos aparecem como mensagens de *SMS*. Limite: 20 por minuto. Aplicam‑se as tarifas do operador.",
+  "**Chamada real** — o cue *chamada real* abre o marcador com o número. O Android não permite a uma app meter uma chamada celular na linha partilhada: o áudio GSM não pode ser ligado; para isso usa a linha SIP.",
+ ]),
+ status=" A rede da versão 1.1 (cifra, P2P, SIP, SMS) está coberta por testes do hub contra um servidor SIP simulado, mas **não** foi experimentada em operadores, NAT ou SIM reais."),
+"de": dict(
+ feat=["**Internet und Mobilfunk (1.1)** — Verbindung mit `Host` oder `Host:Port`; optionaler AES‑128‑GCM‑Netzwerkschlüssel; automatische G.711‑Kompression außerhalb des lokalen Netzes; Keepalive.",
+       "**Direkte P2P‑Gespräche (1.1)** — Audio läuft per UDP mit Hole‑Punching direkt von Telefon zu Telefon, mit Rückfall auf das Hub‑Relay; die Regie kann es abschalten, auf das lokale Netz begrenzen (Standard) oder überall erlauben.",
+       "**VoIP‑/SIP‑Gateway (1.1)** — das Regie‑Telefon registriert sich bei einem SIP‑Anbieter oder einer Telefonanlage; das Team wählt `0`+Nummer nach außen, eingehende SIP‑Anrufe klingeln an einer internen Nummer.",
+       "**Mobilfunknetz (1.1)** — SMS‑Gateway über die SIM des Regie‑Telefons (Senden und Empfangen), Cue *echter Anruf*, der die Wähl‑App öffnet, und WLAN‑/Mobil‑Anzeige."],
+ sec=("Internet, VoIP und Mobilfunk (1.1)", [
+  "**Netzwerkschlüssel** — auf dem Startbildschirm *Verschlüsselte Verbindung* einschalten; die Regie zeigt einen Schlüssel (xxxx‑xxxx‑xxxx‑xxxx). Gib ihn auf jedem anderen Telefon im Feld *Netzwerkschlüssel* ein. Ohne den richtigen Schlüssel lehnt der Hub die Verbindung ab. Immer verwenden, wenn der Verkehr das lokale Netz verlässt.",
+  "**Aus dem Internet** — am Router TCP 8470 und UDP 8472 auf das Regie‑Telefon weiterleiten und die öffentliche Adresse (`Host` oder `Host:Port`) angeben. Mit Mobilfunk ist nichts weiter nötig.",
+  "**P2P** — im Reiter Regie schaltet die Option *Direktgespräche* zwischen aus / nur lokales Netz / überall um. *Überall* lässt zwei Telefone die öffentliche IP des anderen erfahren; die Regie kann ein direktes Gespräch weder mithören, stummschalten noch unterbrechen (bei Bedarf wechselt es automatisch zurück auf das Relay).",
+  "**SIP‑Leitung** — Einstellungen → *VoIP‑/SIP‑Leitung…*: Server, Benutzer, Passwort, optionale Domain und interne Nummer für eingehende Anrufe (Standard 100). Zum Anwenden den Hub neu starten. Das Team wählt `0` + externe Nummer; Zuschauer können nicht nach außen telefonieren. Jeder Anruf ist auf 15 Minuten begrenzt. SIP und RTP sind nicht verschlüsselt.",
+  "**SMS** — Einstellungen → *SMS‑Gateway* (SIM und SMS‑Berechtigungen nötig). Das Team wählt im Reiter Nachrichten *SMS an eine echte Nummer*; eingehende SMS erscheinen als Nachrichten von *SMS*. Limit: 20 pro Minute. Es gelten die Tarife des Anbieters.",
+  "**Echter Anruf** — der Cue *echter Anruf* öffnet die Wähl‑App mit der Nummer. Android erlaubt einer App nicht, ein Mobilfunkgespräch in die Gemeinschaftsleitung zu leiten: GSM‑Audio lässt sich nicht verbinden; dafür die SIP‑Leitung nutzen.",
+ ]),
+ status=" Die Netzfunktionen der Version 1.1 (Verschlüsselung, P2P, SIP, SMS) sind durch Hub‑Tests gegen einen simulierten SIP‑Server abgedeckt, aber **nicht** an echten Anbietern, NATs oder SIM‑Karten erprobt."),
+"hu": dict(
+ feat=["**Internet és mobiladat (1.1)** — csatlakozás `host` vagy `host:port` megadásával; opcionális AES‑128‑GCM hálózati kulcs; automatikus G.711 tömörítés a helyi hálózaton kívül; keepalive.",
+       "**Közvetlen P2P hívások (1.1)** — a hang UDP‑n, lyukasztással megy telefonról telefonra, szükség esetén a hub közvetítőjére visszaesve; a rendező kikapcsolhatja, helyi hálózatra korlátozhatja (alap) vagy bárhová engedheti.",
+       "**VoIP / SIP átjáró (1.1)** — a rendezői telefon bejelentkezik egy SIP‑szolgáltatóhoz vagy alközpontba; a stáb `0`+számot tárcsáz kifelé, a bejövő SIP‑hívások egy belső számon csengenek.",
+       "**Mobilhálózat (1.1)** — SMS‑átjáró a rendezői telefon SIM‑jén át (küldés és fogadás), *valódi hívás* cue, amely megnyitja a tárcsázót, és Wi‑Fi / mobil jelző."],
+ sec=("Internet, VoIP és mobilhálózat (1.1)", [
+  "**Hálózati kulcs** — a kezdőképernyőn kapcsold be a *Titkosított kapcsolat* opciót; a rendező kulcsot mutat (xxxx‑xxxx‑xxxx‑xxxx). Írd be a többi telefon *Hálózati kulcs* mezőjébe. Helyes kulcs nélkül a hub elutasítja a kapcsolatot. Használd, ha a forgalom elhagyja a helyi hálózatot.",
+  "**Internetről** — a routeren irányítsd át a TCP 8470 és UDP 8472 portot a rendezői telefonra, és add meg a nyilvános címet (`host` vagy `host:port`). Mobiladaton semmi más nem kell.",
+  "**P2P** — a Rendező fülön a *Közvetlen hívások* opció kikapcsolt / csak helyi hálózat / bárhol között vált. A *bárhol* lehetővé teszi, hogy két telefon megtudja egymás nyilvános IP‑jét; közvetlen hívást a rendező nem tud hallgatni, elnémítani vagy megszakítani (szükség esetén automatikusan visszavált a közvetítőre).",
+  "**SIP vonal** — Beállítások → *VoIP / SIP vonal…*: szerver, felhasználó, jelszó, opcionális tartomány és a bejövő hívások belső száma (alap 100). Az alkalmazáshoz indítsd újra a hubot. A stáb `0` + külső számot tárcsáz; a nézők nem hívhatnak kifelé. Egy hívás legfeljebb 15 percig tarthat. A SIP és az RTP nem titkosított.",
+  "**SMS** — Beállítások → *SMS‑átjáró* (SIM és SMS‑jogosultság kell). A stáb az Üzenetek fülön az *SMS valódi számra* célt választja; a fogadott SMS‑ek *SMS* feladótól érkező üzenetként jelennek meg. Korlát: percenként 20. A szolgáltató díjai érvényesek.",
+  "**Valódi hívás** — a *valódi hívás* cue megnyitja a tárcsázót a számmal. Az Android nem engedi, hogy egy alkalmazás mobilhívást vezessen a közös vonalra: a GSM‑hang nem hidalható át; ehhez használd a SIP vonalat.",
+ ]),
+ status=" Az 1.1‑es hálózati funkciókat (titkosítás, P2P, SIP, SMS) szimulált SIP‑szerver elleni hubtesztek fedik, de **nem** próbáltuk valódi szolgáltatóval, NAT‑tal vagy SIM‑mel."),
+}
+for _l, _v in _V11.items():
+    D[_l]["feat"] = D[_l]["feat"] + _v["feat"]
+    D[_l]["g"] = D[_l]["g"] + [_v["sec"]]
+    D[_l]["status"] = D[_l]["status"] + _v["status"]

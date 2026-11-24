@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.0.0 · Última actualización: 2026-11-24_
+_Versión: 1.1.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -46,6 +46,15 @@ _Versión: 1.0.0 · Última actualización: 2026-11-24_
 - *PIN / código de sala incorrecto* — la regiduría los muestra en su pantalla de inicio.
 - *Puerto ocupado* — cierra cualquier otra app que use el puerto 8470.
 - *Llamadas mudas* — revisa el permiso del micrófono y el interruptor del altavoz en la pestaña Voz.
+
+## 8. Internet, VoIP y red móvil (1.1)
+
+- **Clave de red** — en la pantalla de inicio activa *Enlace cifrado*; la regiduría muestra una clave (xxxx‑xxxx‑xxxx‑xxxx). Escríbela en el campo *Clave de red* de cada otro teléfono. Sin la clave correcta el hub rechaza la conexión. Úsala siempre que el tráfico salga de la red local.
+- **Desde internet** — redirige TCP 8470 y UDP 8472 en el router al teléfono de la regiduría e indica la dirección pública (`host` o `host:puerto`). Con datos móviles no hace falta nada más.
+- **P2P** — en la pestaña Regiduría la opción *Llamadas directas* alterna desactivadas / solo red local / en cualquier lugar. *En cualquier lugar* deja que dos teléfonos conozcan la IP pública del otro; la regiduría no puede monitorizar, silenciar ni intervenir mientras la llamada es directa (vuelve al relé automáticamente cuando hace falta).
+- **Línea SIP** — Ajustes → *Línea VoIP / SIP…*: servidor, usuario, contraseña, dominio opcional y número interno para llamadas entrantes (100 por defecto). Reinicia el hub para aplicar. El equipo marca `0` + número externo; los espectadores no pueden llamar al exterior. Cada llamada se limita a 15 minutos. SIP y RTP no van cifrados.
+- **SMS** — Ajustes → *Pasarela SMS* (requiere SIM y permisos SMS). El equipo elige *SMS a un número real* en la pestaña Mensajes; los SMS recibidos aparecen como mensajes de *SMS*. Límite: 20 por minuto. Se aplican las tarifas del operador.
+- **Llamada real** — el cue *llamada real* abre el marcador con el número. Android no permite a una app meter una llamada celular en la línea compartida: el audio GSM no se puede enlazar; para eso usa la línea SIP.
 
 ---
 

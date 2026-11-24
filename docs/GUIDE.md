@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.0.0 · Last update: 2026-11-24_
+_Version: 1.1.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -46,6 +46,15 @@ _Version: 1.0.0 · Last update: 2026-11-24_
 - *Wrong PIN / room code* — the control shows both on its start screen.
 - *Port busy* — close any other app using port 8470.
 - *Silent calls* — check the microphone permission and the loudspeaker toggle in the Voice tab.
+
+## 8. Internet, VoIP and mobile network (1.1)
+
+- **Network key** — on the start screen switch *Encrypted link* on; the control shows a key (xxxx‑xxxx‑xxxx‑xxxx). Type it in the *Network key* field on every other phone. Without the right key the hub refuses the connection. Use it whenever traffic leaves your local network.
+- **From the internet** — forward TCP 8470 and UDP 8472 on the router to the control phone and give the public address (`host` or `host:port`) in the *Hub address* field. On mobile data nothing else is needed.
+- **P2P** — in the Control tab the *Direct calls* option cycles off / local network only / anywhere. *Anywhere* lets two phones learn each other's public IP; the control cannot monitor, mute or break into a call while it is direct (it switches back to the relay automatically when it needs to).
+- **SIP line** — Settings → *VoIP / SIP line…*: server, user, password, optional domain and the internal number for incoming calls (default 100). Restart the hub to apply. Staff dial `0` + external number; spectators cannot place outside calls. Each call is limited to 15 minutes. SIP and RTP are not encrypted.
+- **SMS** — Settings → *SMS gateway* (needs a SIM and the SMS permissions). Staff pick *SMS to a real phone number* in the Messages tab; incoming SMS appear to staff as messages from *SMS*. Limit: 20 per minute. Operator charges apply.
+- **Real call** — the *real phone call* cue opens the phone's dialler with the number. Android does not allow an app to route a cellular call into the party line, so GSM call audio cannot be bridged; use the SIP line for that.
 
 ---
 

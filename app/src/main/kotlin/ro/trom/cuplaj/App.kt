@@ -33,7 +33,7 @@ class PeerInfo(
     val muted: Boolean, val bat: Int
 )
 
-class Found(val name: String, val host: String, val locked: Boolean)
+class Found(val name: String, val host: String, val locked: Boolean, val keyed: Boolean = false)
 
 class Fake(val name: String, val num: String, val text: String)
 
@@ -49,7 +49,30 @@ object App {
     var net: Net? = null
     val playout = Playout()
     val ringer = Ringer()
-    val mic = Mic { f -> net?.sendAudio(micMode, f) }
+    val mic = Mic { f ->
+        val l = p2pLink
+        if (micMode == 0 && p2pOn && l != null && l.sendPcm(f)) Unit else net?.sendAudio(micMode, f)
+    }
+
+    // P2P direct, SIP, SMS
+    var p2pLink: P2pLink? = null
+
+    @Volatile
+    var p2pOn = false
+    var sipGw: SipGateway? = null
+    var optP2p = 1
+    var netKey = ""          // cheia de rețea generată de regie
+    var joinKey = ""         // cheia de rețea introdusă de client
+    var encOn = false        // regie: legătură cifrată
+    var smsGw = false        // regie: poartă SMS
+    var sipOn = false
+    var sipHost = ""
+    var sipPort = 5060
+    var sipUser = ""
+    var sipPass = ""
+    var sipDomain = ""
+    var sipInbound = "100"
+
 
     @Volatile
     var micMode = 0
@@ -132,12 +155,29 @@ object App {
         L.lang = p.getString("lang", null) ?: L.detect()
         hubPin = p.getString("hpin", null) ?: (1000 + java.util.Random().nextInt(9000)).toString().also { p.edit().putString("hpin", it).apply() }
         apin = p.getString("apin", "") ?: ""
+        encOn = p.getBoolean("enc", false)
+        netKey = p.getString("nkey", null) ?: Sec.newPassphrase().also { p.edit().putString("nkey", it).apply() }
+        joinKey = p.getString("jkey", "") ?: ""
+        smsGw = p.getBoolean("smsgw", false)
+        sipOn = p.getBoolean("sipon", false)
+        sipHost = p.getString("siph", "") ?: ""
+        sipPort = p.getInt("sipp", 5060)
+        sipUser = p.getString("sipu", "") ?: ""
+        sipPass = p.getString("sipw", "") ?: ""
+        sipDomain = p.getString("sipd", "") ?: ""
+        sipInbound = p.getString("sipi", "100") ?: "100"
         val cs = p.getString("contacts", "") ?: ""
         for (l in cs.split("\n")) {
             val i = l.indexOf(';')
             if (i > 0) contacts.add(Pair(l.substring(0, i), l.substring(i + 1)))
         }
         loadScript(p.getString("script", "") ?: "")
+    }
+
+    fun saveNet() {
+        prefs().edit().putBoolean("enc", encOn).putString("nkey", netKey).putBoolean("smsgw", smsGw).putString("jkey", joinKey)
+            .putBoolean("sipon", sipOn).putString("siph", sipHost).putInt("sipp", sipPort).putString("sipu", sipUser)
+            .putString("sipw", sipPass).putString("sipd", sipDomain).putString("sipi", sipInbound).apply()
     }
 
     fun saveProfile() {
@@ -200,7 +240,7 @@ object App {
                         val s = String(pk.data, 0, pk.length, Charsets.UTF_8).split("|")
                         val h = pk.address.hostAddress
                         if (s.size >= 3 && s[0] == "CUPLAJ1" && h != null) {
-                            val f = Found(s[1], h, s.size >= 4 && s[3] == "1")
+                            val f = Found(s[1], h, s.size >= 4 && s[3] == "1", s.size >= 5 && s[4] == "1")
                             ui.post { if (found.put(h, f) == null) notify("found") }
                         }
                     } catch (_: SocketTimeoutException) {
@@ -261,7 +301,7 @@ object App {
         val target: String
         if (r == "regie") {
             val p = prefs()
-            val hb = Hub(name, hubPin, rm, PORT, p.getString("hubstate", null))
+            val hb = Hub(name, hubPin, rm, PORT, p.getString("hubstate", null), true, if (encOn) netKey else "")
             hb.onPersist = { s -> p.edit().putString("hubstate", s).apply() }
             hubObj = hb
             hb.start()
@@ -278,11 +318,18 @@ object App {
         val n = Net(
             { m -> ui.post { handle(m) } },
             { src, d -> playout.feed(src, d, 1) },
-            { s -> ui.post { connected = false; status = s; if (ph != "idle") resetPhone(); notify("state") } }
+            { s -> ui.post { connected = false; status = s; stopP2p(false); if (ph != "idle") resetPhone(); notify("state") } }
         )
         net = n
         val tok = prefs().getString("tok_$target", "") ?: ""
-        n.start(target, jo("t" to "hello", "id" to deviceId, "name" to name, "role" to r, "pin" to pin, "room" to rm, "tok" to tok))
+        val keyStr = if (r == "regie") (if (encOn) netKey else "") else joinKey.trim()
+        n.start(
+            target,
+            jo("t" to "hello", "id" to deviceId, "name" to name, "role" to r, "pin" to pin, "room" to rm, "tok" to tok,
+                "p2p" to (r != "regie"), "smsgw" to (r == "regie" && smsGw && Telco.hasSms(ctx))),
+            Sec.deriveKey(keyStr)
+        )
+        if (r == "regie" && sipOn && sipHost.isNotBlank() && sipUser.isNotBlank()) startSip(keyStr)
         startService()
     }
 
@@ -297,6 +344,8 @@ object App {
     fun stopSession() {
         ui.removeCallbacks(statTick)
         stopScript()
+        stopP2p(true)
+        stopSip()
         net?.stop()
         net = null
         hubObj?.stop()
@@ -362,6 +411,7 @@ object App {
             val sc = i?.getIntExtra(BatteryManager.EXTRA_SCALE, 100) ?: 100
             val pct = if (lvl >= 0 && sc > 0) lvl * 100 / sc else -1
             send(jo("t" to "stat", "bat" to pct))
+            p2pLink?.let { send(jo("t" to "udp", "lan" to it.lanCandidate(localIps()))) }
         } catch (_: Exception) {
         }
     }
@@ -374,7 +424,8 @@ object App {
                 number = m.optString("number")
                 myGroup = m.optString("group")
                 connected = true
-                status = L.t("connected_to", m.optString("hub"))
+                status = L.t("connected_to", m.optString("hub")) + netIcon()
+                setupP2p(m.optString("tok").ifEmpty { prefs().getString("tok_$curTarget", "") ?: "" })
                 val tk = m.optString("tok")
                 if (tk.isNotEmpty()) prefs().edit().putString("tok_$curTarget", tk).apply()
                 ui.removeCallbacks(statTick)
@@ -414,6 +465,7 @@ object App {
                 optListen = m.optBoolean("listen", true)
                 optClick = m.optBoolean("click", true)
                 optPeerMsg = m.optBoolean("peerMsg", true)
+                optP2p = m.optInt("p2p", 1)
                 notify("peers")
             }
             "log" -> {
@@ -428,6 +480,24 @@ object App {
                 notify("msg")
             }
             "cue" -> cue(m)
+            "pong" -> {}
+            "p2p" -> {
+                val l = p2pLink
+                val k = m.optString("key")
+                val arr = m.optJSONArray("cand")
+                if (l != null && k.length == 32 && arr != null) {
+                    val c = ArrayList<java.net.InetSocketAddress>()
+                    for (i in 0 until arr.length()) parseAddr(arr.optString(i))?.let { c.add(it) }
+                    l.begin(unhex(k), c, m.optBoolean("init"))
+                    ui.postDelayed({ p2pOn = l.up; notify("state") }, 1500)
+                    ui.postDelayed({ p2pOn = l.up; notify("state") }, 3500)
+                }
+            }
+            "p2pstop" -> stopP2p(false)
+            "smsout" -> {
+                if (smsGw) Thread { Telco.sendSms(ctx, m.optString("to"), m.optString("text")) }.start()
+            }
+            "smsres" -> notify("toast:" + (if (m.optBoolean("ok")) L.t("sms_sent") else L.t("sms_err_" + m.optString("why"))))
             "dialtone" -> if (dialed.isEmpty()) enter("dialtone")
             "ringback" -> enter("ringback")
             "busy" -> enter("busy")
@@ -453,6 +523,7 @@ object App {
                 enter("talking")
             }
             "ended" -> {
+                stopP2p(false)
                 playout.clearVoice()
                 dialed.setLength(0)
                 intervening = false
@@ -510,6 +581,7 @@ object App {
                 if (i > 0) addContact(text.substring(0, i).trim(), text.substring(i + 1).filter { it.isDigit() })
             }
             "say" -> Voice.speak(ctx, text, L.lang)
+            "realcall" -> Telco.dial(ctx, text.trim())
             "sound" -> playout.effect(Fx.preset(text.trim()))
             "blackout" -> {
                 val i = text.indexOf(';')
@@ -818,6 +890,78 @@ object App {
         playing = false
         ui.removeCallbacks(playRun)
         notify("script")
+    }
+
+    // ------------------------------------------------------------------ rețea: P2P, SIP, SMS
+
+    fun netIcon(): String = when (Telco.netKind(ctx)) {
+        "wifi" -> " · Wi‑Fi"
+        "mobile" -> " · 📱"
+        else -> ""
+    }
+
+    private fun setupP2p(tok: String) {
+        if (role == "regie" || tok.isEmpty()) return
+        try {
+            var l = p2pLink
+            if (l == null) {
+                l = P2pLink { pcm ->
+                    val b = ByteArray(pcm.size + 1)
+                    b[0] = 255.toByte()
+                    System.arraycopy(pcm, 0, b, 1, pcm.size)
+                    playout.feed(255, b, 1)
+                }
+                p2pLink = l
+            }
+            val (h, p) = parseHostPort(curTarget)
+            Thread {
+                try {
+                    l.registerAt(java.net.InetSocketAddress(java.net.InetAddress.getByName(h), p + P2P_PORT_OFFSET), deviceId, tok)
+                    ui.post { send(jo("t" to "udp", "lan" to l.lanCandidate(localIps()))) }
+                } catch (_: Exception) {
+                }
+            }.start()
+        } catch (_: Exception) {
+        }
+    }
+
+    fun stopP2p(closeSocket: Boolean) {
+        p2pOn = false
+        p2pLink?.end()
+        if (closeSocket) {
+            p2pLink?.close()
+            p2pLink = null
+        }
+    }
+
+    private fun startSip(keyStr: String) {
+        val cfg = SipConfig(sipHost.trim(), sipPort, sipUser.trim(), sipPass, sipDomain.trim(), sipInbound.trim().ifEmpty { "100" }, "", PORT, "", keyStr)
+        val g = SipGateway(cfg) { s -> ui.post { log.add("SIP: $s"); notify("log") } }
+        sipGw = g
+        Thread {
+            try {
+                g.start()
+            } catch (e: Exception) {
+                ui.post { notify("toast:" + L.t("sip_err")) }
+            }
+        }.start()
+    }
+
+    private fun stopSip() {
+        try {
+            sipGw?.stop()
+        } catch (_: Exception) {
+        }
+        sipGw = null
+    }
+
+    fun sendSms(to: String, text: String) {
+        if (text.isBlank()) return
+        send(jo("t" to "sms", "to" to to, "text" to text))
+    }
+
+    fun onSmsReceived(from: String, text: String) {
+        if (smsGw && connected && role == "regie") send(jo("t" to "smsin", "from" to from, "text" to text))
     }
 
     // ------------------------------------------------------------------ vibrații, bliț

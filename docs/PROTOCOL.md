@@ -1,4 +1,4 @@
-# CUPLAJ protocol (v1)
+# CUPLAJ protocol (v1.1)
 
 Documentation language: English only (the app UI, README and user guide are available in 8 languages).
 
@@ -66,3 +66,17 @@ Cue kinds: `text`, `vibrate`, `ring`, `flash`, `speaker`, `era`, `contact`, `say
 ## Security model
 
 Plain TCP on a trusted local network. The room code and PIN are access gates, not cryptography; the session token prevents identity takeover. Do not run the hub on an untrusted network.
+
+## v1.1 extensions
+
+**Frame types.** `1` JSON, `2` PCM16 audio, `3` μ‑law audio (160 bytes = 20 ms). Audio payload: `[src][data]`. Bit `0x80` on the type byte (`FLAG_ENC`) marks an encrypted frame.
+
+**Encryption.** Key = PBKDF2WithHmacSHA1(passphrase, salt `CUPLAJ-v1`, 10 000 iterations, 128 bit). Frame body = `nonce(12) | AES‑GCM(ciphertext+tag)`; nonce = 4‑byte prefix (first byte 1 = hub, 2 = client) + 8‑byte big‑endian counter. Receivers reject a wrong direction byte and non‑increasing counters. The hub may answer `denied bad_key` in clear.
+
+**Keepalive.** Client sends `{"t":"ping"}` every 15 s, hub answers `{"t":"pong"}`; hub closes connections idle for 60 s.
+
+**P2P.** UDP rendezvous on `PORT+2` (8472). Client sends `hello` with `p2p:true`, registers over UDP with `id` and session token, and reports `{"t":"udp","lan":"ip:port"}`. On a call the hub sends `{"t":"p2p","key":hex16,"cand":["lan","observed"],"init":bool}`; peers probe the candidates and send μ‑law audio encrypted with the per‑call key. `{"t":"p2pstop"}` returns audio to the relay. Control option `opt.p2p`: 0 off, 1 LAN only, 2 anywhere.
+
+**Gateway role.** A client with role `gateway` (number 90) is a SIP bridge; it requires the PIN unless local. Staff dial `0`+number; the hub sends `ring` with `dest` to the gateway. `unknown` is returned to spectators.
+
+**SMS.** Staff → hub `{"t":"sms","to","text"}`; hub → gateway `{"t":"smsout",...}`; hub → staff `{"t":"smsres","ok","why"}` (`bad_number`, `no_gateway`, `limit`). Gateway → hub `{"t":"smsin","from","text"}`, delivered to staff as `msg` with role `sms`. `hello.smsgw:true` registers a gateway.

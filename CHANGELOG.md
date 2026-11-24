@@ -2,6 +2,14 @@
 
 Documentation language: English only.
 
+## 1.1.0 — 2026‑11‑24
+
+* Internet and mobile data: `host:port` addressing, optional AES‑128‑GCM network key, G.711 μ‑law compression off the LAN, keepalive and idle timeout.
+* Direct P2P audio over UDP with hole punching and relay fallback; control option off / local / anywhere.
+* VoIP: SIP gateway on the control phone (digest auth, PCMU RTP, inbound and outbound, staff‑only outbound, call length limit).
+* Mobile network: SMS gateway (send and receive), *real call* cue (dialler), Wi‑Fi / mobile indicator.
+* Protocol v1.1 (backward compatible: plain clients still work on unencrypted hubs). 8‑language UI, README and guide updated.
+
 ## 1.0.0 — 2026‑11‑24
 
 First public release; a rewrite of the 0.x prototype after an adversarial audit (see `docs/AUDIT.md`).

@@ -35,6 +35,7 @@ class MainActivity : Activity() {
     private var hostEt: EditText? = null
     private var pinEt: EditText? = null
     private var roomEt: EditText? = null
+    private var keyEt: EditText? = null
     private var logView: TextView? = null
     private var overlay: FrameLayout? = null
     private var startScroll: ScrollView? = null
@@ -163,6 +164,7 @@ class MainActivity : Activity() {
         hostEt?.let { App.hubHost = it.text.toString() }
         pinEt?.let { App.apin = it.text.toString() }
         roomEt?.let { App.room = it.text.toString().trim() }
+        keyEt?.let { App.joinKey = it.text.toString().trim(); App.saveNet() }
     }
 
     private fun lp() = LinearLayout.LayoutParams(MATCH, WRAP)
@@ -207,6 +209,7 @@ class MainActivity : Activity() {
 
         hostEt = null
         pinEt = null
+        keyEt = null
         val room = edit(L.t("room_hint"), App.room)
         roomEt = room
         if (App.role == "regie") {
@@ -218,12 +221,23 @@ class MainActivity : Activity() {
             )
             col.addView(tv(L.t("actor_pin", App.hubPin), 20f, IVORY), lp().apply { topMargin = dp(8) })
             col.addView(room, lp().apply { topMargin = dp(8) })
+            col.addView(btn(if (App.encOn) L.t("enc_on") else L.t("enc_off"), if (App.encOn) GREEN else BTN) {
+                saveFields()
+                App.encOn = !App.encOn
+                App.saveNet()
+                showStart()
+            })
+            if (App.encOn) {
+                col.addView(tv(L.t("enc_key", App.netKey), 18f, IVORY), lp().apply { topMargin = dp(4) })
+                col.addView(tv(L.t("enc_help"), 12f, DIM))
+            }
+            col.addView(tv(L.t("wan_help", PORT, PORT + P2P_PORT_OFFSET), 12f, DIM), lp().apply { topMargin = dp(6) })
             col.addView(btn(L.t("btn_refresh")) { saveFields(); showStart() })
         } else {
             col.addView(tv(L.t("hubs_found"), 13f, DIM), lp().apply { topMargin = dp(16) })
             if (App.found.isEmpty()) col.addView(tv(L.t("hubs_none"), 14f, DIM))
             for (f in App.found.values) {
-                col.addView(btn((if (f.locked) "🔒 " else "") + f.name + " — " + f.host) {
+                col.addView(btn((if (f.locked) "🔒 " else "") + (if (f.keyed) "🔑 " else "") + f.name + " — " + f.host) {
                     saveFields()
                     App.hubHost = f.host
                     showStart()
@@ -233,6 +247,9 @@ class MainActivity : Activity() {
             hostEt = host
             col.addView(host, lp().apply { topMargin = dp(8) })
             col.addView(room)
+            val ke = edit(L.t("key_hint"), App.joinKey)
+            keyEt = ke
+            col.addView(ke)
             if (App.role == "actor") {
                 val pin = edit(L.t("pin_hint"), App.apin)
                 pin.inputType = InputType.TYPE_CLASS_NUMBER
@@ -311,9 +328,59 @@ class MainActivity : Activity() {
                 .setPositiveButton(L.t("yes")) { _, _ -> App.resetHubMemory(); toast(L.t("sent")) }
                 .setNegativeButton(L.t("no"), null).show()
         })
+        col.addView(tv(L.t("set_gateways"), 13f, DIM), lp().apply { topMargin = dp(12) })
+        col.addView(btn(L.t("btn_sip")) { dlg?.dismiss(); sipDialog() })
+        col.addView(btn(if (App.smsGw) L.t("sms_gw_on") else L.t("sms_gw_off"), if (App.smsGw) GREEN else BTN) {
+            dlg?.dismiss()
+            App.smsGw = !App.smsGw
+            if (App.smsGw && !Telco.hasSms(this)) {
+                requestPermissions(arrayOf(Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS), 2)
+                toast(L.t("sms_perm"))
+            }
+            App.saveNet()
+            toast(L.t("restart_hub"))
+        })
         col.addView(btn(L.t("set_about")) { dlg?.dismiss(); aboutDialog() })
         dlg = AlertDialog.Builder(this).setView(sv).setPositiveButton(L.t("ok"), null).create()
         dlg.show()
+    }
+
+    private fun sipDialog() {
+        val sv = ScrollView(this)
+        val col = LinearLayout(this)
+        col.orientation = LinearLayout.VERTICAL
+        col.setPadding(dp(16), dp(8), dp(16), dp(8))
+        sv.addView(col)
+        col.addView(tv(L.t("sip_help"), 13f, DIM))
+        val server = edit(L.t("sip_server"), if (App.sipHost.isEmpty()) "" else App.sipHost + ":" + App.sipPort)
+        val user = edit(L.t("sip_user"), App.sipUser)
+        val pass = edit(L.t("sip_pass"), App.sipPass)
+        pass.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        val domain = edit(L.t("sip_domain"), App.sipDomain)
+        val inbound = edit(L.t("sip_inbound"), App.sipInbound)
+        for (e in listOf(server, user, pass, domain, inbound)) col.addView(e)
+        var on = App.sipOn
+        val sw = btn(if (on) L.t("sip_on") else L.t("sip_off"), if (on) GREEN else BTN) {}
+        sw.setOnClickListener {
+            on = !on
+            sw.text = if (on) L.t("sip_on") else L.t("sip_off")
+            styleBtn(sw, if (on) GREEN else BTN)
+        }
+        col.addView(sw)
+        AlertDialog.Builder(this).setTitle(L.t("btn_sip")).setView(sv)
+            .setPositiveButton(L.t("ok")) { _, _ ->
+                val (h, p) = parseHostPort(server.text.toString(), 5060)
+                App.sipHost = h
+                App.sipPort = p
+                App.sipUser = user.text.toString()
+                App.sipPass = pass.text.toString()
+                App.sipDomain = domain.text.toString()
+                App.sipInbound = inbound.text.toString().filter { it.isDigit() }.ifEmpty { "100" }
+                App.sipOn = on
+                App.saveNet()
+                toast(L.t("restart_hub"))
+            }
+            .setNegativeButton(L.t("cancel"), null).show()
     }
 
     private fun batteryPrompt() {
@@ -432,6 +499,6 @@ class MainActivity : Activity() {
 
     private fun updateHeader() {
         val s = if (App.connected) L.t("hdr_num", fmtNum(App.number)) else App.status
-        header?.text = App.myName + " · " + roleLabel(App.role) + " · " + s
+        header?.text = App.myName + " · " + roleLabel(App.role) + " · " + s + (if (App.p2pOn) " · P2P" else "")
     }
 }

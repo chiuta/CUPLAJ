@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.0.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.1.0 · Ultimo aggiornamento: 2026-11-24_
 
 ## 1. Prima dello spettacolo
 
@@ -46,6 +46,15 @@ _Versione: 1.0.0 · Ultimo aggiornamento: 2026-11-24_
 - *PIN / codice sala errato* — la regia li mostra nella schermata iniziale.
 - *Porta occupata* — chiudi ogni altra app che usa la porta 8470.
 - *Chiamate mute* — controlla il permesso del microfono e l'interruttore dell'altoparlante nella scheda Voce.
+
+## 8. Internet, VoIP e rete mobile (1.1)
+
+- **Chiave di rete** — nella schermata iniziale attiva *Collegamento cifrato*; la regia mostra una chiave (xxxx‑xxxx‑xxxx‑xxxx). Inseriscila nel campo *Chiave di rete* su ogni altro telefono. Senza la chiave giusta l'hub rifiuta la connessione. Usala ogni volta che il traffico esce dalla rete locale.
+- **Da internet** — inoltra TCP 8470 e UDP 8472 sul router verso il telefono della regia e indica l'indirizzo pubblico (`host` o `host:porta`). Con i dati mobili non serve altro.
+- **P2P** — nella scheda Regia l'opzione *Chiamate dirette* alterna spente / solo rete locale / ovunque. *Ovunque* permette a due telefoni di conoscere l'IP pubblico reciproco; la regia non può monitorare, silenziare o intervenire finché la chiamata è diretta (torna al relay automaticamente se serve).
+- **Linea SIP** — Impostazioni → *Linea VoIP / SIP…*: server, utente, password, dominio opzionale e numero interno per le chiamate in arrivo (predefinito 100). Riavvia l'hub per applicare. La squadra compone `0` + numero esterno; gli spettatori non possono chiamare fuori. Ogni chiamata è limitata a 15 minuti. SIP e RTP non sono cifrati.
+- **SMS** — Impostazioni → *Gateway SMS* (servono SIM e permessi SMS). La squadra sceglie *SMS a un numero reale* nella scheda Messaggi; gli SMS ricevuti compaiono come messaggi da *SMS*. Limite: 20 al minuto. Si applicano le tariffe dell'operatore.
+- **Chiamata reale** — il cue *chiamata reale* apre il tastierino con il numero. Android non consente a un'app di portare una chiamata cellulare nella linea condivisa: l'audio GSM non può essere instradato; per questo usa la linea SIP.
 
 ---
 

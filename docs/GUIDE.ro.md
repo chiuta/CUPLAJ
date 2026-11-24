@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.0.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.1.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -46,6 +46,15 @@ _Versiune: 1.0.0 · Ultima actualizare: 2026-11-24_
 - *PIN / cod de cameră greșit* — regia le arată pe ecranul de pornire.
 - *Port ocupat* — închide orice altă aplicație care folosește portul 8470.
 - *Apeluri mute* — verifică permisiunea pentru microfon și comutatorul difuzorului din fila Voce.
+
+## 8. Internet, VoIP și rețea mobilă (1.1)
+
+- **Cheia de rețea** — pe ecranul de start pornește *Legătură cifrată*; Regia afișează o cheie (xxxx‑xxxx‑xxxx‑xxxx). Scrie‑o în câmpul *Cheie de rețea* pe fiecare alt telefon. Fără cheia corectă hubul refuză conexiunea. Folosește‑o oricând traficul iese din rețeaua locală.
+- **Din internet** — redirecționează TCP 8470 și UDP 8472 în router către telefonul Regiei și dă adresa publică (`host` sau `host:port`) în câmpul de adresă. Pe date mobile nu mai trebuie nimic.
+- **P2P** — în fila Regie, opțiunea *Apeluri directe* alternează oprite / doar rețea locală / oriunde. *Oriunde* lasă două telefoane să‑și afle IP‑ul public; Regia nu poate monitoriza, amuți sau intra într‑un apel cât timp e direct (revine automat pe releu când are nevoie).
+- **Linia SIP** — Setări → *Linie VoIP / SIP…*: server, utilizator, parolă, domeniu opțional și numărul intern pentru apeluri primite (implicit 100). Repornește hubul pentru aplicare. Echipa formează `0` + număr extern; spectatorii nu pot suna în afară. Fiecare apel e limitat la 15 minute. SIP și RTP nu sunt cifrate.
+- **SMS** — Setări → *Poartă SMS* (necesită SIM și permisiunile SMS). Echipa alege *SMS către un număr real* în fila Mesaje; SMS‑urile primite apar echipei ca mesaje de la *SMS*. Limită: 20 pe minut. Se aplică tarifele operatorului.
+- **Apel real** — cue‑ul *apel real* deschide formatorul telefonului cu numărul. Android nu permite unei aplicații să ducă un apel celular în cuplaj, deci sunetul apelurilor GSM nu poate fi legat; pentru asta folosește linia SIP.
 
 ---
 

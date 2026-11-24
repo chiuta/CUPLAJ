@@ -6,7 +6,7 @@
 
 > **Gemeinschaftsanschluss-Telefonie für immersives Theater**
 
-_Version: 1.0.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.1.0 · Letzte Aktualisierung: 2026-11-24_
 
 CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Telefonanlage für immersives Theater. Organisatoren und Schauspieler sprechen über das lokale WLAN des Veranstaltungsorts mit den Zuschauern (und untereinander) — ohne Cloud, ohne Konten, ohne Werbung. Das Kernmerkmal ist der *Cuplaj*: der **Gemeinschaftsanschluss** der Festnetztelefone von den 1980er-Jahren bis etwa 2006, bei dem sich zwei Teilnehmer eine Leitung teilten, mit unterschiedlichem Rhythmus klingelten und einander mithören konnten.
 
@@ -20,6 +20,10 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 - **Ablauf** — Signalliste mit GO und PLAY (zeitgesteuert), Umsortieren, JSON-Import/-Export.
 - **Regie-Werkzeuge** — Nummern, Gruppen, Koppeln/Entkoppeln, automatische Paare, stilles Mithören, Stummschalten, Vergessen, Akkustände, Ereignisprotokoll, Zustand übersteht Neustarts, Ratenbegrenzung.
 - **8 Sprachen und Barrierefreiheit** — Englisch, Rumänisch, Französisch, Italienisch, Spanisch, Portugiesisch, Deutsch, Ungarisch; einstellbare Textgröße; Annehmen vom Sperrbildschirm; läuft im Hintergrund.
+- **Internet und Mobilfunk (1.1)** — Verbindung mit `Host` oder `Host:Port`; optionaler AES‑128‑GCM‑Netzwerkschlüssel; automatische G.711‑Kompression außerhalb des lokalen Netzes; Keepalive.
+- **Direkte P2P‑Gespräche (1.1)** — Audio läuft per UDP mit Hole‑Punching direkt von Telefon zu Telefon, mit Rückfall auf das Hub‑Relay; die Regie kann es abschalten, auf das lokale Netz begrenzen (Standard) oder überall erlauben.
+- **VoIP‑/SIP‑Gateway (1.1)** — das Regie‑Telefon registriert sich bei einem SIP‑Anbieter oder einer Telefonanlage; das Team wählt `0`+Nummer nach außen, eingehende SIP‑Anrufe klingeln an einer internen Nummer.
+- **Mobilfunknetz (1.1)** — SMS‑Gateway über die SIM des Regie‑Telefons (Senden und Empfangen), Cue *echter Anruf*, der die Wähl‑App öffnet, und WLAN‑/Mobil‑Anzeige.
 
 ## Schnellstart
 
@@ -56,7 +60,7 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 
 ## Ehrlicher Stand
 
-Die Hub-Logik (Gespräche, Gemeinschaftsanschluss, Berechtigungen, Limits, Persistenz) wird von ~55 automatischen Prüfungen auf einer JVM abgedeckt. Die Android-Oberfläche und der Audiopfad haben die Typprüfung gegen das Android-14-SDK bestanden, wurden aber **noch nicht auf echten Geräten getestet**; der APK wird von GitHub Actions gebaut. Vor einer Vorstellung mit ein paar Telefonen testen. Der Verkehr im lokalen Netz ist nicht verschlüsselt (PIN und Raumcode halten gutgläubige Fremde fern, sie sind keine Kryptografie).
+Die Hub-Logik (Gespräche, Gemeinschaftsanschluss, Berechtigungen, Limits, Persistenz) wird von ~55 automatischen Prüfungen auf einer JVM abgedeckt. Die Android-Oberfläche und der Audiopfad haben die Typprüfung gegen das Android-14-SDK bestanden, wurden aber **noch nicht auf echten Geräten getestet**; der APK wird von GitHub Actions gebaut. Vor einer Vorstellung mit ein paar Telefonen testen. Der Verkehr im lokalen Netz ist nicht verschlüsselt (PIN und Raumcode halten gutgläubige Fremde fern, sie sind keine Kryptografie). Die Netzfunktionen der Version 1.1 (Verschlüsselung, P2P, SIP, SMS) sind durch Hub‑Tests gegen einen simulierten SIP‑Server abgedeckt, aber **nicht** an echten Anbietern, NATs oder SIM‑Karten erprobt.
 
 ## Bauen
 

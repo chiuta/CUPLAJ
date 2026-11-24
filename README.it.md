@@ -6,7 +6,7 @@
 
 > **Telefonia a linea condivisa per il teatro immersivo**
 
-_Versione: 1.0.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.1.0 · Ultimo aggiornamento: 2026-11-24_
 
 CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefonica privata per il teatro immersivo. Organizzatori e attori parlano con gli spettatori (e tra loro) tramite il Wi‑Fi locale del luogo — senza cloud, senza account, senza pubblicità. La sua funzione distintiva è il *cuplaj*: la **linea condivisa** dei telefoni fissi dagli anni '80 fino al 2006 circa, in cui due abbonati dividevano la stessa linea, squillavano con cadenze diverse e potevano ascoltarsi a vicenda.
 
@@ -20,6 +20,10 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 - **Copione** — elenco di segnali con GO e PLAY (a tempo), riordino, import/export JSON.
 - **Strumenti di regia** — numeri, gruppi, accoppiamento/disaccoppiamento, coppie automatiche, ascolto discreto, muto, dimentica, livelli batteria, registro eventi, stato che sopravvive al riavvio, limitazione del flusso.
 - **8 lingue e accessibilità** — inglese, rumeno, francese, italiano, spagnolo, portoghese, tedesco, ungherese; dimensione del testo regolabile; risposta dalla schermata di blocco; funziona in background.
+- **Internet e dati mobili (1.1)** — connessione con `host` o `host:porta`; chiave di rete AES‑128‑GCM opzionale; compressione G.711 automatica fuori dalla rete locale; keepalive.
+- **Chiamate dirette P2P (1.1)** — l'audio va da telefono a telefono via UDP con hole punching, con ripiego sul relay dell'hub; la regia può disattivarlo, limitarlo alla rete locale (predefinito) o aprirlo ovunque.
+- **Gateway VoIP / SIP (1.1)** — il telefono della regia si registra presso un provider SIP o un PBX; la squadra compone `0`+numero per uscire, le chiamate SIP in arrivo squillano a un numero interno.
+- **Rete mobile (1.1)** — gateway SMS tramite la SIM del telefono della regia (invio e ricezione), cue *chiamata reale* che apre il tastierino, indicatore Wi‑Fi / mobile.
 
 ## Avvio rapido
 
@@ -56,7 +60,7 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 
 ## Stato reale
 
-La logica dell'hub (chiamate, linea condivisa, permessi, limiti, persistenza) è coperta da ~55 verifiche automatiche eseguite su una JVM. L'interfaccia Android e il percorso audio hanno superato il controllo dei tipi rispetto all'SDK Android 14 ma **non sono ancora stati provati su dispositivi reali**; l'APK è costruito da GitHub Actions. Prova con qualche telefono prima dello spettacolo. Il traffico sulla rete locale non è cifrato (PIN e codice sala tengono fuori gli estranei in buona fede, non sono crittografia).
+La logica dell'hub (chiamate, linea condivisa, permessi, limiti, persistenza) è coperta da ~55 verifiche automatiche eseguite su una JVM. L'interfaccia Android e il percorso audio hanno superato il controllo dei tipi rispetto all'SDK Android 14 ma **non sono ancora stati provati su dispositivi reali**; l'APK è costruito da GitHub Actions. Prova con qualche telefono prima dello spettacolo. Il traffico sulla rete locale non è cifrato (PIN e codice sala tengono fuori gli estranei in buona fede, non sono crittografia). La rete della versione 1.1 (cifratura, P2P, SIP, SMS) è coperta da test dell'hub contro un server SIP simulato, ma **non** è stata provata su operatori, NAT o SIM reali.
 
 ## Compilazione
 

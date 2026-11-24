@@ -6,7 +6,7 @@
 
 > **Party-line telephony for immersive theatre**
 
-_Version: 1.0.0 · Last update: 2026-11-24_
+_Version: 1.1.0 · Last update: 2026-11-24_
 
 CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchange for immersive theatre. Organisers and actors talk to spectators (and to each other) over the venue's local Wi‑Fi — no cloud, no accounts, no ads. Its signature feature is the *cuplaj*: the shared **party line** of fixed telephones from the 1980s to about 2006, where two subscribers shared one line, rang with different cadences, and could overhear each other.
 
@@ -20,6 +20,10 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 - **Script** — a cue list with GO and PLAY (timed), reorder, import/export as JSON.
 - **Control tools** — numbers, groups, couple/uncouple, automatic pairs, silent monitor, mute, forget, battery levels, event log, state that survives restarts, rate limiting.
 - **8 languages and accessibility** — English, Romanian, French, Italian, Spanish, Portuguese, German, Hungarian; adjustable text size; answer from the lock screen; keeps running in the background.
+- **Internet and mobile data (1.1)** — connect with `host` or `host:port`; optional AES‑128‑GCM network key; automatic G.711 compression off the local network; keepalive.
+- **Direct P2P calls (1.1)** — audio goes phone‑to‑phone over UDP with hole punching, falling back to the hub relay; the control can set it off, local‑only (default) or anywhere.
+- **VoIP / SIP gateway (1.1)** — the control phone registers with a SIP provider or PBX; the crew dials `0`+number to call out, incoming SIP calls ring an internal number.
+- **Mobile network (1.1)** — SMS gateway through the control phone's SIM (send and receive), a *real call* cue that opens the dialler, and a Wi‑Fi / mobile indicator.
 
 ## Quick start
 
@@ -56,7 +60,7 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 
 ## Honest status
 
-The hub logic (calls, party line, permissions, limits, persistence) is covered by ~55 automated checks that run on a JVM. The Android user interface and audio path have been type‑checked against the Android 14 SDK but **not yet tested on physical devices**; the APK is built by GitHub Actions. Test with a handful of phones before a show. Traffic on the local network is not encrypted (the PIN and room code keep honest strangers out, they are not cryptography).
+The hub logic (calls, party line, permissions, limits, persistence) is covered by ~55 automated checks that run on a JVM. The Android user interface and audio path have been type‑checked against the Android 14 SDK but **not yet tested on physical devices**; the APK is built by GitHub Actions. Test with a handful of phones before a show. Traffic on the local network is not encrypted (the PIN and room code keep honest strangers out, they are not cryptography). Version 1.1 networking (encryption, P2P, SIP, SMS) is covered by hub tests against a simulated SIP server, but has **not** been tried on real operators, NATs or SIM cards.
 
 ## Build
 

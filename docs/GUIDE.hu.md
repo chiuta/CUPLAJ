@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.0.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.1.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -46,6 +46,15 @@ _Verzió: 1.0.0 · Utolsó frissítés: 2026-11-24_
 - *Hibás PIN / teremkód* — a rendezés mindkettőt megmutatja a kezdőképernyőn.
 - *Foglalt port* — zárd be azt az alkalmazást, amely a 8470-es portot használja.
 - *Néma hívások* — ellenőrizd a mikrofonengedélyt és a Hang fülön a hangszóró kapcsolóját.
+
+## 8. Internet, VoIP és mobilhálózat (1.1)
+
+- **Hálózati kulcs** — a kezdőképernyőn kapcsold be a *Titkosított kapcsolat* opciót; a rendező kulcsot mutat (xxxx‑xxxx‑xxxx‑xxxx). Írd be a többi telefon *Hálózati kulcs* mezőjébe. Helyes kulcs nélkül a hub elutasítja a kapcsolatot. Használd, ha a forgalom elhagyja a helyi hálózatot.
+- **Internetről** — a routeren irányítsd át a TCP 8470 és UDP 8472 portot a rendezői telefonra, és add meg a nyilvános címet (`host` vagy `host:port`). Mobiladaton semmi más nem kell.
+- **P2P** — a Rendező fülön a *Közvetlen hívások* opció kikapcsolt / csak helyi hálózat / bárhol között vált. A *bárhol* lehetővé teszi, hogy két telefon megtudja egymás nyilvános IP‑jét; közvetlen hívást a rendező nem tud hallgatni, elnémítani vagy megszakítani (szükség esetén automatikusan visszavált a közvetítőre).
+- **SIP vonal** — Beállítások → *VoIP / SIP vonal…*: szerver, felhasználó, jelszó, opcionális tartomány és a bejövő hívások belső száma (alap 100). Az alkalmazáshoz indítsd újra a hubot. A stáb `0` + külső számot tárcsáz; a nézők nem hívhatnak kifelé. Egy hívás legfeljebb 15 percig tarthat. A SIP és az RTP nem titkosított.
+- **SMS** — Beállítások → *SMS‑átjáró* (SIM és SMS‑jogosultság kell). A stáb az Üzenetek fülön az *SMS valódi számra* célt választja; a fogadott SMS‑ek *SMS* feladótól érkező üzenetként jelennek meg. Korlát: percenként 20. A szolgáltató díjai érvényesek.
+- **Valódi hívás** — a *valódi hívás* cue megnyitja a tárcsázót a számmal. Az Android nem engedi, hogy egy alkalmazás mobilhívást vezessen a közös vonalra: a GSM‑hang nem hidalható át; ehhez használd a SIP vonalat.
 
 ---
 

@@ -33,6 +33,11 @@ class Peer(val id: String) {
     var offhook = false
     var muted = false
     var bat = -1
+    var p2p = false        // clientul știe P2P direct
+    var local = false      // telefonul Regiei însuși (conexiune loopback)
+    var udp: java.net.InetSocketAddress? = null  // adresa UDP văzută de hub (după NAT)
+    var smsgw = false      // telefonul Regiei trimite/primește SMS-uri reale
+    var lan = ""            // ip:port local raportat de client
     private var winStart = 0L
     private var jsonCnt = 0
     private var audCnt = 0
@@ -54,6 +59,7 @@ class Call(val id: Int, var a: Peer, var b: Peer) {
     val t0 = System.currentTimeMillis()
     var tConn = 0L
     val listeners = ArrayList<Peer>()
+    var p2pKey: ByteArray? = null
     fun members(): List<Peer> = listOf(a, b)
 }
 
@@ -67,8 +73,14 @@ class Hub(
     private val room: String = "",
     private val port: Int = PORT,
     restore: String? = null,
-    private val trustLoopback: Boolean = true
+    private val trustLoopback: Boolean = true,
+    netKey: String = ""
 ) {
+    private val key: ByteArray? = Sec.deriveKey(netKey)
+
+    /** Liniște maximă pe o conexiune (clienții trimit ping la 15 s), în ms. */
+    @Volatile
+    var idleTimeoutMs = 60000
     private val hubName = hubName.replace('|', ' ').take(40)
     private val lock = Any()
     private val peers = LinkedHashMap<String, Peer>()
@@ -82,6 +94,11 @@ class Hub(
     private var allowListen = true
     private var clickOnJoin = true
     private var peerMsg = true
+
+    /** 0 = fără P2P, 1 = doar în aceeași rețea locală, 2 = oriunde (își arată adresele IP între ei). */
+    @Volatile
+    var p2pMode = 1
+    private var udpSock: java.net.DatagramSocket? = null
     private val log = ArrayList<String>()
     private val rnd = java.security.SecureRandom()
 
@@ -117,6 +134,7 @@ class Hub(
         running = true
         Thread { acceptLoop() }.apply { isDaemon = true; start() }
         Thread { beaconLoop() }.apply { isDaemon = true; start() }
+        Thread { rendezvousLoop() }.apply { isDaemon = true; start() }
         val t = Timer(true)
         t.schedule(object : TimerTask() {
             override fun run() {
@@ -128,6 +146,10 @@ class Hub(
 
     fun stop() {
         running = false
+        try {
+            udpSock?.close()
+        } catch (_: Exception) {
+        }
         timer?.cancel()
         try {
             server?.close()
@@ -150,7 +172,7 @@ class Hub(
         }
         return jo(
             "peers" to arr, "nReg" to nReg, "nAct" to nAct, "nSpec" to nSpec, "lineSeq" to lineSeq, "srcSeq" to srcSeq,
-            "listen" to allowListen, "click" to clickOnJoin, "peerMsg" to peerMsg
+            "listen" to allowListen, "click" to clickOnJoin, "peerMsg" to peerMsg, "p2p" to p2pMode
         ).toString()
     }
 
@@ -161,6 +183,7 @@ class Hub(
         lineSeq = o.optInt("lineSeq")
         srcSeq = o.optInt("srcSeq")
         allowListen = o.optBoolean("listen", true)
+        p2pMode = o.optInt("p2p", 1)
         clickOnJoin = o.optBoolean("click", true)
         peerMsg = o.optBoolean("peerMsg", true)
         val arr = o.optJSONArray("peers") ?: return
@@ -230,7 +253,7 @@ class Hub(
             val d = DatagramSocket()
             ds = d
             d.broadcast = true
-            val msg = "CUPLAJ1|$hubName|$port|" + (if (room.isEmpty()) "0" else "1")
+            val msg = "CUPLAJ1|$hubName|$port|" + (if (room.isEmpty()) "0" else "1") + "|" + (if (key == null) "0" else "1")
             val bytes = msg.toByteArray(Charsets.UTF_8)
             while (running) {
                 try {
@@ -274,11 +297,19 @@ class Hub(
     private fun clean(s: String, n: Int): String = s.filter { it >= ' ' }.trim().take(n)
 
     private fun handle(s: Socket) {
-        val c = Conn(s)
+        val c = Conn(s, key, true)
         var me: Peer? = null
         try {
             s.soTimeout = 10000
             val f = c.readFrame()
+            if (f.bad) {
+                // cheie de rețea lipsă sau greșită: refuz în clar, ca utilizatorul să afle motivul
+                c.startWriter()
+                c.sendJsonPlain(jo("t" to "denied", "why" to "bad_key"))
+                Thread.sleep(300)
+                c.close()
+                return
+            }
             if (f.type != T_JSON) {
                 c.close()
                 return
@@ -288,7 +319,8 @@ class Hub(
                 c.close()
                 return
             }
-            s.soTimeout = 0
+            s.soTimeout = idleTimeoutMs
+            s.keepAlive = true
             val id = clean(m.getString("id"), 64)
             if (id.isEmpty()) {
                 c.close()
@@ -300,11 +332,11 @@ class Hub(
                 deny(c, "bad_room")
                 return
             }
-            if (!local && (role == "actor" || role == "regie") && m.optString("pin") != pin) {
+            if (!local && (role == "actor" || role == "regie" || role == "gateway") && m.optString("pin") != pin) {
                 deny(c, "bad_pin")
                 return
             }
-            if (role != "regie" && role != "actor") role = "spectator"
+            if (role != "regie" && role != "actor" && role != "gateway") role = "spectator"
             c.startWriter()
             var refused: String? = null
             synchronized(lock) {
@@ -327,6 +359,11 @@ class Hub(
                     }
                     if (q.tok.isEmpty()) q.tok = newToken()
                     q.name = clean(m.optString("name", "?"), 40).ifEmpty { "?" }
+                    q.p2p = m.optBoolean("p2p")
+                    q.smsgw = role == "regie" && m.optBoolean("smsgw")
+                    q.local = local
+                    q.udp = null
+                    q.lan = ""
                     q.conn = c
                     me = q
                     sendTo(q, welcome(q))
@@ -346,13 +383,14 @@ class Hub(
             }
             while (true) {
                 val fr = c.readFrame()
+                if (fr.bad) break
                 val who = me ?: break
                 val now = System.currentTimeMillis()
                 if (fr.type == T_JSON) {
                     val jm = parseJson(fr)
                     synchronized(lock) { if (who.allow(0, now)) onJson(who, jm) }
-                } else if (fr.type == T_AUDIO && fr.data.size > 1) {
-                    synchronized(lock) { if (who.allow(1, now)) onAudio(who, fr.data) }
+                } else if ((fr.type == T_AUDIO || fr.type == T_AUDIO_U) && fr.data.size > 1) {
+                    synchronized(lock) { if (who.allow(1, now)) onAudio(who, fr.data, fr.type) }
                 }
             }
         } catch (_: Exception) {
@@ -386,6 +424,7 @@ class Hub(
         while (true) {
             val n = when (role) {
                 "regie" -> "10" + (nReg++)
+                "gateway" -> "90"
                 "actor" -> "2" + String.format("%02d", ++nAct)
                 else -> "21" + String.format("%04d", 1000 + (++nSpec))
             }
@@ -435,7 +474,7 @@ class Hub(
                 )
             )
         }
-        return jo("t" to "peers", "list" to arr, "listen" to allowListen, "click" to clickOnJoin, "peerMsg" to peerMsg)
+        return jo("t" to "peers", "list" to arr, "listen" to allowListen, "click" to clickOnJoin, "peerMsg" to peerMsg, "p2p" to p2pMode)
     }
 
     private fun broadcastPeers() {
@@ -486,11 +525,24 @@ class Hub(
                 val q = peers[m.optString("id")]
                 if (q != null) {
                     q.muted = m.optBoolean("on")
+                    calls[q.callId]?.let { stopP2p(it) }
                     persist()
                     broadcastPeers()
                 }
             }
             "forget" -> if (reg) forget(m.optString("id"))
+            "ping" -> sendTo(p, jo("t" to "pong"))
+            "udp" -> p.lan = clean(m.optString("lan"), 64)
+            "sms" -> if (isStaff(p)) smsOut(p, m)
+            "smsin" -> if (p.smsgw) {
+                val from = m.optString("from").filter { it.isDigit() || it == '+' }.take(20)
+                val text = clean(m.optString("text"), 500)
+                if (from.isNotEmpty() && text.isNotEmpty()) {
+                    val out = jo("t" to "msg", "from" to "SMS", "num" to from, "role" to "sms", "text" to text, "to" to "staff")
+                    for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, out)
+                    logEvent("SMS ← $from")
+                }
+            }
             "stat" -> {
                 p.bat = m.optInt("bat", -1)
                 broadcastPeers()
@@ -498,6 +550,9 @@ class Hub(
             "getlog" -> if (reg) for (l in log) sendTo(p, jo("t" to "log", "line" to l))
             "opt" -> if (reg) {
                 allowListen = m.optBoolean("listen", true)
+                val pm = m.optInt("p2p", p2pMode).coerceIn(0, 2)
+                if (pm == 0 && p2pMode != 0) for (c in calls.values) stopP2p(c)
+                p2pMode = pm
                 clickOnJoin = m.optBoolean("click", true)
                 peerMsg = m.optBoolean("peerMsg", true)
                 persist()
@@ -523,6 +578,7 @@ class Hub(
         p.talking = false
         p.silent = silent
         p.offhook = true
+        stopP2p(c)
         c.listeners.add(p)
         sendTo(p, jo("t" to "listening"))
         logEvent((if (silent) "monitor " else "ascultă ") + label(p) + " @ " + label(c.a) + "↔" + label(c.b))
@@ -550,7 +606,13 @@ class Hub(
             offhook(p)
             if (!p.offhook || p.callId != 0) return
         }
-        val t = peers.values.firstOrNull { it.number == number }
+        // prefixul 0 = ieșire prin poarta SIP/VoIP (doar echipa; pe o linie reală costă bani)
+        var dest = ""
+        var t = peers.values.firstOrNull { it.number == number }
+        if (number.length > 1 && number.startsWith("0")) {
+            t = if (isStaff(p)) peers.values.firstOrNull { it.role == "gateway" && it.online } else null
+            dest = number.substring(1)
+        }
         if (t == null || !t.online || t === p) {
             sendTo(p, jo("t" to "unknown"))
             return
@@ -566,12 +628,112 @@ class Hub(
         p.callId = c.id
         t.callId = c.id
         sendTo(p, jo("t" to "ringback"))
-        sendTo(t, jo("t" to "ring", "num" to p.number, "name" to p.name, "pat" to t.slot, "who" to t.number))
+        sendTo(t, jo("t" to "ring", "num" to p.number, "name" to p.name, "pat" to t.slot, "who" to t.number, "dest" to dest))
         // pe linia cuplată sună și telefonul vecinului, cu aceeași cadență (a numărului chemat)
         if (tp != null && tp.online) {
             sendTo(tp, jo("t" to "ring", "num" to p.number, "name" to "", "pat" to t.slot, "who" to t.number, "party" to true))
         }
         logEvent("apel " + label(p) + " → " + label(t))
+    }
+
+    // ------------------------------------------------------------------ SMS prin rețeaua mobilă (telefonul Regiei)
+
+    private var smsWinStart = 0L
+    private var smsCount = 0
+
+    private fun smsOut(p: Peer, m: JSONObject) {
+        val to = m.optString("to").filter { it.isDigit() || it == '+' }
+        val text = clean(m.optString("text"), 320)
+        val gw = peers.values.firstOrNull { it.smsgw && it.online }
+        val why = when {
+            to.length !in 5..16 || text.isEmpty() -> "bad_number"
+            gw == null -> "no_gateway"
+            else -> {
+                val now = System.currentTimeMillis()
+                if (now - smsWinStart > 60000) { smsWinStart = now; smsCount = 0 }
+                if (++smsCount > 20) "limit" else ""
+            }
+        }
+        if (why.isNotEmpty()) {
+            sendTo(p, jo("t" to "smsres", "ok" to false, "why" to why))
+            return
+        }
+        sendTo(gw!!, jo("t" to "smsout", "to" to to, "text" to text))
+        sendTo(p, jo("t" to "smsres", "ok" to true))
+        logEvent("SMS → $to (" + label(p) + ")")
+    }
+
+    // ------------------------------------------------------------------ P2P direct (semnalizare)
+
+    private fun hex(b: ByteArray) = b.joinToString("") { "%02x".format(it) }
+
+    private fun sameNet(a: java.net.InetSocketAddress, b: java.net.InetSocketAddress): Boolean {
+        val x = a.address
+        val y = b.address
+        return x == y || (x.isSiteLocalAddress && y.isSiteLocalAddress)
+    }
+
+    /** Punctul de întâlnire UDP: clientul trimite „CUPLAJP|id|tok”, hubul îi notează adresa văzută (după NAT). */
+    private fun rendezvousLoop() {
+        var d: DatagramSocket? = null
+        try {
+            d = DatagramSocket(null)
+            d.reuseAddress = true
+            d.bind(InetSocketAddress(port + P2P_PORT_OFFSET))
+            udpSock = d
+            val buf = ByteArray(256)
+            while (running) {
+                val pk = DatagramPacket(buf, buf.size)
+                d.receive(pk)
+                val t = String(pk.data, 0, pk.length, Charsets.UTF_8).split("|")
+                if (t.size == 3 && t[0] == "CUPLAJP") {
+                    var ok = false
+                    synchronized(lock) {
+                        val q = peers[t[1]]
+                        if (q != null && q.online && q.tok.isNotEmpty() && q.tok == t[2]) {
+                            q.udp = InetSocketAddress(pk.address, pk.port)
+                            ok = true
+                        }
+                    }
+                    if (ok) {
+                        val r = "CUPLAJP-OK".toByteArray()
+                        d.send(DatagramPacket(r, r.size, pk.socketAddress))
+                    }
+                }
+            }
+        } catch (_: Exception) {
+        } finally {
+            d?.close()
+        }
+    }
+
+    private fun tryP2p(c: Call) {
+        if (p2pMode == 0 || c.listeners.isNotEmpty() || c.p2pKey != null) return
+        val a = c.a
+        val b = c.b
+        if (!a.p2p || !b.p2p || a.local || b.local || a.muted || b.muted) return
+        val ua = a.udp ?: return
+        val ub = b.udp ?: return
+        if (p2pMode == 1 && !sameNet(ua, ub)) return
+        val key = ByteArray(16).also { rnd.nextBytes(it) }
+        c.p2pKey = key
+        fun cands(p: Peer, u: InetSocketAddress): JSONArray {
+            val arr = JSONArray()
+            if (p.lan.isNotEmpty()) arr.put(p.lan)
+            arr.put((u.address.hostAddress ?: "") + ":" + u.port)
+            return arr
+        }
+        sendTo(a, jo("t" to "p2p", "key" to hex(key), "cand" to cands(b, ub), "init" to true))
+        sendTo(b, jo("t" to "p2p", "key" to hex(key), "cand" to cands(a, ua), "init" to false))
+        logEvent("P2P " + label(a) + " ↔ " + label(b))
+    }
+
+    private fun stopP2p(c: Call) {
+        if (c.p2pKey == null) return
+        c.p2pKey = null
+        sendTo(c.a, jo("t" to "p2pstop"))
+        sendTo(c.b, jo("t" to "p2pstop"))
+        logEvent("P2P oprit " + label(c.a) + " ↔ " + label(c.b))
     }
 
     private fun connect(c: Call, forNum: String) {
@@ -583,6 +745,7 @@ class Hub(
         sendTo(c.b, jo("t" to "connected", "peer" to c.a.number, "name" to c.a.name, "forNum" to forNum))
         val pb = partnerOf(c.b)
         if (pb != null && pb.callId == 0) sendTo(pb, jo("t" to "stopring"))
+        tryP2p(c)
         logEvent("conectat " + label(c.a) + " ↔ " + label(c.b) + if (forNum.isNotEmpty()) " (răspuns greșit, era pentru $forNum)" else "")
     }
 
@@ -744,13 +907,13 @@ class Hub(
 
     // ------------------------------------------------------------------ audio
 
-    private fun onAudio(p: Peer, data: ByteArray) {
+    private fun onAudio(p: Peer, data: ByteArray, type: Int) {
         if (p.muted) return
         val mode = data[0].toInt()
         val out = ByteArray(data.size)
         System.arraycopy(data, 1, out, 1, data.size - 1)
         out[0] = p.src.toByte()
-        val f = Frame(T_AUDIO, out)
+        val f = Frame(type, out)
         val dest: List<Peer> = when (mode) {
             0 -> {
                 val c = calls[p.callId]

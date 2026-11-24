@@ -6,7 +6,7 @@
 
 > **Közös vonalas telefonálás immerzív színházhoz**
 
-_Verzió: 1.0.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.1.0 · Utolsó frissítés: 2026-11-24_
 
 A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonközponttá immerzív színház számára. A szervezők és a színészek a helyszín helyi Wi‑Fi hálózatán beszélnek a nézőkkel (és egymással) — felhő, fiók és reklám nélkül. Névadó funkciója a *cuplaj*: az 1980-as évektől nagyjából 2006-ig használt vezetékes telefonok **közös vonala**, amelyen két előfizető osztozott, eltérő ritmusban csengettek, és hallhatták egymást.
 
@@ -20,6 +20,10 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 - **Forgatókönyv** — jelzéslista GO és PLAY (időzített) gombbal, átrendezés, JSON import/export.
 - **Rendezői eszközök** — számok, csoportok, párosítás/szétválasztás, automatikus párok, csendes belehallgatás, némítás, törlés, akkumulátorszint, eseménynapló, újraindítást túlélő állapot, forgalomkorlátozás.
 - **8 nyelv és hozzáférhetőség** — angol, román, francia, olasz, spanyol, portugál, német, magyar; állítható szövegméret; hívásfogadás a zárolt képernyőről; háttérben is fut.
+- **Internet és mobiladat (1.1)** — csatlakozás `host` vagy `host:port` megadásával; opcionális AES‑128‑GCM hálózati kulcs; automatikus G.711 tömörítés a helyi hálózaton kívül; keepalive.
+- **Közvetlen P2P hívások (1.1)** — a hang UDP‑n, lyukasztással megy telefonról telefonra, szükség esetén a hub közvetítőjére visszaesve; a rendező kikapcsolhatja, helyi hálózatra korlátozhatja (alap) vagy bárhová engedheti.
+- **VoIP / SIP átjáró (1.1)** — a rendezői telefon bejelentkezik egy SIP‑szolgáltatóhoz vagy alközpontba; a stáb `0`+számot tárcsáz kifelé, a bejövő SIP‑hívások egy belső számon csengenek.
+- **Mobilhálózat (1.1)** — SMS‑átjáró a rendezői telefon SIM‑jén át (küldés és fogadás), *valódi hívás* cue, amely megnyitja a tárcsázót, és Wi‑Fi / mobil jelző.
 
 ## Gyors kezdés
 
@@ -56,7 +60,7 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 
 ## Őszinte állapot
 
-A hub logikáját (hívások, közös vonal, jogosultságok, korlátok, tartós állapot) ~55 automatikus ellenőrzés fedi le JVM-en. Az Android-felület és a hangút típusellenőrzésen átment az Android 14 SDK ellen, de **valódi eszközön még nem tesztelték**; az APK-t a GitHub Actions építi. Előadás előtt próbáld ki néhány telefonnal. A helyi hálózati forgalom nincs titkosítva (a PIN és a teremkód a jóhiszemű kívülállókat tartja távol, nem kriptográfia).
+A hub logikáját (hívások, közös vonal, jogosultságok, korlátok, tartós állapot) ~55 automatikus ellenőrzés fedi le JVM-en. Az Android-felület és a hangút típusellenőrzésen átment az Android 14 SDK ellen, de **valódi eszközön még nem tesztelték**; az APK-t a GitHub Actions építi. Előadás előtt próbáld ki néhány telefonnal. A helyi hálózati forgalom nincs titkosítva (a PIN és a teremkód a jóhiszemű kívülállókat tartja távol, nem kriptográfia). Az 1.1‑es hálózati funkciókat (titkosítás, P2P, SIP, SMS) szimulált SIP‑szerver elleni hubtesztek fedik, de **nem** próbáltuk valódi szolgáltatóval, NAT‑tal vagy SIM‑mel.
 
 ## Építés
 

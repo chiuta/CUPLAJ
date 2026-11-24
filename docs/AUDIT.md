@@ -51,7 +51,7 @@ Method: code review of all sources, then JVM integration tests of the hub with s
 
 ## E. Open items (honest list)
 
-1. **Traffic is not encrypted or authenticated per message.** Anyone on the same Wi‑Fi who knows the hub address can attempt to connect; the PIN/room code only gate admission. Use a private network or hotspot.
+1. **Encryption is optional (since 1.1).** Without a network key traffic is plain; with it, every frame is AES‑128‑GCM with direction‑bound nonces and replay rejection. The key is derived from a passphrase with PBKDF2 (10 000 iterations); a weak or shared key is only as strong as its secrecy.
 2. **Single point of failure:** if the control phone dies, all calls stop (state is restored on restart, calls are not).
 3. **No device testing yet.** Audio mixing, echo cancellation on speakerphone, and latency on real hardware are unmeasured; a handful of phones should be rehearsed before a show.
 4. **No load testing beyond simulation.** The 400‑device cap is a safety limit, not a claim of tested capacity.
@@ -59,3 +59,13 @@ Method: code review of all sources, then JVM integration tests of the hub with s
 6. The protocol document, audit and changelog are English only; the app, README and user guide are in 8 languages.
 7. Android versions: minSdk 24; behaviour of full‑screen call notifications varies by vendor.
 8. **Display names are self‑declared.** A spectator can type a name such as "Regie"; numbers and roles shown next to messages are hub‑stamped and trustworthy.
+
+## F. Version 1.1 risks and mitigations
+
+1. **P2P bypasses the hub.** Direct audio cannot be monitored, muted or broken into; the hub stops P2P (`p2pstop`) when it needs to, and keeps hub‑local phones and non‑P2P clients on the relay. Mode *anywhere* reveals each phone's public IP to its peer; default is local network only.
+2. **SIP toll fraud.** Outbound calls are staff‑only, 15‑minute maximum, and inbound SIP is accepted only from the configured server's IP. SIP signalling and RTP are unencrypted; the provider password travels as a digest only.
+3. **SIP NAT traversal is minimal** (rport and registration refresh only); providers needing STUN/ICE or SRTP are not supported.
+4. **SMS cost and abuse.** Staff only, 20 per minute, number and length validation, text sanitised before display, only the registered gateway can inject incoming SMS.
+5. **Cellular call audio cannot be bridged.** Stock Android gives apps no access to GSM call audio; the *real call* cue is only a dialler handoff.
+6. **Not tested on real networks:** NAT types, mobile carriers (CGNAT may block P2P), SIP providers, SIM cards, battery cost of keepalive. Hub logic is tested on a JVM against a simulated SIP server.
+7. Port forwarding (TCP 8470, UDP 8472) exposes the hub to the internet; always enable the network key and PIN in that case.

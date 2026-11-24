@@ -240,7 +240,7 @@ class MsgTab(a: MainActivity) : Tab(a) {
     private val numEt = EditText(a)
     private val sp = Spinner(a)
     private val staff = App.role != "spectator"
-    private val keys = if (staff) listOf("tgt_all", "tgt_spectators", "tgt_actors", "tgt_staff", "tgt_number") else listOf("tgt_staff_sp", "tgt_number")
+    private val keys = if (staff) listOf("tgt_all", "tgt_spectators", "tgt_actors", "tgt_staff", "tgt_number", "tgt_sms") else listOf("tgt_staff_sp", "tgt_number")
     private val opts = keys.map { L.t(it) }
 
     init {
@@ -254,7 +254,7 @@ class MsgTab(a: MainActivity) : Tab(a) {
         sp.adapter = ArrayAdapter(a, android.R.layout.simple_spinner_dropdown_item, opts)
         sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
-                numEt.visibility = if (keys[pos] == "tgt_number") View.VISIBLE else View.GONE
+                numEt.visibility = if (keys[pos] == "tgt_number" || keys[pos] == "tgt_sms") View.VISIBLE else View.GONE
             }
 
             override fun onNothingSelected(p: AdapterView<*>?) {}
@@ -303,7 +303,11 @@ class MsgTab(a: MainActivity) : Tab(a) {
             a.toast(L.t("err_conn"))
             return
         }
-        App.sendMsg(target(), t)
+        if (keys[sp.selectedItemPosition] == "tgt_sms") {
+            App.sendSms(numEt.text.toString().trim(), t)
+        } else {
+            App.sendMsg(target(), t)
+        }
         input.setText("")
     }
 
@@ -389,7 +393,7 @@ class VoiceTab(a: MainActivity) : Tab(a) {
 
 // ====================================================================== REGIE
 
-val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall")
+val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall")
 
 /** Țintele pentru indicii: poziție în spinner → șir de țintă. */
 fun targetOptions(): List<String> = listOf(L.t("tgt_all"), L.t("tgt_spectators"), L.t("tgt_actors"), L.t("tgt_selected"), L.t("tgt_group"), L.t("tgt_number"))
@@ -409,6 +413,7 @@ class RegieTab(a: MainActivity) : Tab(a) {
     private var optL: Button? = null
     private var optC: Button? = null
     private var optP: Button? = null
+    private var optQ: Button? = null
 
     init {
         col.orientation = LinearLayout.VERTICAL
@@ -440,11 +445,14 @@ class RegieTab(a: MainActivity) : Tab(a) {
         val ol = a.btn("", BTN) { sendOpt(!App.optListen, App.optClick, App.optPeerMsg) }
         val oc = a.btn("", BTN) { sendOpt(App.optListen, !App.optClick, App.optPeerMsg) }
         val op = a.btn("", BTN) { sendOpt(App.optListen, App.optClick, !App.optPeerMsg) }
+        val oq = a.btn("", BTN) { sendOpt(App.optListen, App.optClick, App.optPeerMsg, (App.optP2p + 1) % 3) }
+        optQ = oq
         optL = ol
         optC = oc
         optP = op
         col.addView(row(ol, oc))
-        col.addView(row(op, a.btn(L.t("btn_journal"), BTN) { showLog() }))
+        col.addView(row(op, oq))
+        col.addView(row(a.btn(L.t("btn_journal"), BTN) { showLog() }))
 
         col.addView(a.tv(L.t("sec_cues"), 13f, DIM), lpw(top = 14, a = a))
         tgt.adapter = ArrayAdapter(a, android.R.layout.simple_spinner_dropdown_item, targetOptions())
@@ -481,8 +489,8 @@ class RegieTab(a: MainActivity) : Tab(a) {
         App.send(jo("t" to "peers"))
     }
 
-    private fun sendOpt(l: Boolean, k: Boolean, p: Boolean) {
-        App.send(jo("t" to "opt", "listen" to l, "click" to k, "peerMsg" to p))
+    private fun sendOpt(l: Boolean, k: Boolean, p: Boolean, p2p: Int = App.optP2p) {
+        App.send(jo("t" to "opt", "listen" to l, "click" to k, "peerMsg" to p, "p2p" to p2p))
     }
 
     private fun row(vararg v: View): LinearLayout {
@@ -612,6 +620,7 @@ class RegieTab(a: MainActivity) : Tab(a) {
         optL?.text = L.t("opt_listen", if (App.optListen) L.t("yes") else L.t("no"))
         optC?.text = L.t("opt_click", if (App.optClick) L.t("yes") else L.t("no"))
         optP?.text = L.t("opt_peermsg", if (App.optPeerMsg) L.t("yes") else L.t("no"))
+        optQ?.text = L.t("opt_p2p", L.t(listOf("p2p_off", "p2p_lan", "p2p_any")[App.optP2p.coerceIn(0, 2)]))
     }
 
     override fun update(kind: String) {

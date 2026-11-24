@@ -4,7 +4,7 @@ import org.json.JSONObject
 import java.net.InetSocketAddress
 import java.net.Socket
 
-/** Clientul: ține conexiunea cu hubul (cu reconectare automată) și duce mesaje JSON și audio. */
+/** Clientul: ține conexiunea cu hubul (cu reconectare automată, bătăi de inimă, cifrare opțională) și duce JSON și audio. */
 class Net(
     private val onJson: (JSONObject) -> Unit,
     private val onAudio: (Int, ByteArray) -> Unit,
@@ -19,12 +19,23 @@ class Net(
     @Volatile
     private var gen = 0
 
-    fun start(host: String, hello: JSONObject) {
+    /** true = trimite audio μ-law (mai puțin trafic, pentru internet/date mobile). */
+    @Volatile
+    var compress = false
+
+    /** null = automat (comprimă când hubul nu e în rețeaua locală). */
+    var forceCompress: Boolean? = null
+
+    @Volatile
+    var remote = false
+        private set
+
+    fun start(host: String, hello: JSONObject, key: ByteArray? = null) {
         stop()
         run = true
         gen++
         val my = gen
-        Thread { loop(my, host, hello) }.apply {
+        Thread { loop(my, host, hello, key) }.apply {
             isDaemon = true
             start()
         }
@@ -37,31 +48,62 @@ class Net(
         conn = null
     }
 
-    private fun loop(my: Int, host: String, hello: JSONObject) {
+    private fun loop(my: Int, hostPort: String, hello: JSONObject, key: ByteArray?) {
+        val (host, port) = parseHostPort(hostPort)
         var delay = 1000L
         while (run && gen == my) {
             try {
-                onState("Conectare la $host…")
+                onState(L.t("net_connecting", hostPort))
                 val s = Socket()
-                s.connect(InetSocketAddress(host, PORT), 4000)
-                val c = Conn(s)
+                s.connect(InetSocketAddress(host, port), 5000)
+                s.keepAlive = true
+                s.soTimeout = 45000 // hubul răspunde la ping la 15 s; liniște de 45 s = legătură moartă
+                val a = s.inetAddress
+                remote = !(a.isSiteLocalAddress || a.isLoopbackAddress || a.isLinkLocalAddress)
+                compress = forceCompress ?: remote
+                val c = Conn(s, key, false)
                 conn = c
                 c.startWriter()
                 c.sendJson(hello)
                 delay = 1000L
+                val pinger = Thread {
+                    try {
+                        while (run && gen == my && c.open) {
+                            Thread.sleep(15000)
+                            c.sendJson(jo("t" to "ping"))
+                        }
+                    } catch (_: Exception) {
+                    }
+                }
+                pinger.isDaemon = true
+                pinger.start()
                 while (run && gen == my) {
                     val f = c.readFrame()
+                    if (f.bad) {
+                        // hub fără/cu altă cheie: singurul mesaj acceptat în clar este refuzul
+                        if (f.type == T_JSON && f.data.isNotEmpty()) {
+                            val m = parseJson(f)
+                            if (m.optString("t") == "denied") onJson(m)
+                        }
+                        break
+                    }
                     if (f.type == T_JSON) {
                         onJson(parseJson(f))
                     } else if (f.type == T_AUDIO && f.data.size > 1) {
                         onAudio(f.data[0].toInt() and 0xFF, f.data)
+                    } else if (f.type == T_AUDIO_U && f.data.size > 1) {
+                        val pcm = G711.decode(f.data, 1, f.data.size - 1)
+                        val out = ByteArray(pcm.size + 1)
+                        out[0] = f.data[0]
+                        System.arraycopy(pcm, 0, out, 1, pcm.size)
+                        onAudio(f.data[0].toInt() and 0xFF, out)
                     }
                 }
             } catch (_: Exception) {
             }
             conn?.close()
             if (run && gen == my) {
-                onState("Conexiune pierdută; reîncerc…")
+                onState(L.t("net_lost"))
                 try {
                     Thread.sleep(delay)
                 } catch (_: Exception) {
@@ -76,9 +118,10 @@ class Net(
     }
 
     fun sendAudio(mode: Int, pcm: ByteArray) {
-        val b = ByteArray(pcm.size + 1)
+        val payload = if (compress) G711.encode(pcm) else pcm
+        val b = ByteArray(payload.size + 1)
         b[0] = mode.toByte()
-        System.arraycopy(pcm, 0, b, 1, pcm.size)
-        conn?.send(Frame(T_AUDIO, b))
+        System.arraycopy(payload, 0, b, 1, payload.size)
+        conn?.send(Frame(if (compress) T_AUDIO_U else T_AUDIO, b))
     }
 }

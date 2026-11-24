@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.0.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.1.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -46,6 +46,15 @@ _Version : 1.0.0 · Dernière mise à jour : 2026-11-24_
 - *PIN / code de salle incorrect* — la régie les affiche sur son écran de démarrage.
 - *Port occupé* — fermez toute autre application utilisant le port 8470.
 - *Appels muets* — vérifiez la permission du microphone et le bouton haut‑parleur de l'onglet Voix.
+
+## 8. Internet, VoIP et réseau mobile (1.1)
+
+- **Clé réseau** — sur l'écran de départ, activez *Liaison chiffrée* ; la régie affiche une clé (xxxx‑xxxx‑xxxx‑xxxx). Saisissez‑la dans le champ *Clé réseau* de chaque autre téléphone. Sans la bonne clé, le hub refuse la connexion. À utiliser dès que le trafic quitte le réseau local.
+- **Depuis Internet** — redirigez TCP 8470 et UDP 8472 sur le routeur vers le téléphone de la régie et indiquez l'adresse publique (`hôte` ou `hôte:port`). En données mobiles, rien d'autre n'est nécessaire.
+- **P2P** — dans l'onglet Régie, l'option *Appels directs* alterne désactivés / réseau local seulement / partout. *Partout* permet à deux téléphones de connaître leur IP publique mutuelle ; la régie ne peut ni écouter, ni couper, ni s'insérer tant que l'appel est direct (retour automatique au relais si nécessaire).
+- **Ligne SIP** — Réglages → *Ligne VoIP / SIP…* : serveur, utilisateur, mot de passe, domaine facultatif et numéro interne pour les appels entrants (100 par défaut). Redémarrez le hub pour appliquer. L'équipe compose `0` + numéro externe ; les spectateurs ne peuvent pas appeler à l'extérieur. Chaque appel est limité à 15 minutes. SIP et RTP ne sont pas chiffrés.
+- **SMS** — Réglages → *Passerelle SMS* (SIM et permissions SMS requises). L'équipe choisit *SMS vers un vrai numéro* dans l'onglet Messages ; les SMS reçus apparaissent comme messages de *SMS*. Limite : 20 par minute. Les tarifs de l'opérateur s'appliquent.
+- **Appel réel** — le cue *appel réel* ouvre le numéroteur avec le numéro. Android interdit à une application d'injecter un appel cellulaire dans la ligne partagée : l'audio GSM ne peut pas être relayé ; utilisez la ligne SIP pour cela.
 
 ---
 

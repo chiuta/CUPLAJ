@@ -6,7 +6,7 @@
 
 > **Telefonía de línea compartida para teatro inmersivo**
 
-_Versión: 1.0.0 · Última actualización: 2026-11-24_
+_Versión: 1.1.0 · Última actualización: 2026-11-24_
 
 CUPLAJ convierte una flota de teléfonos Android corrientes en una centralita telefónica privada para teatro inmersivo. Organizadores y actores hablan con el público (y entre sí) por el Wi‑Fi local del recinto — sin nube, sin cuentas, sin anuncios. Su función distintiva es el *cuplaj*: la **línea compartida** de los teléfonos fijos desde los años 80 hasta cerca de 2006, en la que dos abonados compartían una línea, sonaban con cadencias distintas y podían oírse el uno al otro.
 
@@ -20,6 +20,10 @@ CUPLAJ convierte una flota de teléfonos Android corrientes en una centralita te
 - **Guion** — lista de señales con GO y PLAY (temporizado), reordenar, importar/exportar JSON.
 - **Herramientas de regiduría** — números, grupos, acoplar/desacoplar, parejas automáticas, escucha discreta, silenciar, olvidar, niveles de batería, registro de eventos, estado que sobrevive a reinicios, limitación de flujo.
 - **8 idiomas y accesibilidad** — inglés, rumano, francés, italiano, español, portugués, alemán, húngaro; tamaño de texto ajustable; respuesta desde la pantalla de bloqueo; funciona en segundo plano.
+- **Internet y datos móviles (1.1)** — conexión con `host` o `host:puerto`; clave de red AES‑128‑GCM opcional; compresión G.711 automática fuera de la red local; keepalive.
+- **Llamadas directas P2P (1.1)** — el audio va de teléfono a teléfono por UDP con perforación de NAT, con respaldo en el relé del hub; la regiduría puede desactivarlo, limitarlo a la red local (por defecto) o abrirlo a cualquier lugar.
+- **Pasarela VoIP / SIP (1.1)** — el teléfono de la regiduría se registra en un proveedor SIP o una PBX; el equipo marca `0`+número para salir, las llamadas SIP entrantes suenan en un número interno.
+- **Red móvil (1.1)** — pasarela SMS mediante la SIM del teléfono de la regiduría (envío y recepción), cue de *llamada real* que abre el marcador e indicador Wi‑Fi / móvil.
 
 ## Inicio rápido
 
@@ -56,7 +60,7 @@ CUPLAJ convierte una flota de teléfonos Android corrientes en una centralita te
 
 ## Estado real
 
-La lógica del hub (llamadas, línea compartida, permisos, límites, persistencia) está cubierta por ~55 comprobaciones automáticas que se ejecutan en una JVM. La interfaz Android y la ruta de audio han pasado la comprobación de tipos frente al SDK de Android 14, pero **aún no se han probado en dispositivos reales**; el APK lo construye GitHub Actions. Prueba con unos pocos teléfonos antes de la función. El tráfico de la red local no está cifrado (el PIN y el código de sala frenan a extraños de buena fe, no son criptografía).
+La lógica del hub (llamadas, línea compartida, permisos, límites, persistencia) está cubierta por ~55 comprobaciones automáticas que se ejecutan en una JVM. La interfaz Android y la ruta de audio han pasado la comprobación de tipos frente al SDK de Android 14, pero **aún no se han probado en dispositivos reales**; el APK lo construye GitHub Actions. Prueba con unos pocos teléfonos antes de la función. El tráfico de la red local no está cifrado (el PIN y el código de sala frenan a extraños de buena fe, no son criptografía). La red de la versión 1.1 (cifrado, P2P, SIP, SMS) está cubierta por pruebas del hub contra un servidor SIP simulado, pero **no** se ha probado con operadores, NAT ni SIM reales.
 
 ## Compilación
 
