@@ -16,13 +16,26 @@ object Sec {
         val s = secret.trim()
         if (s.isEmpty()) return null
         val f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
-        return f.generateSecret(PBEKeySpec(s.toCharArray(), "CUPLAJ-v1".toByteArray(), 10000, 128)).encoded
+        return f.generateSecret(PBEKeySpec(s.toCharArray(), "CUPLAJ-v1".toByteArray(), 100000, 128)).encoded
     }
 
     fun newPassphrase(): String {
         val abc = "abcdefghjkmnpqrstuvwxyz23456789"
         return (1..4).joinToString("-") { (1..4).map { abc[rnd.nextInt(abc.length)] }.joinToString("") }
     }
+
+    /** Cheie de sesiune proaspătă pentru fiecare conexiune: HMAC‑SHA256(cheie, „CUPLAJ-sess” + nonce hub + nonce client). */
+    fun session(master: ByteArray, serverNonce: ByteArray, clientNonce: ByteArray): ByteArray {
+        val m = javax.crypto.Mac.getInstance("HmacSHA256")
+        m.init(SecretKeySpec(master, "HmacSHA256"))
+        m.update("CUPLAJ-sess".toByteArray())
+        m.update(serverNonce)
+        m.update(clientNonce)
+        return m.doFinal().copyOf(16)
+    }
+
+    /** Un PIN numeric nepredictibil (SecureRandom). */
+    fun pin(digits: Int): String = (1..digits).joinToString("") { rnd.nextInt(10).toString() }
 
     fun randomBytes(n: Int): ByteArray = ByteArray(n).also { rnd.nextBytes(it) }
 

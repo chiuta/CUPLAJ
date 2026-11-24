@@ -80,6 +80,21 @@ Method: code review of all sources, then JVM integration tests of the hub with s
 6. Permissions grew: Bluetooth, nearby Wi‑Fi devices and, on Android ≤ 12, location (Android requirement for scanning; CUPLAJ never reads the location).
 7. **Not tested on real devices**; the channel layer is covered by JVM simulation only.
 
+## I. Version 1.4 adversarial audit
+
+Findings fixed: (1) hub PIN was 4 digits from a non‑secure generator with no brute‑force limit → 6 digits from SecureRandom, 1 s delay and per‑origin lockout; (2) loopback was trusted blindly, so any app on the control phone could join as control → the control phone's own client now logs in with the PIN; (3) GCM nonce prefix collisions and cross‑connection replay → per‑connection session keys and direction‑tagged counters; (4) unbounded pre‑login threads and 200 KB pre‑login frames → caps and a 2 KB limit; (5) filling the 400‑peer table with random ids → oldest offline spectator evicted; (6) JSON bombs and parser exceptions → frame limits and a catch‑all; (7) P2P candidate redirection (reflection) → only private addresses and ports ≥ 1024; (8) `tel:` USSD or call‑forward codes and SIP URI injection → digits and a leading + only; (9) invitation links silently opening the microphone → confirmation dialog.
+
+Open items: SIP/RTP are unencrypted; key strength depends on the passphrase; Bluetooth uses the insecure RFCOMM profile; invitation links contain the key and PIN; nothing here was run on real phones.
+
+## J. CUPLAJ‑AIR risks
+
+1. **Eavesdropping.** Light, sound and vibration can be seen, heard or felt by anyone nearby. Cues carry no secrets; packets are authenticated, not encrypted.
+2. **Invitations are unauthenticated** (the phone being invited has no key yet): a nearby person can broadcast a fake invitation. The receiver must confirm, and the hub still needs the correct PIN, room and key. Cue packets are rejected unless the tag matches the network key; with no key set anyone can forge them, and the Air receiver accepts only harmless local effects (text, vibrate, ring, flash, blackout, sound).
+3. **Replay** within 10 minutes is refused by (type, sequence); the sender's sequence is random at start.
+4. **Camera and microphone are on while listening**; the listeners stop when switched off and are off by default.
+5. **Range and speed are physical limits**: LUMEN needs line of sight and a dim room; SONUS depends on speaker and microphone response above 17 kHz (many phones filter it; use audible mode); TACTUS needs a shared surface.
+6. **Not tested on real phones.** Codecs are tested against simulated noise, clock drift, wrong keys and interference only.
+
 ## H. Version 1.3 risks and mitigations
 
 1. **Invitation links carry the network key and PIN.** Anyone who gets the link can join as spectator (or actor if it is the actor link). Links are parsed strictly: scheme and host fixed, length capped, fields sanitised, roles limited to spectator/actor so a link can never create a control phone.

@@ -6,7 +6,7 @@
 
 > **Telefonie cu cuplaj pentru teatru imersiv**
 
-_Versiune: 1.3.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.4.0 · Ultima actualizare: 2026-11-24_
 
 CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală telefonică privată pentru teatrul imersiv. Organizatorii și actorii vorbesc cu spectatorii (și între ei) prin Wi‑Fi-ul local al locației — fără cloud, fără conturi, fără reclame. Funcția lui de bază este *cuplajul*: **linia comună** a telefoanelor fixe din anii '80 până pe la 2006, în care doi abonați împărțeau aceeași linie, sunau cu cadențe diferite și se puteau auzi unul pe altul.
 
@@ -26,6 +26,7 @@ CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală te
 - **Rețea mobilă (1.1)** — poartă SMS prin SIM‑ul telefonului Regiei (trimitere și primire), cue de *apel real* care deschide formatorul și indicator Wi‑Fi / mobil.
 - **Mai multe moduri de conectare (1.2)** — Bluetooth (fără router, circa 7 telefoane), Wi‑Fi Direct (telefonul Regiei își face propria rețea Wi‑Fi) și descoperire mDNS, pe lângă Wi‑Fi, hotspot, tethering USB, Ethernet și date mobile.
 - **Plug and play (1.3)** — telefonul Regiei deschide singur toate legăturile potrivite; celelalte telefoane apasă *Găsește și alătură‑mă automat* sau ating un link de invitație. Adaugă Wi‑Fi Aware.
+- **Întărit și fără rețea (1.4)** — audit cu public ostil, cu remedieri, și CUPLAJ‑AIR: trei protocoale originale care duc replici și invitații fără nicio rețea (lanternă → cameră, difuzor → microfon, vibrație → accelerometru).
 
 ## Pornire rapidă
 
@@ -62,7 +63,7 @@ CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală te
 
 ## Stadiul real
 
-Logica hubului (apeluri, cuplaj, permisiuni, limite, persistență) este acoperită de ~55 de verificări automate care rulează pe JVM. Interfața Android și calea audio au trecut verificarea de tipuri față de SDK-ul Android 14, dar **nu au fost încă testate pe telefoane reale**; APK-ul este construit de GitHub Actions. Încearcă cu câteva telefoane înainte de spectacol. Traficul din rețeaua locală nu este criptat (PIN-ul și codul de cameră țin la distanță străinii de bună-credință, nu sunt criptografie). Rețelistica din versiunea 1.1 (cifrare, P2P, SIP, SMS) e acoperită de teste de hub contra unui server SIP simulat, dar **nu** a fost încercată pe operatori, NAT‑uri sau SIM‑uri reale. Legăturile Bluetooth, Wi‑Fi Direct și mDNS (1.2) folosesc același strat de transport, testat pe JVM cu canale simulate, dar **nu** au fost încercate pe dispozitive reale; comportamentul diferă între producători. Plug and play (conectare automată, invitații, Wi‑Fi Aware, 1.3) **nu** a fost testat pe dispozitive; formatul invitațiilor e acoperit de teste JVM.
+Logica hubului (apeluri, cuplaj, permisiuni, limite, persistență) este acoperită de ~55 de verificări automate care rulează pe JVM. Interfața Android și calea audio au trecut verificarea de tipuri față de SDK-ul Android 14, dar **nu au fost încă testate pe telefoane reale**; APK-ul este construit de GitHub Actions. Încearcă cu câteva telefoane înainte de spectacol. Traficul din rețeaua locală nu este criptat (PIN-ul și codul de cameră țin la distanță străinii de bună-credință, nu sunt criptografie). Rețelistica din versiunea 1.1 (cifrare, P2P, SIP, SMS) e acoperită de teste de hub contra unui server SIP simulat, dar **nu** a fost încercată pe operatori, NAT‑uri sau SIM‑uri reale. Legăturile Bluetooth, Wi‑Fi Direct și mDNS (1.2) folosesc același strat de transport, testat pe JVM cu canale simulate, dar **nu** au fost încercate pe dispozitive reale; comportamentul diferă între producători. Plug and play (conectare automată, invitații, Wi‑Fi Aware, 1.3) **nu** a fost testat pe dispozitive; formatul invitațiilor e acoperit de teste JVM. Remedierile din auditul 1.4 și codecurile AIR sunt acoperite de teste JVM (zgomot simulat, derivă de ceas, cheie greșită, interferență); codul pentru lanternă, cameră, microfon, difuzor, motor și accelerometru **nu** este testat pe telefoane reale, iar raza și viteza reale vor diferi.
 
 ## Compilare
 

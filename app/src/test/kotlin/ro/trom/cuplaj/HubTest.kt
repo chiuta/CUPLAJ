@@ -19,6 +19,7 @@ class C(val id: String, val name: String, val role: String, pin: String = "1234"
     var denied = ""
 
     init {
+        if (key != null) conn.clientHandshake()
         conn.startWriter()
         conn.sendJson(jo("t" to "hello", "id" to id, "name" to name, "role" to role, "pin" to pin, "room" to room, "tok" to tok, "p2p" to p2p, "smsgw" to smsgw))
         Thread {
@@ -564,6 +565,16 @@ class HubTest {
     }
 
     @Test
+    fun air() {
+        assertEquals(0L, runAir().toLong())
+    }
+
+    @Test
+    fun advers() {
+        assertEquals(0L, runAdv().toLong())
+    }
+
+    @Test
     fun invitatie() {
         assertEquals(0L, runInvite().toLong())
     }
@@ -629,5 +640,267 @@ fun runInvite(): Int {
     check("invitație: PIN doar cifre", InviteLink.parse("cuplaj://join?r=actor&p=12ab34")!!.pin == "1234")
     check("invitație: link prea lung respins", InviteLink.parse("cuplaj://join?r=actor&k=" + "a".repeat(900)) == null)
     println(if (fails == 0) "INVITATIE OK" else "$fails ESECURI INVITATIE")
+    return fails
+}
+
+
+/** Țeavă simplă fără paznicul de fir al PipedStream (care aruncă „Read end dead”). */
+class MemPipe {
+    private val q = java.util.concurrent.LinkedBlockingQueue<ByteArray>()
+    private var cur = ByteArray(0)
+    private var pos = 0
+    @Volatile var closed = false
+    val out = object : java.io.OutputStream() {
+        override fun write(b: Int) { q.put(byteArrayOf(b.toByte())) }
+        override fun write(b: ByteArray, o: Int, l: Int) { q.put(b.copyOfRange(o, o + l)) }
+        override fun close() { closed = true; q.put(ByteArray(0)) }
+    }
+    val inp = object : java.io.InputStream() {
+        override fun read(): Int {
+            val b = ByteArray(1)
+            return if (read(b, 0, 1) <= 0) -1 else b[0].toInt() and 0xFF
+        }
+        override fun read(b: ByteArray, o: Int, l: Int): Int {
+            while (pos >= cur.size) {
+                if (closed && q.isEmpty()) return -1
+                cur = q.poll(200, java.util.concurrent.TimeUnit.MILLISECONDS) ?: continue
+                pos = 0
+                if (cur.isEmpty()) return -1
+            }
+            val n = minOf(l, cur.size - pos)
+            System.arraycopy(cur, pos, b, o, n); pos += n
+            return n
+        }
+        override fun available(): Int = cur.size - pos
+    }
+}
+
+private fun rawFrame(type: Int, n: Int, body: ByteArray = ByteArray(0)): ByteArray {
+    val o = java.io.ByteArrayOutputStream(); val d = java.io.DataOutputStream(o)
+    d.writeByte(type); d.writeInt(n); d.write(body); d.flush(); return o.toByteArray()
+}
+
+/** Se întoarce true dacă hubul a închis conexiunea (EOF) în timpul dat. */
+private fun closedBy(s: Socket, ms: Int): Boolean {
+    s.soTimeout = ms
+    return try { s.getInputStream().read() == -1 } catch (_: java.net.SocketTimeoutException) { false } catch (_: Exception) { true }
+}
+
+/** Teste ostile: abuzuri înainte și după autentificare, reluări, bombe JSON, forță brută, epuizare de resurse. */
+fun runAdv(): Int {
+    fails = 0
+    val port = 18500
+    val hub = Hub("ADV", "482913", "", port, null, false)
+    hub.start(); Thread.sleep(400)
+    // 1. cadru uriaș înainte de hello
+    var s = Socket("127.0.0.1", port)
+    s.getOutputStream().write(rawFrame(T_JSON, 150_000)); s.getOutputStream().flush()
+    check("cadru de 150 KB înainte de hello => conexiune închisă", closedBy(s, 3000)); s.close()
+    // 2. conexiune mută (slowloris): închisă după timeout-ul de hello (10 s)
+    s = Socket("127.0.0.1", port)
+    val t0 = System.currentTimeMillis()
+    check("conexiune mută închisă de hub în ~10 s", closedBy(s, 14000) && System.currentTimeMillis() - t0 < 13000); s.close()
+    // 3. zgomot aleator: hubul rămâne în viață
+    val rnd = java.util.Random(7)
+    for (i in 0 until 60) {
+        try {
+            val z = Socket("127.0.0.1", port); val b = ByteArray(rnd.nextInt(400)); rnd.nextBytes(b)
+            z.getOutputStream().write(b); z.getOutputStream().flush(); z.close()
+        } catch (_: Exception) {}
+    }
+    val ok1 = C("adv1", "Ana", "spectator", room = "", port = port)
+    check("după 60 de conexiuni cu zgomot hubul funcționează", ok1.number.isNotEmpty())
+    // 4. fără încredere în loopback: regia fără PIN e refuzată
+    check("regie fără PIN refuzată chiar de pe același telefon", C("adv-r", "R", "regie", pin = "", room = "", port = port).denied == "bad_pin")
+    check("regie cu PIN corect acceptată", C("adv-r2", "R", "regie", pin = "482913", room = "", port = port).number.startsWith("10"))
+    check("spectator care cere rol de actor cu PIN greșit refuzat", C("adv-s", "S", "actor", pin = "000000", room = "", port = port).denied == "bad_pin")
+    // 5. furt de identitate: același id fără token
+    val victim = C("adv-v", "Victima", "spectator", room = "", port = port)
+    check("același id fără token => dup", C("adv-v", "Hoț", "spectator", room = "", port = port, tok = "").denied == "dup")
+    check("același id cu tokenul corect preia sesiunea", C("adv-v", "Victima", "spectator", room = "", port = port, tok = victim.tok).number == victim.number)
+    // 6. după hello: cadru prea mare, bombă JSON
+    val big = C("adv-b", "Big", "spectator", room = "", port = port)
+    big.conn.send(Frame(T_JSON, ByteArray(40_000) { '{'.code.toByte() }))
+    Thread.sleep(500)
+    big.send("t" to "ping")
+    check("cadru JSON de 40 KB după hello => conexiune închisă", big.next("pong", 800) == null)
+    val bomb = C("adv-bomb", "Bomb", "spectator", room = "", port = port)
+    bomb.conn.send(Frame(T_JSON, ByteArray(30_000) { '['.code.toByte() }))
+    Thread.sleep(500)
+    ok1.send("t" to "ping")
+    check("bombă JSON imbricată: hubul rămâne în viață", ok1.next("pong", 1500) != null)
+    // 7. JSON malformat și mesaje cu tipuri greșite
+    val bad = C("adv-bad", "Bad", "spectator", room = "", port = port)
+    bad.conn.send(Frame(T_JSON, "{\"t\":".toByteArray()))
+    bad.conn.send(Frame(T_JSON, "[1,2,3]".toByteArray()))
+    ok1.send("t" to "ping")
+    check("JSON malformat nu strică hubul", ok1.next("pong", 1500) != null)
+    ok1.send("t" to "dial", "number" to 12345)
+    ok1.send("t" to "msg", "to" to listOf(1, 2), "text" to null)
+    ok1.send("t" to "cue", "kind" to "text", "text" to "x")
+    ok1.send("t" to "ping")
+    check("tipuri greșite în câmpuri nu strică hubul", ok1.next("pong", 1500) != null)
+    // 8. spectatorul nu poate da comenzi de staff
+    ok1.drain(); val sp2 = C("adv2", "Bob", "spectator", room = "", port = port); ok1.drain(); sp2.drain()
+    ok1.send("t" to "cue", "to" to "all", "kind" to "blackout", "text" to "1")
+    check("spectatorul nu poate trimite cue-uri", sp2.next("cue", 700) == null)
+    ok1.send("t" to "sms", "to" to "0721000111", "text" to "x")
+    check("spectatorul nu poate trimite SMS", ok1.next("smsres", 700)?.optBoolean("ok", false) != true)
+    // 9. numere și candidați
+    check("tel: fără coduri USSD/redirecționare", safeNumber("*21*+40721000111#") == "2140721000111" && safeNumber("+40 721-000.111") == "+40721000111")
+    check("candidat P2P public respins, privat acceptat", !privateCand("8.8.8.8:5000") && !privateCand("192.168.1.5:80") && privateCand("192.168.1.5:5000") && privateCand("10.0.0.2:40000") && !privateCand("172.32.0.1:5000") && !privateCand("evil.com:5000"))
+    hub.stop(); Thread.sleep(200)
+
+    // 10. forță brută asupra PIN-ului: blocare după 6 încercări greșite
+    val hb = Hub("BR", "135790", "", 18501, null, false); hb.lockLoopback = true
+    hb.start(); Thread.sleep(400)
+    for (i in 0 until 6) C("br$i", "X", "actor", pin = "00000$i", room = "", port = 18501)
+    check("după 6 PIN‑uri greșite, chiar PIN‑ul corect e refuzat (blocat)", C("br-ok", "Y", "actor", pin = "135790", room = "", port = 18501).number.isEmpty())
+    hb.stop(); Thread.sleep(200)
+
+    // 11. hub cu cheie față de client fără cheie / hub fără cheie față de client cu cheie
+    val hk = Hub("K", "1111", "", 18502, null, false, "parola-k"); hk.start(); Thread.sleep(400)
+    check("client fără cheie la hub cifrat => bad_key", C("k1", "A", "spectator", room = "", port = 18502).denied == "bad_key")
+    hk.stop(); Thread.sleep(200)
+    val hn = Hub("N", "1111", "", 18503, null, false); hn.start(); Thread.sleep(400)
+    check("client cu cheie la hub necifrat => no_key", C("k2", "A", "spectator", room = "", port = 18503, key = Sec.deriveKey("x")).denied == "no_key")
+
+    // 12. epuizare: 400 de telefoane, al 401-lea refuzat, după ce unul pleacă locul se eliberează prin eliminarea celor deconectate
+    hn.stop(); Thread.sleep(200)
+    val hf = Hub("F", "1111", "", 18504, null, false); hf.start(); Thread.sleep(400)
+    val many = ArrayList<C>()
+    for (i in 0 until 400) many.add(C("f$i", "T$i", "spectator", room = "", port = 18504))
+    check("400 de telefoane conectate", many.count { it.number.isNotEmpty() } == 400)
+    check("al 401-lea refuzat (full) cât toți sunt conectați", C("f-extra", "Z", "spectator", room = "", port = 18504).denied == "full")
+    for (i in 0 until 3) many[i].sock!!.close()
+    Thread.sleep(600)
+    check("după deconectări, intrarea unui telefon nou e posibilă", C("f-new", "Z", "spectator", room = "", port = 18504).number.isNotEmpty())
+    hf.stop(); Thread.sleep(200)
+
+    // 13. reluare între conexiuni: cadrele unei sesiuni nu se acceptă în alta
+    val key = Sec.deriveKey("replay-key")
+    fun pair(tee: java.io.ByteArrayOutputStream?): Triple<Conn, Conn, MemPipe> {
+        val c2s = MemPipe(); val s2c = MemPipe()
+        val cOut = if (tee == null) c2s.out else object : java.io.OutputStream() {
+            override fun write(b: Int) { tee.write(b); c2s.out.write(b) }
+            override fun write(b: ByteArray, o: Int, l: Int) { tee.write(b, o, l); c2s.out.write(b, o, l) }
+        }
+        val cli = Conn(StreamChan(s2c.inp, cOut, {}), key, false)
+        val srv = Conn(StreamChan(c2s.inp, s2c.out, {}), key, true)
+        val th = Thread { srv.serverHandshake() }; th.start()
+        cli.clientHandshake(); th.join()
+        return Triple(cli, srv, c2s)
+    }
+    val rec = java.io.ByteArrayOutputStream()
+    val (c1, s1, _) = pair(rec)
+    val mark = rec.size()
+    c1.startWriter(); c1.sendJson(jo("t" to "cue", "kind" to "blackout")); Thread.sleep(300)
+    val f1 = s1.readFrame()
+    check("sesiunea 1: cadrul cifrat e acceptat", !f1.bad && parseJson(f1).optString("t") == "cue")
+    val captured = rec.toByteArray().copyOfRange(mark, rec.size())
+    val (_, srv2, p2) = pair(null)
+    p2.out.write(captured, 0, captured.size)
+    check("cadrul înregistrat din sesiunea 1 e respins în sesiunea 2 (cheie de sesiune proaspătă)", srv2.readFrame().bad)
+    // același cadru reluat în aceeași sesiune
+    val (c3, s3, _) = pair(null)
+    c3.startWriter(); c3.sendJson(jo("t" to "a")); Thread.sleep(200)
+    val g1 = s3.readFrame()
+    check("cadru normal acceptat", !g1.bad)
+    println(if (fails == 0) "ADVERS OK" else "$fails ESECURI ADVERS")
+    return fails
+}
+
+// ---------------------------------------------------------------- CUPLAJ-AIR (lumină, sunet, vibrații)
+
+private fun gauss(r: java.util.Random, sd: Double) = r.nextGaussian() * sd
+
+fun runAir(): Int {
+    fails = 0
+    val key = Sec.deriveKey("air-key")
+    val other = Sec.deriveKey("alta")
+    val r = java.util.Random(11)
+    // pachet
+    val pk = AirPacket(Air.T_CUE, 7, Air.cue(3, "Ora 12"))
+    val raw = Air.pack(pk, key)
+    check("pachet: dus‑întors cu cheie", Air.unpack(raw, key)?.let { it.type == 1 && it.seq == 7 && String(it.data.copyOfRange(1, it.data.size)) == "Ora 12" } == true)
+    check("pachet: cheie greșită respins", Air.unpack(raw, other) == null)
+    val tam = raw.clone(); tam[4] = (tam[4].toInt() xor 1).toByte()
+    check("pachet: bit modificat respins", Air.unpack(tam, key) == null)
+    check("pachet: trunchiat/prea lung respins", Air.unpack(raw.copyOf(raw.size - 1), key) == null && Air.unpack(raw + byteArrayOf(0), key) == null)
+    val g = AirGuard()
+    check("anti‑reluare: a doua oară același (tip,seq) respins", g.accept(pk, 1000) && !g.accept(pk, 2000) && g.accept(pk, 1000 + 700_000))
+
+    // ---- LUMEN: lanternă → cameră la 30 fps cu zgomot, derivă de ceas, filtrare de expunere
+    fun lumenSim(packet: ByteArray, fps: Double, skew: Double, noise: Double, ambient: Double, tail: Double): List<LSample> {
+        val slots = Lumen.encode(packet)
+        val T = Lumen.SLOT_MS * skew
+        val lead = 700.0 + r.nextDouble() * 80
+        val total = lead + slots.size * T + tail
+        val out = ArrayList<LSample>()
+        var t = 0.0; var y = ambient
+        while (t < total) {
+            val k = ((t - lead) / T).toInt()
+            val target = ambient + (if (t >= lead && k in slots.indices && slots[k]) 120.0 else 0.0)
+            y += (target - y) * 0.6 // expunerea/auto‑gain netezește fronturile
+            out.add(LSample(t, y + gauss(r, noise) + 0.01 * t / 10)) // derivă lentă a luminii ambientale
+            t += 1000.0 / fps + gauss(r, 3.0)
+        }
+        return out
+    }
+    val lp = Air.pack(AirPacket(Air.T_CUE, 9, byteArrayOf(5)), key, 2)
+    check("LUMEN: curat 30 fps", Lumen.decode(lumenSim(lp, 30.0, 1.0, 0.5, 40.0, 800.0), key)?.let { it.seq == 9 && it.data[0].toInt() == 5 } == true)
+    check("LUMEN: zgomot 6 + ceas +4 %", Lumen.decode(lumenSim(lp, 30.0, 1.04, 6.0, 60.0, 800.0), key) != null)
+    check("LUMEN: 24 fps, ceas −5 %", Lumen.decode(lumenSim(lp, 24.0, 0.95, 4.0, 30.0, 800.0), key) != null)
+    check("LUMEN: cheie greșită respinsă", Lumen.decode(lumenSim(lp, 30.0, 1.0, 1.0, 40.0, 800.0), other) == null)
+    check("LUMEN: doar zgomot/ambient => nimic", Lumen.decode((0 until 600).map { LSample(it * 33.3, 50 + gauss(r, 8.0)) }, key) == null)
+    check("LUMEN: contrast prea mic => nimic", Lumen.decode(lumenSim(lp, 30.0, 1.0, 0.5, 40.0, 800.0).map { LSample(it.t, 40 + (it.v - 40) * 0.02) }, key) == null)
+
+    // ---- SONUS: difuzor → microfon, 48 kHz, ultrasonic și audibil
+    fun sonusSim(packet: ByteArray, fs: Int, ultra: Boolean, noise: Double, gain: Double, offsetMs: Int): ShortArray {
+        val s = Sonus.encode(packet, fs, ultra, 0.5)
+        val pad = fs * offsetMs / 1000
+        val out = ShortArray(pad + s.size + fs / 2)
+        for (i in out.indices) {
+            val v = (if (i >= pad && i - pad < s.size) s[i - pad] * gain else 0.0) + gauss(r, noise * 32767)
+            out[i] = v.coerceIn(-32768.0, 32767.0).toInt().toShort()
+        }
+        return out
+    }
+    val sp = Air.pack(AirPacket(Air.T_INVITE, 21, "192.168.43.1;ab12-cd34;482913".toByteArray()), key)
+    check("SONUS: ultrasonic curat", Sonus.decode(sonusSim(sp, 48000, true, 0.002, 1.0, 317), 48000, true, key)?.let { it.type == 2 && String(it.data).startsWith("192.168.43.1") } == true)
+    check("SONUS: ultrasonic, semnal slab (10 %) și zgomot", Sonus.decode(sonusSim(sp, 48000, true, 0.01, 0.1, 911), 48000, true, key) != null)
+    check("SONUS: audibil 44,1 kHz", Sonus.decode(sonusSim(sp, 44100, false, 0.01, 0.3, 123), 44100, false, key) != null)
+    check("SONUS: cheie greșită respinsă", Sonus.decode(sonusSim(sp, 48000, true, 0.002, 1.0, 100), 48000, true, other) == null)
+    check("SONUS: zgomot alb fără semnal => nimic", Sonus.decode(ShortArray(48000 * 6) { gauss(r, 3000.0).toInt().toShort() }, 48000, true, key) == null)
+    check("SONUS: ton ultrasonic continuu (interferență) nu e pachet", Sonus.decode(ShortArray(48000 * 6) { (8000 * Math.sin(2 * Math.PI * 18200.0 * it / 48000)).toInt().toShort() }, 48000, true, key) == null)
+
+    // ---- TACTUS: motor de vibrații → accelerometru la 200 Hz, cu gravitație și zgomot; vibrația (≈170 Hz) e subeșantionată
+    fun tactusSim(packet: ByteArray, hz: Double, noise: Double, amp: Double, skew: Double): List<ASample> {
+        val d = Tactus.encode(packet)
+        val lead = 800.0
+        val segs = ArrayList<Triple<Double, Double, Boolean>>()
+        var t = lead
+        for ((i, ms) in d.withIndex()) { segs.add(Triple(t, t + ms * skew, i % 2 == 0)); t += ms * skew }
+        val total = t + 800
+        val out = ArrayList<ASample>()
+        var tt = 0.0
+        while (tt < total) {
+            var a = 0.0
+            for (sg in segs) if (sg.third && tt >= sg.first + 25 && tt < sg.second + 15) { // motorul pornește cu ~25 ms întârziere și se oprește lent
+                a = amp * Math.sin(2 * Math.PI * 170.0 * tt / 1000)
+            }
+            out.add(ASample(tt, gauss(r, noise), gauss(r, noise), 9.81 + a + gauss(r, noise)))
+            tt += 1000.0 / hz + gauss(r, 0.4)
+        }
+        return out
+    }
+    val tp = Air.pack(AirPacket(Air.T_CUE, 4, byteArrayOf(2)), key, 2)
+    check("TACTUS: curat 200 Hz", Tactus.decode(tactusSim(tp, 200.0, 0.02, 1.5, 1.0), key)?.let { it.seq == 4 && it.data[0].toInt() == 2 } == true)
+    check("TACTUS: zgomot mare (0,15) și 100 Hz", Tactus.decode(tactusSim(tp, 100.0, 0.15, 1.5, 1.0), key) != null)
+    check("TACTUS: ritm cu 8 % mai lent", Tactus.decode(tactusSim(tp, 200.0, 0.05, 1.5, 1.08), key) != null)
+    check("TACTUS: cheie greșită respinsă", Tactus.decode(tactusSim(tp, 200.0, 0.02, 1.5, 1.0), other) == null)
+    check("TACTUS: telefon în mână (tremur lent) nu e pachet", Tactus.decode((0 until 3000).map { ASample(it * 5.0, 2.0 * Math.sin(it * 0.05), 1.0 * Math.sin(it * 0.03), 9.81 + 1.5 * Math.sin(it * 0.04)) }, key) == null)
+    check("TACTUS: liniște => nimic", Tactus.decode((0 until 3000).map { ASample(it * 5.0, gauss(r, 0.02), gauss(r, 0.02), 9.81 + gauss(r, 0.02)) }, key) == null)
+    println(if (fails == 0) "AIR OK" else "$fails ESECURI AIR")
     return fails
 }

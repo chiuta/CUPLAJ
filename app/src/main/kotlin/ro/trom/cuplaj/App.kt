@@ -159,7 +159,7 @@ object App {
         room = p.getString("room", "") ?: ""
         textScale = p.getFloat("scale", 1f)
         L.lang = p.getString("lang", null) ?: L.detect()
-        hubPin = p.getString("hpin", null) ?: (1000 + java.util.Random().nextInt(9000)).toString().also { p.edit().putString("hpin", it).apply() }
+        hubPin = p.getString("hpin", null) ?.takeIf { it.length >= 6 } ?: Sec.pin(6).also { p.edit().putString("hpin", it).apply() }
         apin = p.getString("apin", "") ?: ""
         encOn = p.getBoolean("enc", false)
         netKey = p.getString("nkey", null) ?: Sec.newPassphrase().also { p.edit().putString("nkey", it).apply() }
@@ -446,7 +446,7 @@ object App {
         val target: String
         if (r == "regie") {
             val p = prefs()
-            val hb = Hub(name, hubPin, rm, PORT, p.getString("hubstate", null), true, if (encOn) netKey else "")
+            val hb = Hub(name, hubPin, rm, PORT, p.getString("hubstate", null), false, if (encOn) netKey else "")
             hb.onPersist = { s -> p.edit().putString("hubstate", s).apply() }
             hubObj = hb
             hb.start()
@@ -475,7 +475,7 @@ object App {
         val keyStr = if (r == "regie") (if (encOn) netKey else "") else joinKey.trim()
         n.start(
             target,
-            jo("t" to "hello", "id" to deviceId, "name" to name, "role" to r, "pin" to pin, "room" to rm, "tok" to tok,
+            jo("t" to "hello", "id" to deviceId, "name" to name, "role" to r, "pin" to (if (r == "regie") hubPin else pin), "room" to rm, "tok" to tok,
                 "p2p" to (r != "regie"), "smsgw" to (r == "regie" && smsGw && Telco.hasSms(ctx))),
             Sec.deriveKey(keyStr)
         )
@@ -936,6 +936,11 @@ object App {
         notify("contacts")
     }
 
+    /** Cue primit prin aer (lumină/sunet/vibrații), deja autentificat de AirLink. */
+    fun airCue(kind: String, text: String) {
+        ui.post { cue(jo("kind" to kind, "text" to text, "from" to L.t("role_regie"))) }
+    }
+
     fun sendCue(to: String, kind: String, text: String) {
         send(jo("t" to "cue", "to" to to, "kind" to kind, "text" to text))
     }
@@ -1096,7 +1101,7 @@ object App {
     }
 
     private fun startSip(keyStr: String) {
-        val cfg = SipConfig(sipHost.trim(), sipPort, sipUser.trim(), sipPass, sipDomain.trim(), sipInbound.trim().ifEmpty { "100" }, "", PORT, "", keyStr)
+        val cfg = SipConfig(sipHost.trim(), sipPort, sipUser.trim(), sipPass, sipDomain.trim(), sipInbound.trim().ifEmpty { "100" }, "", PORT, hubPin, keyStr, 900, room)
         val g = SipGateway(cfg) { s -> ui.post { log.add("SIP: $s"); notify("log") } }
         sipGw = g
         Thread {

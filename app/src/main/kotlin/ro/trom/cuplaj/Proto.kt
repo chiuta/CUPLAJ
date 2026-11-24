@@ -12,7 +12,7 @@ import java.net.Socket
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
-const val VERSION = "1.3.0"
+const val VERSION = "1.4.0"
 const val VERSION_DATE = "2026-11-24"
 const val PORT = 8470
 const val BEACON_PORT = 8471
@@ -21,6 +21,7 @@ const val T_AUDIO = 2
 const val T_AUDIO_U = 3 // audio μ-law (G.711), 160 octeți/20 ms
 const val P2P_PORT_OFFSET = 2 // UDP: PORT + 2
 const val FLAG_ENC = 0x80
+const val T_CHAL = 4 // schimb de nonce-uri pentru cheia de sesiune (în clar)
 
 /** Un cadru pe fir: 1 octet tip, 4 octeți lungime, date. */
 class Frame(val type: Int, val data: ByteArray, val plain: Boolean = false, val bad: Boolean = false)
@@ -41,6 +42,9 @@ interface Chan {
 
     /** Liniște maximă acceptată; după ea citirea eșuează și conexiunea se închide. */
     fun setIdleTimeout(ms: Int)
+
+    /** Originea (IP) pentru limitarea abuzurilor. */
+    val origin: String
 
     /** Conexiune de pe același telefon. */
     val loopback: Boolean
@@ -69,6 +73,7 @@ class SocketChan(val sock: Socket) : Chan {
     }
 
     override val loopback: Boolean get() = sock.inetAddress?.isLoopbackAddress == true
+    override val origin: String get() = sock.inetAddress?.hostAddress ?: "?"
     override val remote: Boolean
         get() {
             val a = sock.inetAddress ?: return false
@@ -115,6 +120,7 @@ class StreamChan(
     }
     override val loopback: Boolean get() = false
     override val remote: Boolean get() = false
+    override val origin: String get() = "stream"
 
     init {
         Thread {
@@ -156,6 +162,61 @@ class Conn(val chan: Chan, private val key: ByteArray? = null, private val serve
     private val nPrefix = ByteArray(4).also { java.security.SecureRandom().nextBytes(it); it[0] = if (server) 1 else 2 }
     private var nCtr = 0L
     private var rxCtr = 0L
+
+    /** Cheia de sesiune (după schimbul de nonce-uri); fără ea nu se trimite și nu se acceptă nimic cifrat. */
+    @Volatile
+    private var skey: ByteArray? = null
+    private var pending: Frame? = null
+
+    /** Limita de lungime a unui cadru primit: strânsă înainte de autentificare, apoi mai largă. */
+    @Volatile
+    var maxFrame = if (server) 2048 else 200_000
+
+    /** Client cu cheie: trimite nonce‑ul, primește nonce‑ul hubului și derivă cheia de sesiune. Se apelează înainte de startWriter. */
+    fun clientHandshake() {
+        val mk = key ?: return
+        val cn = Sec.randomBytes(16)
+        dout.writeByte(T_CHAL)
+        dout.writeInt(16)
+        dout.write(cn)
+        dout.flush()
+        val t = din.readUnsignedByte()
+        val n = din.readInt()
+        if (n < 0 || n > 4096) throw IOException("cadru invalid")
+        val b = ByteArray(n)
+        din.readFully(b)
+        if (t == T_CHAL && n == 16) {
+            skey = Sec.session(mk, b, cn)
+        } else {
+            pending = Frame(t and FLAG_ENC.inv(), b, bad = true) // refuz în clar (ex. denied)
+        }
+    }
+
+    /**
+     * Hub: citește primul cadru. Cu cheie așteaptă T_CHAL și răspunde cu nonce‑ul hubului;
+     * fără cheie primul cadru rămâne pentru readFrame. Întoarce false dacă cheia nu se potrivește (cineva cere/nu cere cifrare).
+     */
+    fun serverHandshake(): Boolean {
+        val t = din.readUnsignedByte()
+        val n = din.readInt()
+        if (n < 0 || n > maxFrame) throw IOException("cadru invalid")
+        val b = ByteArray(n)
+        din.readFully(b)
+        val mk = key
+        if (mk == null) {
+            if (t == T_CHAL) return false
+            pending = Frame(t and FLAG_ENC.inv(), b, bad = (t and FLAG_ENC) != 0)
+            return true
+        }
+        if (t != T_CHAL || n != 16) return false
+        val sn = Sec.randomBytes(16)
+        dout.writeByte(T_CHAL)
+        dout.writeInt(16)
+        dout.write(sn)
+        dout.flush()
+        skey = Sec.session(mk, sn, b)
+        return true
+    }
     private val din = DataInputStream(BufferedInputStream(chan.input, 8192))
     private val dout = DataOutputStream(BufferedOutputStream(chan.output, 8192))
     private val q = LinkedBlockingQueue<Frame>(400)
@@ -168,12 +229,14 @@ class Conn(val chan: Chan, private val key: ByteArray? = null, private val serve
             try {
                 while (open) {
                     val f = q.poll(500, TimeUnit.MILLISECONDS) ?: continue
-                    if (key != null && !f.plain) {
+                    val sk = skey
+                    if (key != null && !f.plain && sk == null) continue // fără cheie de sesiune nu se trimite nimic în clar
+                    if (key != null && !f.plain && sk != null) {
                         val nonce = ByteArray(12)
                         System.arraycopy(nPrefix, 0, nonce, 0, 4)
                         var c = ++nCtr
                         for (i in 11 downTo 4) { nonce[i] = (c and 0xFF).toByte(); c = c shr 8 }
-                        val ct = Sec.encrypt(key, nonce, f.data)
+                        val ct = Sec.encrypt(sk, nonce, f.data)
                         dout.writeByte(f.type or FLAG_ENC)
                         dout.writeInt(12 + ct.size)
                         dout.write(nonce)
@@ -211,21 +274,26 @@ class Conn(val chan: Chan, private val key: ByteArray? = null, private val serve
     }
 
     fun readFrame(): Frame {
+        pending?.let {
+            pending = null
+            return it
+        }
         val t = din.readUnsignedByte()
         val n = din.readInt()
-        if (n < 0 || n > 200_000) throw IOException("cadru invalid")
+        if (n < 0 || n > maxFrame) throw IOException("cadru invalid")
         val b = ByteArray(n)
         din.readFully(b)
         val enc = (t and FLAG_ENC) != 0
         val ty = t and FLAG_ENC.inv()
         if (key == null) return if (enc) Frame(ty, ByteArray(0), bad = true) else Frame(ty, b)
+        val sk = skey ?: return Frame(ty, ByteArray(0), bad = true)
         if (!enc) return Frame(ty, b, bad = true)
         // cifrat: nonce(12) + text cifrat; contorul trebuie să crească (anti-reluare); primul octet = direcția
         if (n < 12 + 16 || (b[0].toInt() == 1) == server) return Frame(ty, ByteArray(0), bad = true)
         var ctr = 0L
         for (i in 4 until 12) ctr = (ctr shl 8) or (b[i].toLong() and 0xFF)
         if (ctr <= rxCtr) return Frame(ty, ByteArray(0), bad = true)
-        val pt = Sec.decrypt(key, b.copyOfRange(0, 12), b.copyOfRange(12, n)) ?: return Frame(ty, ByteArray(0), bad = true)
+        val pt = Sec.decrypt(sk, b.copyOfRange(0, 12), b.copyOfRange(12, n)) ?: return Frame(ty, ByteArray(0), bad = true)
         rxCtr = ctr
         return Frame(ty, pt)
     }
@@ -252,4 +320,22 @@ fun parseHostPort(s: String, defPort: Int = PORT): Pair<String, Int> {
         if (p != null && p in 1..65535) return Pair(t.substring(0, i), p)
     }
     return Pair(t, defPort)
+}
+
+/** Doar adrese locale (RFC 1918 / link‑local) sunt candidate P2P acceptate în modul „doar rețea locală”. */
+fun privateCand(s: String): Boolean {
+    val (h, p) = parseHostPort(s, -1)
+    if (p !in 1024..65535) return false
+    val parts = h.split('.')
+    if (parts.size != 4) return false
+    val n = parts.map { it.toIntOrNull() ?: return false }
+    if (n.any { it !in 0..255 }) return false
+    return n[0] == 10 || n[0] == 127 || (n[0] == 172 && n[1] in 16..31) || (n[0] == 192 && n[1] == 168) || (n[0] == 169 && n[1] == 254)
+}
+
+/** Doar cifre și un „+” la început: fără coduri USSD (*…#) sau de redirecționare a apelurilor. */
+fun safeNumber(n: String): String {
+    val d = n.filter { it.isDigit() || it == '+' }
+    val plus = d.startsWith("+")
+    return (if (plus) "+" else "") + d.filter { it.isDigit() }.take(20)
 }

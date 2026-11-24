@@ -101,3 +101,17 @@ Idle limits apply per channel: 10 s to send `hello`, 60 s of silence afterwards 
 **Wi‑Fi Aware:** the hub publishes service `cuplaj` and listens on a TCP port inside the Aware data path; the client subscribes, sends a message to the publisher, receives the peer IPv6 address and port and opens an ordinary TCP channel (same framing). The data path is protected with a fixed passphrase; admission is still the hub's job.
 
 **Auto‑join priority:** local network, mDNS, Wi‑Fi Direct group, Wi‑Fi Aware, Bluetooth.
+
+## v1.4: session keys, limits and CUPLAJ‑AIR
+
+**Handshake.** A keyed client first sends a plain `T_CHAL` frame with a 16‑byte nonce `cn`; a keyed hub answers `T_CHAL` with `sn`. Session key = first 16 bytes of HMAC‑SHA256(master, "CUPLAJ-sess" ‖ sn ‖ cn). Frames are AES‑128‑GCM with nonce = direction byte (1 hub, 2 client) ‖ counter; receivers reject reflected or non‑increasing counters. A wrong or missing key gets a plain `denied bad_key`; a keyed client on an unkeyed hub gets `denied no_key`. Master key: PBKDF2‑HMAC‑SHA1, 100 000 iterations, salt `CUPLAJ-v1`.
+
+**Limits.** 2048 bytes per frame before login, 32768 after; 64 concurrent unauthenticated connections; 60 per origin; 6 failures in 60 s lock an origin for 60 s.
+
+**Air packet.** `[ver(4)|type(4)] [seq] [len] [data…] [tag]`, tag = first 2 or 4 bytes of HMAC‑SHA256(network key, header ‖ data); invitations use a fixed public key. Type 1 = cue (`[kind index][text]`), type 2 = invitation (IPv4 ‖ 24‑bit PIN).
+
+**LUMEN.** Slots of 100 ms: 2 off, Barker‑13 (1111100110101), then each bit as a Manchester pair (1 = on‑off), 2 off. Receiver averages the central 60 % of each slot of the camera's mean luminance, searches 31 clock skews (±6 %) and 10 phases, requires Barker match and contrast, reads bits differentially.
+
+**SONUS.** 8‑FSK, 3 bits per 50 ms symbol; tones 17.0–19.8 kHz in steps of 400 Hz (near‑ultrasonic) or 1.8–3.9 kHz in steps of 300 Hz (audible); preamble is a zig‑zag of all eight tones twice; 5 ms cosine ramps. Receiver runs Goertzel on a sliding window (hop = 1/8 symbol), scores the preamble, then reads symbols.
+
+**TACTUS.** Vibration bursts: long ≈ 240 ms = 1, short ≈ 100 ms = 0, gap ≈ 100 ms; preamble long, long, long, short. Receiver removes gravity with a moving average, takes a 40 ms envelope, applies hysteresis thresholds, measures burst lengths relative to the preamble.

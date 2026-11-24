@@ -65,6 +65,7 @@ class MainActivity : Activity() {
         super.onRequestPermissionsResult(code, p, r)
         // serviciul pornit fără microfon nu are voie să capteze; îl repornim după acordare
         if (App.net != null && App.hasMic()) App.startService()
+        if (code == 6) { AirLink.applyRx(); return }
         if (code == 5) {
             if (App.role == "regie" && App.net != null) App.openLinks()
             else if (screen == "start" && App.role != "regie") App.scanAll(App.autoJoin)
@@ -96,6 +97,16 @@ class MainActivity : Activity() {
     private fun handleInvite(i: Intent?) {
         val inv = InviteLink.parse(i?.dataString) ?: return
         i?.data = null
+        // un link poate veni de pe orice pagină web: fără confirmare nu se schimbă nimic și nu se conectează nimic
+        val what = (if (inv.hub.isNotEmpty()) inv.hub else L.t("invite_unknown_hub")) +
+            (if (inv.hosts.isNotEmpty()) "\n" + inv.hosts.joinToString(", ") else "") +
+            "\n" + roleLabel(inv.role)
+        AlertDialog.Builder(this).setTitle(L.t("invite_confirm")).setMessage(what)
+            .setPositiveButton(L.t("invite_join")) { _, _ -> applyInvite(inv) }
+            .setNegativeButton(L.t("cancel"), null).show()
+    }
+
+    private fun applyInvite(inv: Invite) {
         App.role = inv.role
         App.joinKey = inv.key
         App.room = inv.room
@@ -180,6 +191,14 @@ class MainActivity : Activity() {
                 toast(L.t("auto_found"))
                 App.hubHost = k.substring(9)
                 connectNow()
+            }
+            k.startsWith("airinvite:") -> {
+                val q = k.substring(10).split("|")
+                if (q.size == 2) AlertDialog.Builder(this).setMessage(L.t("air_invite_q", q[0]))
+                    .setPositiveButton(L.t("invite_join")) { _, _ ->
+                        App.hubHost = q[0]; App.apin = q[1]; App.saveNet(); App.saveProfile()
+                        if (screen != "main") connectNow()
+                    }.setNegativeButton(L.t("cancel"), null).show()
             }
             k.startsWith("toast:") -> toast(k.substring(6))
             k.startsWith("bigtext:") -> bigText(k.substring(8))
@@ -478,6 +497,7 @@ class MainActivity : Activity() {
             col.addView(btn(L.t("btn_invite_sp")) { dlg?.dismiss(); shareInvite("spectator") })
             col.addView(btn(L.t("btn_invite_ac")) { dlg?.dismiss(); shareInvite("actor") })
         }
+        col.addView(btn(L.t("set_air")) { dlg?.dismiss(); airDialog() })
         col.addView(tv(L.t("set_gateways"), 13f, DIM), lp().apply { topMargin = dp(12) })
         col.addView(btn(L.t("btn_sip")) { dlg?.dismiss(); sipDialog() })
         col.addView(btn(if (App.smsGw) L.t("sms_gw_on") else L.t("sms_gw_off"), if (App.smsGw) GREEN else BTN) {
@@ -491,6 +511,50 @@ class MainActivity : Activity() {
             toast(L.t("restart_hub"))
         })
         col.addView(btn(L.t("set_about")) { dlg?.dismiss(); aboutDialog() })
+        dlg = AlertDialog.Builder(this).setView(sv).setPositiveButton(L.t("ok"), null).create()
+        dlg.show()
+    }
+
+    private fun airNeeds(): Array<String> {
+        val l = ArrayList<String>()
+        if (AirLink.rxLight || AirLink.rxVibe) l.add(Manifest.permission.CAMERA)
+        if (AirLink.rxSound) l.add(Manifest.permission.RECORD_AUDIO)
+        return l.filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }.toTypedArray()
+    }
+
+    private fun airApply() {
+        val need = airNeeds()
+        if (need.isNotEmpty()) { requestPermissions(need, 6); return }
+        val bad = AirLink.applyRx()
+        if (bad.isNotEmpty()) toast(L.t("air_unavailable", bad.joinToString(",")))
+    }
+
+    private fun airDialog() {
+        val sv = ScrollView(this)
+        val col = LinearLayout(this)
+        col.orientation = LinearLayout.VERTICAL
+        col.setPadding(dp(16), dp(12), dp(16), dp(12))
+        sv.addView(col)
+        var dlg: AlertDialog? = null
+        col.addView(tv(L.t("air_title"), 15f, IVORY))
+        col.addView(tv(L.t("air_hint"), 12f, DIM), lp().apply { topMargin = dp(6) })
+        fun tog(label: String, on: Boolean, f: () -> Unit) {
+            col.addView(btn(label + ": " + L.t(if (on) "air_on" else "air_off"), if (on) GREEN else BTN) { f(); dlg?.dismiss(); airApply(); airDialog() })
+        }
+        tog(L.t("air_rx_light"), AirLink.rxLight) { AirLink.rxLight = !AirLink.rxLight }
+        tog(L.t("air_rx_sound"), AirLink.rxSound) { AirLink.rxSound = !AirLink.rxSound }
+        tog(L.t("air_rx_vibe"), AirLink.rxVibe) { AirLink.rxVibe = !AirLink.rxVibe }
+        col.addView(btn(L.t(if (AirLink.ultra) "air_ultra" else "air_audible")) { AirLink.ultra = !AirLink.ultra; dlg?.dismiss(); airApply(); airDialog() })
+        if (App.role == "regie" && App.net != null) {
+            col.addView(tv(L.t("air_send_cue"), 13f, DIM), lp().apply { topMargin = dp(12) })
+            for (m in AirLink.MODES) col.addView(btn(L.t("air_$m")) {
+                if (AirLink.sendCue(m, "vibrate", "800")) toast(L.t("air_sending")) else toast(L.t("air_unavailable", m))
+            })
+            col.addView(tv(L.t("air_send_invite"), 13f, DIM), lp().apply { topMargin = dp(12) })
+            for (m in listOf("light", "sound")) col.addView(btn(L.t("air_$m")) {
+                if (AirLink.sendInvite(m)) toast(L.t("air_sending")) else toast(L.t("air_unavailable", m))
+            })
+        }
         dlg = AlertDialog.Builder(this).setView(sv).setPositiveButton(L.t("ok"), null).create()
         dlg.show()
     }

@@ -2,6 +2,12 @@
 
 Documentation language: English only.
 
+## 1.4.0 — 2026‑11‑24
+
+* Adversarial audit with fixes: random 6‑digit hub PIN; per‑connection session key (HMAC of both nonces) and 100 000 PBKDF2 iterations; plain `denied bad_key` / `no_key`; frame limits (2 KB before login, 32 KB after); pre‑login and per‑origin connection caps; lockout after repeated bad PINs; constant‑time secret comparison; eviction of offline spectators when full; loopback no longer trusted; P2P candidates limited to private addresses; dialled numbers stripped of USSD characters; invitation links need confirmation.
+* CUPLAJ‑AIR, three original no‑network protocols: **LUMEN** (torch → camera, Manchester slots with Barker sync), **SONUS** (8‑FSK, near‑ultrasonic or audible, Goertzel detection), **TACTUS** (vibration pulse lengths → accelerometer). Shared authenticated packet (HMAC tag, replay guard). Carry cues and a hub invitation.
+* New permission: camera (receive LUMEN). Settings → *Air links*.
+
 ## 1.3.0 — 2026‑11‑24
 
 * Plug and play: *Plug & play* mode on the control phone opens every fitting link on its own (Wi‑Fi/hotspot, mDNS, Bluetooth, Wi‑Fi Aware, and a Wi‑Fi Direct group when there is no Wi‑Fi); one permission prompt.

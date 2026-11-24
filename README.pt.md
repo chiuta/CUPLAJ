@@ -6,7 +6,7 @@
 
 > **Telefonia de linha partilhada para teatro imersivo**
 
-_Versão: 1.3.0 · Última atualização: 2026-11-24_
+_Versão: 1.4.0 · Última atualização: 2026-11-24_
 
 O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefónica privada para teatro imersivo. Organizadores e atores falam com os espectadores (e entre si) pela rede Wi‑Fi local do espaço — sem nuvem, sem contas, sem anúncios. A sua função distintiva é o *cuplaj*: a **linha partilhada** dos telefones fixos dos anos 80 até cerca de 2006, em que dois assinantes partilhavam a mesma linha, tocavam com cadências diferentes e podiam ouvir-se um ao outro.
 
@@ -26,6 +26,7 @@ O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefó
 - **Rede móvel (1.1)** — porta SMS através do SIM do telemóvel da régie (envio e receção), cue de *chamada real* que abre o marcador e indicador Wi‑Fi / móvel.
 - **Mais formas de ligação (1.2)** — Bluetooth (sem router, cerca de 7 telemóveis), Wi‑Fi Direct (o telemóvel da régie cria a sua própria rede Wi‑Fi) e descoberta mDNS, além de Wi‑Fi, hotspot, partilha por USB, Ethernet e dados móveis.
 - **Plug and play (1.3)** — o telemóvel da régie abre sozinho todas as ligações úteis; os outros tocam em *Encontrar e juntar‑me automaticamente* ou num link de convite. Acrescenta Wi‑Fi Aware.
+- **Reforçado e sem rede (1.4)** — auditoria com público hostil e correções, e CUPLAJ‑AIR: três protocolos originais que levam sinais e convites sem qualquer rede (lanterna → câmara, altifalante → microfone, vibração → acelerómetro).
 
 ## Início rápido
 
@@ -62,7 +63,7 @@ O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefó
 
 ## Estado real
 
-A lógica do hub (chamadas, linha partilhada, permissões, limites, persistência) está coberta por ~55 verificações automáticas executadas numa JVM. A interface Android e o caminho de áudio passaram a verificação de tipos contra o SDK Android 14, mas **ainda não foram testados em dispositivos reais**; o APK é construído pelo GitHub Actions. Testa com alguns telemóveis antes de um espetáculo. O tráfego da rede local não é cifrado (o PIN e o código de sala afastam estranhos de boa‑fé, não são criptografia). A rede da versão 1.1 (cifra, P2P, SIP, SMS) está coberta por testes do hub contra um servidor SIP simulado, mas **não** foi experimentada em operadores, NAT ou SIM reais. As ligações Bluetooth, Wi‑Fi Direct e mDNS (1.2) partilham a mesma camada de transporte, testada em JVM com canais simulados, mas **não** foram experimentadas em dispositivos reais; o comportamento varia entre fabricantes. O plug and play (ligação automática, convites, Wi‑Fi Aware, 1.3) **não** foi testado em dispositivos; o formato dos convites é coberto por testes JVM.
+A lógica do hub (chamadas, linha partilhada, permissões, limites, persistência) está coberta por ~55 verificações automáticas executadas numa JVM. A interface Android e o caminho de áudio passaram a verificação de tipos contra o SDK Android 14, mas **ainda não foram testados em dispositivos reais**; o APK é construído pelo GitHub Actions. Testa com alguns telemóveis antes de um espetáculo. O tráfego da rede local não é cifrado (o PIN e o código de sala afastam estranhos de boa‑fé, não são criptografia). A rede da versão 1.1 (cifra, P2P, SIP, SMS) está coberta por testes do hub contra um servidor SIP simulado, mas **não** foi experimentada em operadores, NAT ou SIM reais. As ligações Bluetooth, Wi‑Fi Direct e mDNS (1.2) partilham a mesma camada de transporte, testada em JVM com canais simulados, mas **não** foram experimentadas em dispositivos reais; o comportamento varia entre fabricantes. O plug and play (ligação automática, convites, Wi‑Fi Aware, 1.3) **não** foi testado em dispositivos; o formato dos convites é coberto por testes JVM. As correções da auditoria 1.4 e os codecs AIR estão cobertos por testes JVM (ruído simulado, deriva de relógio, chave errada, interferência); o código de lanterna, câmara, microfone, altifalante, motor e acelerómetro **não** está testado em telemóveis reais, e o alcance e a velocidade reais serão diferentes.
 
 ## Compilação
 

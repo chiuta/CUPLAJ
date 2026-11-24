@@ -6,7 +6,7 @@
 
 > **Közös vonalas telefonálás immerzív színházhoz**
 
-_Verzió: 1.3.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.4.0 · Utolsó frissítés: 2026-11-24_
 
 A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonközponttá immerzív színház számára. A szervezők és a színészek a helyszín helyi Wi‑Fi hálózatán beszélnek a nézőkkel (és egymással) — felhő, fiók és reklám nélkül. Névadó funkciója a *cuplaj*: az 1980-as évektől nagyjából 2006-ig használt vezetékes telefonok **közös vonala**, amelyen két előfizető osztozott, eltérő ritmusban csengettek, és hallhatták egymást.
 
@@ -26,6 +26,7 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 - **Mobilhálózat (1.1)** — SMS‑átjáró a rendezői telefon SIM‑jén át (küldés és fogadás), *valódi hívás* cue, amely megnyitja a tárcsázót, és Wi‑Fi / mobil jelző.
 - **További csatlakozási módok (1.2)** — Bluetooth (router nélkül, kb. 7 telefon), Wi‑Fi Direct (a rendezői telefon saját Wi‑Fi hálózatot hoz létre) és mDNS‑felderítés, a Wi‑Fi, hotspot, USB‑megosztás, Ethernet és mobiladat mellett.
 - **Plug and play (1.3)** — a rendezői telefon magától megnyit minden megfelelő kapcsolatot; a többiek az *Automatikus keresés és csatlakozás* gombot vagy egy meghívó linket érintenek meg. Újdonság: Wi‑Fi Aware.
+- **Megerősítve és hálózat nélkül (1.4)** — ellenséges közönségre méretezett átvizsgálás javításokkal, és a CUPLAJ‑AIR: három saját protokoll, amely jelzéseket és meghívókat visz teljesen hálózat nélkül (zseblámpa → kamera, hangszóró → mikrofon, rezgés → gyorsulásmérő).
 
 ## Gyors kezdés
 
@@ -62,7 +63,7 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 
 ## Őszinte állapot
 
-A hub logikáját (hívások, közös vonal, jogosultságok, korlátok, tartós állapot) ~55 automatikus ellenőrzés fedi le JVM-en. Az Android-felület és a hangút típusellenőrzésen átment az Android 14 SDK ellen, de **valódi eszközön még nem tesztelték**; az APK-t a GitHub Actions építi. Előadás előtt próbáld ki néhány telefonnal. A helyi hálózati forgalom nincs titkosítva (a PIN és a teremkód a jóhiszemű kívülállókat tartja távol, nem kriptográfia). Az 1.1‑es hálózati funkciókat (titkosítás, P2P, SIP, SMS) szimulált SIP‑szerver elleni hubtesztek fedik, de **nem** próbáltuk valódi szolgáltatóval, NAT‑tal vagy SIM‑mel. A Bluetooth, Wi‑Fi Direct és mDNS kapcsolatok (1.2) ugyanazt a szállítási réteget használják, amelyet JVM‑en szimulált csatornákkal teszteltünk, de **nem** próbáltuk valódi eszközön; a viselkedés gyártónként eltér. A plug and play (automatikus csatlakozás, meghívók, Wi‑Fi Aware, 1.3) **nincs** eszközökön tesztelve; a meghívó formátumát JVM‑tesztek fedik.
+A hub logikáját (hívások, közös vonal, jogosultságok, korlátok, tartós állapot) ~55 automatikus ellenőrzés fedi le JVM-en. Az Android-felület és a hangút típusellenőrzésen átment az Android 14 SDK ellen, de **valódi eszközön még nem tesztelték**; az APK-t a GitHub Actions építi. Előadás előtt próbáld ki néhány telefonnal. A helyi hálózati forgalom nincs titkosítva (a PIN és a teremkód a jóhiszemű kívülállókat tartja távol, nem kriptográfia). Az 1.1‑es hálózati funkciókat (titkosítás, P2P, SIP, SMS) szimulált SIP‑szerver elleni hubtesztek fedik, de **nem** próbáltuk valódi szolgáltatóval, NAT‑tal vagy SIM‑mel. A Bluetooth, Wi‑Fi Direct és mDNS kapcsolatok (1.2) ugyanazt a szállítási réteget használják, amelyet JVM‑en szimulált csatornákkal teszteltünk, de **nem** próbáltuk valódi eszközön; a viselkedés gyártónként eltér. A plug and play (automatikus csatlakozás, meghívók, Wi‑Fi Aware, 1.3) **nincs** eszközökön tesztelve; a meghívó formátumát JVM‑tesztek fedik. Az 1.4‑es átvizsgálás javításait és az AIR kodekeket JVM‑tesztek fedik (szimulált zaj, órajel‑sodródás, hibás kulcs, interferencia); a zseblámpa, kamera, mikrofon, hangszóró, motor és gyorsulásmérő kódja **nincs** valódi telefonokon tesztelve, a valós hatótávolság és sebesség eltérhet.
 
 ## Építés
 

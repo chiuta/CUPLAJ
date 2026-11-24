@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.3.0 · Última actualización: 2026-11-24_
+_Versión: 1.4.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -72,6 +72,14 @@ _Versión: 1.3.0 · Última actualización: 2026-11-24_
 - **Otros teléfonos, sin enlace** — elige un rol y pulsa *Buscar y unirme automáticamente*. CUPLAJ busca en todos los enlaces a la vez (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) y se conecta al mejor hub: primero la red local, al final Bluetooth.
 - **Wi‑Fi Aware** — los teléfonos compatibles se encuentran sin router ni configuración. Muchos no lo admiten; no se rompe nada si el tuyo no.
 - **Seguridad** — una invitación solo puede crear un espectador o un actor, nunca un teléfono de regiduría. Los enlaces contienen la clave y el PIN; envíalos solo a quien invites.
+
+## 11. Refuerzo + AIR (1.4)
+
+- **Hub más seguro** — PIN aleatorio de 6 cifras, clave nueva en cada conexión, límites a conexiones sin autenticar y al tamaño de mensajes, bloqueo tras PIN erróneos repetidos y confirmación antes de aplicar un enlace de invitación.
+- **LUMEN (luz)** — el teléfono de regiduría parpadea con la linterna; otro teléfono mira con la cámara trasera. Sala con poca luz, 1–3 m, linterna apuntando a la cámara. Lento (unos segundos) pero robusto.
+- **SONUS (sonido)** — el altavoz reproduce un código de tonos, casi ultrasónico (inaudible para la mayoría de adultos) o audible; el otro teléfono escucha con el micrófono. Lleva señales y una invitación al hub (dirección y PIN).
+- **TACTUS (vibración)** — el motor de vibración envía pulsos cortos y largos; otro teléfono apoyado en la misma superficie los siente con el acelerómetro. Funciona en silencio y a oscuras, para señales cortas.
+- **Uso** — Ajustes → *Enlaces por aire*: activa las escuchas deseadas (cámara / micrófono / acelerómetro; el teléfono pide permiso) y en el teléfono de regiduría pulsa un botón de envío. Los paquetes llevan una etiqueta corta de autenticación derivada de la clave de red y no pueden repetirse.
 
 ---
 

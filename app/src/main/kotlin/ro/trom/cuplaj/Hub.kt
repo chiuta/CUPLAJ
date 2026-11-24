@@ -10,6 +10,9 @@ import java.net.NetworkInterface
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketException
+import java.security.MessageDigest
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Timer
@@ -38,6 +41,8 @@ class Peer(val id: String) {
     var udp: java.net.InetSocketAddress? = null  // adresa UDP văzută de hub (după NAT)
     var smsgw = false      // telefonul Regiei trimite/primește SMS-uri reale
     var lan = ""            // ip:port local raportat de client
+    @Volatile
+    var seen = System.currentTimeMillis() // ultima activitate (pentru eliminarea celor deconectate când hubul e plin)
     private var winStart = 0L
     private var jsonCnt = 0
     private var audCnt = 0
@@ -296,19 +301,85 @@ class Hub(
 
     private fun clean(s: String, n: Int): String = s.filter { it >= ' ' }.trim().take(n)
 
-    /** Preia un canal nou (TCP, Bluetooth…) și îl tratează într-un fir propriu. */
+    // ------------------------------------------------------------------ apărare împotriva abuzului
+
+    private class Fail {
+        var n = 0
+        var first = 0L
+        var until = 0L
+    }
+
+    private val fails = ConcurrentHashMap<String, Fail>()
+    private val conns = ConcurrentHashMap<String, AtomicInteger>()
+    private val preauth = AtomicInteger()
+
+    /** Doar pentru teste: aplică blocarea și originii loopback. */
+    var lockLoopback = false
+
+    private fun blocked(o: String): Boolean = (fails[o]?.until ?: 0L) > System.currentTimeMillis()
+
+    /** Cinci–șase încercări eșuate într-un minut blochează originea un minut. */
+    private fun failed(o: String) {
+        val now = System.currentTimeMillis()
+        if (fails.size > 2000) fails.clear()
+        val f = fails.getOrPut(o) { Fail() }
+        synchronized(f) {
+            if (now - f.first > 60_000) {
+                f.n = 0
+                f.first = now
+            }
+            f.n++
+            if (f.n >= 6) f.until = now + 60_000
+        }
+    }
+
+    private fun sameSecret(a: String, b: String): Boolean =
+        MessageDigest.isEqual(a.toByteArray(Charsets.UTF_8), b.toByteArray(Charsets.UTF_8))
+
+    /** Preia un canal nou (TCP, Bluetooth…) și îl tratează într-un fir propriu, cu limite pe origine și pe conexiunile neautentificate. */
     fun adopt(ch: Chan) {
-        Thread { handle(ch) }.apply { isDaemon = true; start() }
+        val o = ch.origin
+        val loop = ch.loopback
+        if ((!loop || lockLoopback) && blocked(o)) {
+            ch.close()
+            return
+        }
+        val cnt = conns.getOrPut(o) { AtomicInteger() }
+        if (preauth.get() >= 64 || (!loop && cnt.get() >= 60)) {
+            ch.close()
+            return
+        }
+        cnt.incrementAndGet()
+        Thread {
+            try {
+                handle(ch)
+            } finally {
+                cnt.decrementAndGet()
+            }
+        }.apply { isDaemon = true; start() }
     }
 
     private fun handle(ch: Chan) {
         val c = Conn(ch, key, true)
         var me: Peer? = null
+        val origin = ch.origin
+        val loop = ch.loopback
+        var counted = true
+        preauth.incrementAndGet()
         try {
             ch.setIdleTimeout(10000)
+            if (!c.serverHandshake()) {
+                // fie hubul are cheie și clientul nu, fie invers: refuz în clar, ca utilizatorul să afle motivul
+                if (!loop || lockLoopback) failed(origin)
+                c.startWriter()
+                c.sendJsonPlain(jo("t" to "denied", "why" to (if (key == null) "no_key" else "bad_key")))
+                Thread.sleep(300)
+                c.close()
+                return
+            }
             val f = c.readFrame()
             if (f.bad) {
-                // cheie de rețea lipsă sau greșită: refuz în clar, ca utilizatorul să afle motivul
+                if (!loop || lockLoopback) failed(origin)
                 c.startWriter()
                 c.sendJsonPlain(jo("t" to "denied", "why" to "bad_key"))
                 Thread.sleep(300)
@@ -324,7 +395,6 @@ class Hub(
                 c.close()
                 return
             }
-            ch.setIdleTimeout(idleTimeoutMs)
             val id = clean(m.getString("id"), 64)
             if (id.isEmpty()) {
                 c.close()
@@ -332,19 +402,34 @@ class Hub(
             }
             var role = m.optString("role", "spectator")
             val local = trustLoopback && ch.loopback
-            if (!local && room.isNotEmpty() && m.optString("room") != room) {
+            if (!local && room.isNotEmpty() && !sameSecret(m.optString("room"), room)) {
+                if (!loop || lockLoopback) failed(origin)
+                Thread.sleep(1000)
                 deny(c, "bad_room")
                 return
             }
-            if (!local && (role == "actor" || role == "regie" || role == "gateway") && m.optString("pin") != pin) {
+            if (!local && (role == "actor" || role == "regie" || role == "gateway") && !sameSecret(m.optString("pin"), pin)) {
+                if (!loop || lockLoopback) failed(origin)
+                Thread.sleep(1000) // frânează ghicirea PIN‑ului, inclusiv de pe același telefon
                 deny(c, "bad_pin")
                 return
+            }
+            ch.setIdleTimeout(idleTimeoutMs)
+            c.maxFrame = 32768
+            if (counted) {
+                counted = false
+                preauth.decrementAndGet()
             }
             if (role != "regie" && role != "actor" && role != "gateway") role = "spectator"
             c.startWriter()
             var refused: String? = null
             synchronized(lock) {
                 var q = peers[id]
+                if (q == null && peers.size >= 400) {
+                    // plin: face loc eliminând cel mai vechi spectator deconectat, altfel refuză
+                    val old = peers.values.filter { !it.online && it.role == "spectator" && it.line == 0 }.minByOrNull { it.seen }
+                    if (old != null) peers.remove(old.id)
+                }
                 if (q == null && peers.size >= 400) {
                     refused = "full"
                 } else if (q != null && !local && q.tok.isNotEmpty() && q.tok != m.optString("tok")) {
@@ -365,7 +450,7 @@ class Hub(
                     q.name = clean(m.optString("name", "?"), 40).ifEmpty { "?" }
                     q.p2p = m.optBoolean("p2p")
                     q.smsgw = role == "regie" && m.optBoolean("smsgw")
-                    q.local = local
+                    q.local = local || (loop && (role == "regie" || role == "gateway"))
                     q.udp = null
                     q.lan = ""
                     q.conn = c
@@ -397,10 +482,12 @@ class Hub(
                     synchronized(lock) { if (who.allow(1, now)) onAudio(who, fr.data, fr.type) }
                 }
             }
-        } catch (_: Exception) {
+        } catch (_: Throwable) {
         } finally {
+            if (counted) preauth.decrementAndGet()
             val q = me
             if (q != null) {
+                q.seen = System.currentTimeMillis()
                 synchronized(lock) {
                     if (q.conn === c) {
                         hangup(q)
@@ -536,7 +623,7 @@ class Hub(
             }
             "forget" -> if (reg) forget(m.optString("id"))
             "ping" -> sendTo(p, jo("t" to "pong"))
-            "udp" -> p.lan = clean(m.optString("lan"), 64)
+            "udp" -> p.lan = clean(m.optString("lan"), 64).let { if (privateCand(it)) it else "" }
             "sms" -> if (isStaff(p)) smsOut(p, m)
             "smsin" -> if (p.smsgw) {
                 val from = m.optString("from").filter { it.isDigit() || it == '+' }.take(20)

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.3.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.4.0 · Ultimo aggiornamento: 2026-11-24_
 
 ## 1. Prima dello spettacolo
 
@@ -72,6 +72,14 @@ _Versione: 1.3.0 · Ultimo aggiornamento: 2026-11-24_
 - **Altri telefoni, senza link** — scegli un ruolo e tocca *Trova e unisciti automaticamente*. CUPLAJ cerca su tutti i collegamenti insieme (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) e si collega al miglior hub: prima la rete locale, per ultimo il Bluetooth.
 - **Wi‑Fi Aware** — i telefoni compatibili si trovano senza router né configurazione. Molti non lo supportano; non si rompe nulla se il tuo non lo fa.
 - **Sicurezza** — un invito può creare solo uno spettatore o un attore, mai un telefono della regia. I link contengono chiave e PIN; inviali solo alle persone invitate.
+
+## 11. Rinforzo + AIR (1.4)
+
+- **Hub più sicuro** — PIN casuale di 6 cifre, chiave nuova a ogni connessione, limiti su connessioni non autenticate e dimensione dei messaggi, blocco dopo PIN errati ripetuti e conferma prima di applicare un link di invito.
+- **LUMEN (luce)** — il telefono della regia fa lampeggiare la torcia; un altro telefono guarda con la fotocamera posteriore. Stanza poco illuminata, 1–3 m, torcia puntata sulla fotocamera. Lento (qualche secondo) ma robusto.
+- **SONUS (suono)** — l'altoparlante riproduce un codice di toni, quasi ultrasonico (inudibile per la maggior parte degli adulti) o udibile; l'altro telefono ascolta col microfono. Porta cue e un invito all'hub (indirizzo e PIN).
+- **TACTUS (vibrazione)** — il motore di vibrazione invia impulsi brevi e lunghi; un altro telefono appoggiato sulla stessa superficie li sente con l'accelerometro. Funziona in silenzio e al buio, per cue brevi.
+- **Uso** — Impostazioni → *Collegamenti via aria*: attiva gli ascolti voluti (fotocamera / microfono / accelerometro; il telefono chiede il permesso), poi sul telefono della regia premi un pulsante di invio. I pacchetti hanno una breve etichetta di autenticazione derivata dalla chiave di rete e non possono essere riprodotti.
 
 ---
 

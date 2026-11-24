@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.3.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.4.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -72,6 +72,14 @@ _Verzió: 1.3.0 · Utolsó frissítés: 2026-11-24_
 - **A többi telefon, link nélkül** — válassz szerepet, és érintsd meg az *Automatikus keresés és csatlakozás* gombot. A CUPLAJ egyszerre keres minden kapcsolaton (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware), és a legjobb hubhoz csatlakozik: előbb a helyi hálózat, utoljára a Bluetooth.
 - **Wi‑Fi Aware** — a támogató telefonok router és beállítás nélkül megtalálják egymást. Sok telefon nem támogatja; semmi sem romlik el, ha a tiéd nem.
 - **Biztonság** — meghívóval csak néző vagy színész hozható létre, rendezői telefon soha. A linkek tartalmazzák a kulcsot és a PIN‑t; csak a meghívottaknak küldd.
+
+## 11. Megerősítés + AIR (1.4)
+
+- **Biztonságosabb hub** — véletlen 6 jegyű PIN, minden kapcsolathoz új kulcs, korlátok a nem hitelesített kapcsolatokra és az üzenetméretre, zárolás ismételt hibás PIN után, és megerősítés bármely meghívó link alkalmazása előtt.
+- **LUMEN (fény)** — a rendezői telefon villogtatja a zseblámpát; egy másik telefon a hátlapi kamerával figyeli. Halvány fény, 1–3 m, a lámpa a kamerára irányítva. Lassú (néhány másodperc), de robusztus.
+- **SONUS (hang)** — a hangszóró hangkódot játszik le, közel ultrahangosat (a legtöbb felnőtt nem hallja) vagy hallhatót; a másik telefon mikrofonnal figyel. Jelzéseket és hub‑meghívót (cím és PIN) visz.
+- **TACTUS (rezgés)** — a rezgőmotor rövid és hosszú impulzusokat küld; egy ugyanazon a felületen fekvő másik telefon gyorsulásmérővel érzékeli. Csendben és sötétben is működik, rövid jelzésekhez.
+- **Használat** — Beállítások → *Légi kapcsolatok*: kapcsold be a kívánt figyelőket (kamera / mikrofon / gyorsulásmérő; a telefon engedélyt kér), majd a rendezői telefonon nyomj egy küldő gombot. A csomagok a hálózati kulcsból képzett rövid hitelesítő címkét hordoznak, és nem játszhatók vissza.
 
 ---
 

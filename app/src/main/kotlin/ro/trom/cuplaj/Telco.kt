@@ -34,7 +34,7 @@ object Telco {
     /** Deschide formatorul cu numărul completat; omul apasă „Apel” (nu cere permisiunea CALL_PHONE). */
     fun dial(ctx: Context, number: String) {
         try {
-            val i = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Uri.encode(number.filter { it.isDigit() || it == '+' || it == '*' || it == '#' })))
+            val i = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Uri.encode(safeNumber(number))))
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             ctx.startActivity(i)
         } catch (_: Exception) {

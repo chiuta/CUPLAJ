@@ -6,7 +6,7 @@
 
 > **Gemeinschaftsanschluss-Telefonie für immersives Theater**
 
-_Version: 1.3.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.4.0 · Letzte Aktualisierung: 2026-11-24_
 
 CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Telefonanlage für immersives Theater. Organisatoren und Schauspieler sprechen über das lokale WLAN des Veranstaltungsorts mit den Zuschauern (und untereinander) — ohne Cloud, ohne Konten, ohne Werbung. Das Kernmerkmal ist der *Cuplaj*: der **Gemeinschaftsanschluss** der Festnetztelefone von den 1980er-Jahren bis etwa 2006, bei dem sich zwei Teilnehmer eine Leitung teilten, mit unterschiedlichem Rhythmus klingelten und einander mithören konnten.
 
@@ -26,6 +26,7 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 - **Mobilfunknetz (1.1)** — SMS‑Gateway über die SIM des Regie‑Telefons (Senden und Empfangen), Cue *echter Anruf*, der die Wähl‑App öffnet, und WLAN‑/Mobil‑Anzeige.
 - **Weitere Verbindungsarten (1.2)** — Bluetooth (ohne Router, etwa 7 Telefone), Wi‑Fi Direct (das Regie‑Telefon baut ein eigenes WLAN auf) und mDNS‑Erkennung, zusätzlich zu WLAN, Hotspot, USB‑Tethering, Ethernet und Mobilfunk.
 - **Plug and Play (1.3)** — das Regie‑Telefon öffnet alle passenden Verbindungen selbst; die anderen tippen auf *Automatisch finden und beitreten* oder auf einen Einladungslink. Neu: Wi‑Fi Aware.
+- **Gehärtet und ohne Netz (1.4)** — Audit mit feindlichem Publikum samt Korrekturen, und CUPLAJ‑AIR: drei eigene Protokolle, die Cues und Einladungen ganz ohne Netz übertragen (Taschenlampe → Kamera, Lautsprecher → Mikrofon, Vibration → Beschleunigungssensor).
 
 ## Schnellstart
 
@@ -62,7 +63,7 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 
 ## Ehrlicher Stand
 
-Die Hub-Logik (Gespräche, Gemeinschaftsanschluss, Berechtigungen, Limits, Persistenz) wird von ~55 automatischen Prüfungen auf einer JVM abgedeckt. Die Android-Oberfläche und der Audiopfad haben die Typprüfung gegen das Android-14-SDK bestanden, wurden aber **noch nicht auf echten Geräten getestet**; der APK wird von GitHub Actions gebaut. Vor einer Vorstellung mit ein paar Telefonen testen. Der Verkehr im lokalen Netz ist nicht verschlüsselt (PIN und Raumcode halten gutgläubige Fremde fern, sie sind keine Kryptografie). Die Netzfunktionen der Version 1.1 (Verschlüsselung, P2P, SIP, SMS) sind durch Hub‑Tests gegen einen simulierten SIP‑Server abgedeckt, aber **nicht** an echten Anbietern, NATs oder SIM‑Karten erprobt. Die Verbindungen über Bluetooth, Wi‑Fi Direct und mDNS (1.2) nutzen dieselbe Transportschicht, auf der JVM mit simulierten Kanälen getestet, wurden aber **nicht** an echten Geräten erprobt; das Verhalten unterscheidet sich je nach Hersteller. Plug and Play (Auto‑Beitritt, Einladungen, Wi‑Fi Aware, 1.3) ist **nicht** an Geräten getestet; das Einladungsformat ist durch JVM‑Tests abgedeckt.
+Die Hub-Logik (Gespräche, Gemeinschaftsanschluss, Berechtigungen, Limits, Persistenz) wird von ~55 automatischen Prüfungen auf einer JVM abgedeckt. Die Android-Oberfläche und der Audiopfad haben die Typprüfung gegen das Android-14-SDK bestanden, wurden aber **noch nicht auf echten Geräten getestet**; der APK wird von GitHub Actions gebaut. Vor einer Vorstellung mit ein paar Telefonen testen. Der Verkehr im lokalen Netz ist nicht verschlüsselt (PIN und Raumcode halten gutgläubige Fremde fern, sie sind keine Kryptografie). Die Netzfunktionen der Version 1.1 (Verschlüsselung, P2P, SIP, SMS) sind durch Hub‑Tests gegen einen simulierten SIP‑Server abgedeckt, aber **nicht** an echten Anbietern, NATs oder SIM‑Karten erprobt. Die Verbindungen über Bluetooth, Wi‑Fi Direct und mDNS (1.2) nutzen dieselbe Transportschicht, auf der JVM mit simulierten Kanälen getestet, wurden aber **nicht** an echten Geräten erprobt; das Verhalten unterscheidet sich je nach Hersteller. Plug and Play (Auto‑Beitritt, Einladungen, Wi‑Fi Aware, 1.3) ist **nicht** an Geräten getestet; das Einladungsformat ist durch JVM‑Tests abgedeckt. Die Korrekturen des 1.4‑Audits und die AIR‑Codecs sind durch JVM‑Tests abgedeckt (simuliertes Rauschen, Taktdrift, falscher Schlüssel, Störungen); der Code für Taschenlampe, Kamera, Mikrofon, Lautsprecher, Motor und Beschleunigungssensor ist **nicht** auf echten Telefonen getestet, und echte Reichweite und Geschwindigkeit werden abweichen.
 
 ## Bauen
 

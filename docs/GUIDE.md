@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.3.0 · Last update: 2026-11-24_
+_Version: 1.4.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -72,6 +72,14 @@ _Version: 1.3.0 · Last update: 2026-11-24_
 - **Other phones, without a link** — choose a role and tap *Find and join automatically*. CUPLAJ searches every link at once (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) and connects to the best hub it finds: local network first, Bluetooth last.
 - **Wi‑Fi Aware** — phones that support it find each other with no router and no setup. Many phones do not support it; nothing breaks if yours does not.
 - **Safety** — an invitation can only make a spectator or an actor, never a control phone. Links contain the key and PIN, so send them only to people you invite.
+
+## 11. Hardened + AIR (1.4)
+
+- **Safer hub** — 6‑digit random PIN, a fresh key for every connection, limits on unauthenticated connections and message size, lockout after repeated wrong PINs, and a confirmation before any invitation link is applied.
+- **LUMEN (light)** — the control phone blinks its torch; another phone watches with its rear camera. Dim the room, 1–3 m, point the torch at the camera. Slow (a few seconds) but works through any wall of noise.
+- **SONUS (sound)** — the speaker plays a tone code, near‑ultrasonic (inaudible to most adults) or audible; the other phone listens with its microphone. Carries cues and a hub invitation (address and PIN).
+- **TACTUS (vibration)** — the vibration motor sends short and long pulses; another phone resting on the same surface feels them with its accelerometer. Works in silence and darkness, carries short cues.
+- **Using it** — Settings → *Air links*: switch on the listeners you want (camera / microphone / accelerometer; the phone asks for permission), then on the control phone press a send button. Packets carry a short authentication tag from the network key and cannot be replayed.
 
 ---
 

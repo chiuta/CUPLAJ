@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.3.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.4.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -72,6 +72,14 @@ _Version : 1.3.0 · Dernière mise à jour : 2026-11-24_
 - **Autres téléphones, sans lien** — choisissez un rôle et touchez *Trouver et rejoindre automatiquement*. CUPLAJ cherche sur toutes les liaisons à la fois (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) et se connecte au meilleur hub : réseau local d'abord, Bluetooth en dernier.
 - **Wi‑Fi Aware** — les téléphones compatibles se trouvent sans routeur ni réglage. Beaucoup ne le gèrent pas ; rien ne casse si le vôtre non.
 - **Sécurité** — une invitation ne peut créer qu'un spectateur ou un acteur, jamais un téléphone de régie. Les liens contiennent la clé et le PIN ; ne les envoyez qu'aux personnes invitées.
+
+## 11. Durcissement + AIR (1.4)
+
+- **Hub plus sûr** — PIN aléatoire à 6 chiffres, clé nouvelle à chaque connexion, limites sur les connexions non authentifiées et la taille des messages, blocage après des PIN erronés répétés, et confirmation avant d'appliquer un lien d'invitation.
+- **LUMEN (lumière)** — le téléphone de régie fait clignoter sa lampe ; un autre téléphone observe avec sa caméra arrière. Pièce tamisée, 1–3 m, lampe dirigée vers la caméra. Lent (quelques secondes) mais robuste.
+- **SONUS (son)** — le haut‑parleur joue un code de tons, quasi ultrasonore (inaudible pour la plupart des adultes) ou audible ; l'autre téléphone écoute avec son micro. Transporte des indices et une invitation au hub (adresse et PIN).
+- **TACTUS (vibration)** — le moteur de vibration envoie des impulsions courtes et longues ; un autre téléphone posé sur la même surface les sent avec son accéléromètre. Fonctionne dans le silence et le noir, pour de courts indices.
+- **Utilisation** — Réglages → *Liaisons par l'air* : activez les écoutes voulues (caméra / micro / accéléromètre ; le téléphone demande la permission), puis sur le téléphone de régie appuyez sur un bouton d'envoi. Les paquets portent une courte étiquette d'authentification dérivée de la clé réseau et ne peuvent pas être rejoués.
 
 ---
 

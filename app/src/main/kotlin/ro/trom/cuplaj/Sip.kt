@@ -22,7 +22,8 @@ class SipConfig(
     val hubPort: Int = PORT,
     val hubPin: String = "",
     val hubKey: String = "",
-    val maxSeconds: Int = 900
+    val maxSeconds: Int = 900,
+    val hubRoom: String = ""
 )
 
 private fun md5(s: String): String = MessageDigest.getInstance("MD5").digest(s.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
@@ -117,8 +118,9 @@ class SipGateway(private val cfg: SipConfig, private val log: (String) -> Unit =
                 s.soTimeout = 45000
                 val c = Conn(s, Sec.deriveKey(cfg.hubKey), false)
                 hub = c
+                c.clientHandshake()
                 c.startWriter()
-                c.sendJson(jo("t" to "hello", "id" to "sip-gateway", "name" to "SIP", "role" to "gateway", "pin" to cfg.hubPin))
+                c.sendJson(jo("t" to "hello", "id" to "sip-gateway", "name" to "SIP", "role" to "gateway", "pin" to cfg.hubPin, "room" to cfg.hubRoom))
                 var lastPing = System.currentTimeMillis()
                 while (run) {
                     val f = try {
@@ -266,7 +268,7 @@ class SipGateway(private val cfg: SipConfig, private val log: (String) -> Unit =
     private var lastAuthHdr = ""
 
     private fun invite(dest: String) {
-        val clean = dest.filter { it.isDigit() || it == '+' || it == '*' || it == '#' }
+        val clean = dest.filter { it.isDigit() || it == '+' }.take(24)
         if (clean.isEmpty()) {
             hubSend(jo("t" to "hangup"))
             return

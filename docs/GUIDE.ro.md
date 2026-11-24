@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.3.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.4.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -72,6 +72,14 @@ _Versiune: 1.3.0 · Ultima actualizare: 2026-11-24_
 - **Celelalte telefoane, fără link** — alege un rol și apasă *Găsește și alătură‑mă automat*. CUPLAJ caută pe toate legăturile deodată (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) și se conectează la cel mai bun hub găsit: întâi rețeaua locală, la urmă Bluetooth.
 - **Wi‑Fi Aware** — telefoanele care îl au se găsesc fără router și fără configurare. Multe telefoane nu îl au; nimic nu se strică dacă al tău nu îl are.
 - **Siguranță** — o invitație poate crea doar spectator sau actor, niciodată telefon de Regie. Linkurile conțin cheia și PIN‑ul; trimite‑le doar celor invitați.
+
+## 11. Întărire + AIR (1.4)
+
+- **Hub mai sigur** — PIN aleatoriu de 6 cifre, cheie nouă la fiecare conexiune, limite pentru conexiuni neautentificate și mărimea mesajelor, blocare după PIN‑uri greșite repetate și confirmare înainte de aplicarea oricărui link de invitație.
+- **LUMEN (lumină)** — telefonul Regiei clipește cu lanterna; alt telefon privește cu camera din spate. Camera slab luminată, 1–3 m, lanterna îndreptată spre cameră. Lent (câteva secunde), dar trece prin orice zgomot.
+- **SONUS (sunet)** — difuzorul redă un cod de tonuri, aproape ultrasonic (inaudibil pentru majoritatea adulților) sau audibil; celălalt telefon ascultă cu microfonul. Duce replici și o invitație la hub (adresă și PIN).
+- **TACTUS (vibrații)** — motorul de vibrații trimite pulsuri scurte și lungi; alt telefon așezat pe aceeași suprafață le simte cu accelerometrul. Merge în liniște și în întuneric, duce replici scurte.
+- **Folosire** — Setări → *Legături prin aer*: pornește receptoarele dorite (cameră / microfon / accelerometru; telefonul cere permisiunea), apoi pe telefonul Regiei apasă un buton de trimitere. Pachetele au o etichetă scurtă de autentificare din cheia de rețea și nu pot fi reluate.
 
 ---
 

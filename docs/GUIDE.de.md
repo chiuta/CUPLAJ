@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.3.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.4.0 · Letzte Aktualisierung: 2026-11-24_
 
 ## 1. Vor der Vorstellung
 
@@ -72,6 +72,14 @@ _Version: 1.3.0 · Letzte Aktualisierung: 2026-11-24_
 - **Andere Telefone, ohne Link** — Rolle wählen und *Automatisch finden und beitreten* tippen. CUPLAJ sucht auf allen Verbindungen gleichzeitig (WLAN, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) und verbindet sich mit dem besten Hub: erst das lokale Netz, zuletzt Bluetooth.
 - **Wi‑Fi Aware** — unterstützende Telefone finden sich ohne Router und ohne Einrichtung. Viele unterstützen es nicht; nichts geht kaputt, wenn Ihres es nicht kann.
 - **Sicherheit** — eine Einladung kann nur Zuschauer oder Schauspieler anlegen, nie ein Regie‑Telefon. Links enthalten Schlüssel und PIN; nur an Eingeladene senden.
+
+## 11. Härtung + AIR (1.4)
+
+- **Sichererer Hub** — zufällige 6‑stellige PIN, frischer Schlüssel pro Verbindung, Grenzen für nicht authentifizierte Verbindungen und Nachrichtengröße, Sperre nach wiederholt falscher PIN und Bestätigung, bevor ein Einladungslink angewendet wird.
+- **LUMEN (Licht)** — das Regie‑Telefon blinkt mit der Taschenlampe; ein anderes Telefon beobachtet mit der rückseitigen Kamera. Raum abdunkeln, 1–3 m, Lampe auf die Kamera richten. Langsam (einige Sekunden), aber robust.
+- **SONUS (Schall)** — der Lautsprecher spielt einen Tonkode, nahe Ultraschall (für die meisten Erwachsenen unhörbar) oder hörbar; das andere Telefon hört mit dem Mikrofon. Überträgt Cues und eine Hub‑Einladung (Adresse und PIN).
+- **TACTUS (Vibration)** — der Vibrationsmotor sendet kurze und lange Impulse; ein anderes Telefon auf derselben Fläche spürt sie mit dem Beschleunigungssensor. Funktioniert in Stille und Dunkelheit für kurze Cues.
+- **Benutzung** — Einstellungen → *Luftverbindungen*: gewünschte Empfänger einschalten (Kamera / Mikrofon / Beschleunigungssensor; das Telefon fragt nach der Berechtigung), dann am Regie‑Telefon eine Sende‑Taste drücken. Pakete tragen ein kurzes Authentifizierungs‑Tag aus dem Netzwerkschlüssel und lassen sich nicht wiedereinspielen.
 
 ---
 

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · **Português** · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versão: 1.3.0 · Última atualização: 2026-11-24_
+_Versão: 1.4.0 · Última atualização: 2026-11-24_
 
 ## 1. Antes do espetáculo
 
@@ -72,6 +72,14 @@ _Versão: 1.3.0 · Última atualização: 2026-11-24_
 - **Outros telemóveis, sem link** — escolhe um papel e toca em *Encontrar e juntar‑me automaticamente*. O CUPLAJ procura em todas as ligações ao mesmo tempo (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) e liga‑se ao melhor hub: primeiro a rede local, por último o Bluetooth.
 - **Wi‑Fi Aware** — os telemóveis compatíveis encontram‑se sem router nem configuração. Muitos não o suportam; nada se estraga se o teu não suportar.
 - **Segurança** — um convite só pode criar um espectador ou um ator, nunca um telemóvel de régie. Os links contêm a chave e o PIN; envia‑os só a quem convidares.
+
+## 11. Reforço + AIR (1.4)
+
+- **Hub mais seguro** — PIN aleatório de 6 dígitos, chave nova em cada ligação, limites para ligações não autenticadas e tamanho das mensagens, bloqueio após PIN errados repetidos e confirmação antes de aplicar um link de convite.
+- **LUMEN (luz)** — o telemóvel da Regia pisca a lanterna; outro telemóvel observa com a câmara traseira. Sala com pouca luz, 1–3 m, lanterna apontada à câmara. Lento (alguns segundos) mas robusto.
+- **SONUS (som)** — o altifalante reproduz um código de tons, quase ultrassónico (inaudível para a maioria dos adultos) ou audível; o outro telemóvel ouve com o microfone. Leva sinais e um convite ao hub (endereço e PIN).
+- **TACTUS (vibração)** — o motor de vibração envia pulsos curtos e longos; outro telemóvel pousado na mesma superfície sente‑os com o acelerómetro. Funciona em silêncio e no escuro, para sinais curtos.
+- **Utilização** — Definições → *Ligações pelo ar*: ative as escutas pretendidas (câmara / microfone / acelerómetro; o telemóvel pede permissão) e, no telemóvel da Regia, prima um botão de envio. Os pacotes levam uma etiqueta curta de autenticação derivada da chave de rede e não podem ser repetidos.
 
 ---
 

@@ -68,6 +68,7 @@ class Net(
                 compress = forceCompress ?: (ch.remote || ch.lowBandwidth)
                 val c = Conn(ch, key, false)
                 conn = c
+                c.clientHandshake()
                 c.startWriter()
                 c.sendJson(hello)
                 delay = 1000L
