@@ -95,7 +95,7 @@ _Versão: 1.8.0 · Última atualização: 2026-11-24_
 - **Sinais multimédia** — no telemóvel da Regia, separador Sinais → *Enviar um ficheiro…* escolhe uma imagem, um vídeo ou um áudio (até 8 MB) e envia‑o por partes aos telemóveis escolhidos; cada um verifica tamanho e soma de controlo e ignora um ficheiro danificado. Depois use *Imagem no ecrã*, *Vídeo no ecrã* ou *Clipe de áudio* (texto vazio = último ficheiro, ou `código;segundos`). Um toque longo fecha a imagem ou o vídeo. Os telemóveis que entram depois não têm o ficheiro: envie‑o de novo.
 - **OSC de saída** — Definições → *OSC*: cada sinal é também enviado como `/cuplaj/cue <para> <tipo> <texto>` por UDP a uma mesa de luz ou som, QLab ou Companion.
 - **OSC de entrada** — a mesa pode enviar `/cuplaj/<PIN do hub>/go`, `/panic`, `/stop` ou `/cue <para> <tipo> <texto>` à Regia (porta 8473 por defeito). O PIN no endereço é a única proteção: mantenha privada a rede do espetáculo. No máximo 20 mensagens por segundo.
-- **Não incluído** — iOS (só Android), MIDI, program feed e mais canais do que os grupos existentes.
+- **Não incluído** — iOS (só Android), program feed e mais canais do que os grupos existentes.
 
 ## 14. Espetáculo inteligente (1.7)
 
@@ -114,6 +114,35 @@ _Versão: 1.8.0 · Última atualização: 2026-11-24_
 - **Gravador fantasma** — grava até 60 s do microfone de um telemóvel no hub e reproduz depois a um grupo, como uma voz de lado nenhum (fonte reservada 253).
 - **Luzes de sala** — sinal *house*: pára tudo (como PÂNICO), vibra, ecrã branco e mensagem calma. **Morse** — sinal *morse*: vibra um texto em Morse.
 - **Relatório** — *Ferramentas → Relatório*: ficheiro Markdown com totais, chamadas/mensagens/entradas em zona/bateria por telemóvel e cronologia completa.
+
+## 16. Referência de sinais (todos os tipos)
+
+- **Prefixos** — `@3.5;` dispara o sinal após 3,5 s em todos os telemóveis ao mesmo tempo; `~150;` (depois de `@…;`) envia‑o aos telemóveis um a um, com 150 ms; `en=Hello|ro=Salut` escolhe o idioma de cada telemóvel; `{name}` e `{number}` são substituídos em cada telemóvel.
+- **`text`** — Texto no ecrã: Texto mostrado em ecrã inteiro
+- **`vibrate`** — Vibração: Duração em ms (ex. 800)
+- **`ring`** — Toque: (não é preciso texto)
+- **`flash`** — Flash: Duração em ms (ex. 1500)
+- **`speaker`** — Altifalante: 1 = ligado, 0 = desligado
+- **`contact`** — Adicionar contacto: Nome;número (ex. Mãe;204455)
+- **`era`** — Mudar de época: 1985, 1995 ou 2003
+- **`say`** — Voz falada: Texto a dizer
+- **`sound`** — Efeito sonoro: bell, siren, knock, static (sino, sirene, batida, estática)
+- **`blackout`** — Ecrã preto: 1;texto ou 0
+- **`fakecall`** — Chamada fantasma: Nome;número;palavras ditas
+- **`realcall`** — Chamada real (abre o marcador): Número a marcar, ex. +40721000111
+- **`panic`** — PÂNICO: parar tudo: (sem texto)
+- **`color`** — Cor em ecrã inteiro: #RRGGBB;segundos;pulsos por segundo (máx. 2)
+- **`poll`** — Sondagem (voto do público): pergunta;opção 1;opção 2;… (2–6 opções)
+- **`pollend`** — Terminar a sondagem e mostrar o resultado: (sem texto)
+- **`image`** — Imagem no ecrã: código do ficheiro;segundos (envie antes o ficheiro; vazio = último)
+- **`video`** — Vídeo no ecrã: código do ficheiro;segundos (envie antes o ficheiro; vazio = último)
+- **`clip`** — Clipe de áudio: código do ficheiro;segundos (envie antes o ficheiro; vazio = último)
+- **`caption`** — Legenda no ecrã: texto, ou en=Hello|ro=Salut|fr=Bonjour (cada telemóvel mostra a sua língua; {name} = nome do telemóvel)
+- **`dmx`** — Luzes: Art‑Net/DMX (telemóvel da regia): universo;canal=valor,intervalo=valor;fade ms — ex. 0;1=255,2-4=128;2000
+- **`midi`** — Saída MIDI (telemóvel da regia): note 60 127 [canal] · off 60 [canal] · cc 7 100 [canal] · pc 5 [canal] · mmc play|stop|record
+- **`morse`** — Código Morse por vibração: texto a transmitir (letras e algarismos; ~ 60 caracteres)
+- **`house`** — Luzes de sala (segurança: parar + ecrã branco): (opcional) mensagem mostrada no ecrã branco
+- **Gatilhos e ações de regras** — Uma regra por linha: ‹quando› > ‹quem› | ‹tipo de sinal› | ‹texto›. Quando: `zone 3 [once]`, `pollwin 0` (opção vencedora, desde 0), `meter noise|motion 70` (média ≥ 70). Quem: all, staff, spectators, actors, self (quem ativou), num:/id:/grp:. O tipo `goto` salta para um passo do guião por nome ou número. O texto pode usar {name}. Também `solved` (um segredo fragmentado foi adivinhado).
 
 ---
 

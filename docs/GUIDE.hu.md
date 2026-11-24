@@ -95,7 +95,7 @@ _Verzió: 1.8.0 · Utolsó frissítés: 2026-11-24_
 - **Média jelzések** — a rendezői telefonon a Jelzések fül → *Fájl küldése…* kiválaszt egy képet, videót vagy hangot (legfeljebb 8 MB), és darabokban elküldi a kijelölt telefonoknak; mindegyik ellenőrzi a méretet és az ellenőrző összeget, a sérült fájlt eldobja. Utána használd a *Kép a képernyőn*, *Videó a képernyőn* vagy *Hangklip* jelzést (üres szöveg = utolsó fájl, vagy `kód;másodperc`). Hosszú nyomás bezárja a képet/videót. A később csatlakozók nem kapják meg a fájlt: küldd újra.
 - **OSC kimenet** — Beállítások → *OSC*: minden jelzés `/cuplaj/cue <cél> <típus> <szöveg>` üzenetként is megy UDP-n egy fény- vagy hangpultra, QLab-ra vagy Companionra.
 - **OSC bemenet** — a pult `/cuplaj/<hub PIN>/go`, `/panic`, `/stop` vagy `/cue <cél> <típus> <szöveg>` üzenetet küldhet a rendezői telefonnak (alap port: 8473). A címben lévő PIN az egyetlen védelem: tartsd privátban az előadás hálózatát. Másodpercenként legfeljebb 20 üzenet fogadható.
-- **Nem része** — iOS (csak Android), MIDI, program feed és a meglévő csoportoknál több csatorna.
+- **Nem része** — iOS (csak Android), program feed és a meglévő csoportoknál több csatorna.
 
 ## 14. Okos előadás (1.7)
 
@@ -114,6 +114,35 @@ _Verzió: 1.8.0 · Utolsó frissítés: 2026-11-24_
 - **Szellemmagnó** — egy telefon mikrofonjából legfeljebb 60 mp-et rögzít a hubon, és később lejátssza egy csoportnak, mint a semmiből jövő hangot (fenntartott forrás: 253).
 - **Nézőtéri fények** — *house* jelzés: mindent leállít (mint a PÁNIK), rezeg, fehér képernyő és nyugodt üzenet. **Morze** — a *morse* jelzés egy szöveget Morze‑kóddal rezeg.
 - **Jelentés** — *Eszközök → Jelentés*: Markdown fájl összesítéssel, telefononkénti hívás/üzenet/zónabelépés/akku adatokkal és teljes idővonallal.
+
+## 16. Jelzések referenciája (minden típus)
+
+- **Előtagok** — az `@3.5;` 3,5 mp múlva, minden telefonon egyszerre indítja a jelzést; a `~150;` (az `@…;` után) egymás után küldi a telefonoknak, 150 ms különbséggel; az `en=Hello|ro=Salut` minden telefonnak a saját nyelvét választja; a `{name}` és `{number}` telefononként cserélődik.
+- **`text`** — Szöveg a képernyőn: Teljes képernyős szöveg
+- **`vibrate`** — Rezgés: Időtartam ms-ban (pl. 800)
+- **`ring`** — Csengetés: (nem kell szöveg)
+- **`flash`** — Vaku: Időtartam ms-ban (pl. 1500)
+- **`speaker`** — Hangszóró: 1 = be, 0 = ki
+- **`contact`** — Névjegy hozzáadása: Név;szám (pl. Anya;204455)
+- **`era`** — Korszakváltás: 1985, 1995 vagy 2003
+- **`say`** — Beszélt hang: Felolvasandó szöveg
+- **`sound`** — Hangeffekt: bell, siren, knock, static (csengő, sziréna, kopogás, zaj)
+- **`blackout`** — Fekete képernyő: 1;szöveg vagy 0
+- **`fakecall`** — Szellemhívás: Név;szám;felolvasott szöveg
+- **`realcall`** — Valódi hívás (megnyitja a tárcsázót): A tárcsázandó szám, pl. +40721000111
+- **`panic`** — PÁNIK: mindent leállít: (nincs szöveg)
+- **`color`** — Teljes képernyős szín: #RRGGBB;másodperc;impulzus/másodperc (max. 2)
+- **`poll`** — Szavazás (közönség): kérdés;1. lehetőség;2. lehetőség;… (2–6)
+- **`pollend`** — Szavazás lezárása és eredmény: (nincs szöveg)
+- **`image`** — Kép a képernyőn: fájlkód;másodperc (előbb küldd el a fájlt; üres = utolsó)
+- **`video`** — Videó a képernyőn: fájlkód;másodperc (előbb küldd el a fájlt; üres = utolsó)
+- **`clip`** — Hangklip: fájlkód;másodperc (előbb küldd el a fájlt; üres = utolsó)
+- **`caption`** — Felirat a képernyőn: szöveg, vagy en=Hello|ro=Salut|fr=Bonjour (minden telefon a saját nyelvét mutatja; {name} = a telefon neve)
+- **`dmx`** — Fények: Art‑Net/DMX (a rendező telefonja): univerzum;csatorna=érték,tartomány=érték;áttűnés ms — pl. 0;1=255,2-4=128;2000
+- **`midi`** — MIDI kimenet (a rendező telefonja): note 60 127 [csat.] · off 60 [csat.] · cc 7 100 [csat.] · pc 5 [csat.] · mmc play|stop|record
+- **`morse`** — Morze‑kód rezgéssel: küldendő szöveg (betűk és számjegyek; ~ 60 karakter)
+- **`house`** — Nézőtéri fények (biztonság: leállítás + fehér képernyő): (opcionális) a fehér képernyőn megjelenő üzenet
+- **Szabály‑kioldók és ‑műveletek** — Soronként egy szabály: ‹mikor› > ‹kinek› | ‹jelzés típusa› | ‹szöveg›. Mikor: `zone 3 [once]`, `pollwin 0` (nyertes opció, 0-tól), `meter noise|motion 70` (átlag ≥ 70). Kinek: all, staff, spectators, actors, self (aki kiváltotta), num:/id:/grp:. A `goto` típus név vagy szám szerint a forgatókönyv egy lépésére ugrik. A szöveg használhatja a {name} jelölést. Valamint `solved` (megfejtették a szétosztott titkot).
 
 ---
 

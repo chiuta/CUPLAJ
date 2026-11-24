@@ -95,7 +95,7 @@ _Versiune: 1.8.0 · Ultima actualizare: 2026-11-24_
 - **Replici media** — pe telefonul Regiei, fila Replici → *Trimite un fișier…* alege o imagine, un video sau un audio (până la 8 MB) și îl trimite pe bucăți telefoanelor alese; fiecare telefon verifică mărimea și suma de control și ignoră un fișier deteriorat. Apoi folosește tipurile *Imagine pe ecran*, *Video pe ecran* sau *Clip audio* (lasă textul gol pentru ultimul fișier, sau `cod;secunde`). Apăsarea lungă închide imaginea sau videoul. Telefoanele care intră mai târziu nu au fișierul: trimite‑l din nou.
 - **OSC ieșire** — Setări → *OSC*: fiecare replică se trimite și ca `/cuplaj/cue <către> <tip> <text>` prin UDP către un pupitru de lumini sau sunet, QLab sau Companion.
 - **OSC intrare** — pupitrul poate trimite `/cuplaj/<PIN hub>/go`, `/panic`, `/stop` sau `/cue <către> <tip> <text>` telefonului Regiei (port implicit 8473). PIN‑ul din adresă e singura protecție: ține rețeaua spectacolului privată. Se acceptă cel mult 20 de mesaje pe secundă.
-- **Nu sunt incluse** — iOS (doar Android), MIDI, program feed și mai multe canale decât grupurile existente.
+- **Nu sunt incluse** — iOS (doar Android), program feed și mai multe canale decât grupurile existente.
 
 ## 14. Spectacol inteligent (1.7)
 
@@ -114,6 +114,35 @@ _Versiune: 1.8.0 · Ultima actualizare: 2026-11-24_
 - **Casetofon‑fantomă** — înregistrezi până la 60 s din microfonul unui telefon pe hub și le redai mai târziu oricărui grup, ca o voce de nicăieri (sursa rezervată 253).
 - **Lumini de sală** — cue *house*: oprește tot (ca PANICA), vibrează, arată un ecran alb și un mesaj calm. **Morse** — cue *morse* vibrează un text în cod Morse.
 - **Raport** — *Instrumente → Raport*: un fișier Markdown cu totaluri, apeluri/mesaje/intrări în zone/baterie pe telefon și cronologia completă, partajat cu orice aplicație.
+
+## 16. Referință cue‑uri (toate tipurile)
+
+- **Prefixe** — `@3.5;` declanșează cue‑ul după 3,5 s pe toate telefoanele deodată; `~150;` (după `@…;`) îl trimite telefoanelor pe rând, la 150 ms; `en=Hello|ro=Salut` alege limba fiecărui telefon; `{name}` și `{number}` se înlocuiesc pe fiecare telefon.
+- **`text`** — Text pe ecran: Textul afișat pe tot ecranul
+- **`vibrate`** — Vibrație: Durata în ms (ex. 800)
+- **`ring`** — Sunet de apel: (nu e nevoie de text)
+- **`flash`** — Bliț: Durata în ms (ex. 1500)
+- **`speaker`** — Difuzor: 1 = pornit, 0 = oprit
+- **`contact`** — Adaugă contact: Nume;număr (ex. Mama;204455)
+- **`era`** — Schimbă epoca: 1985, 1995 sau 2003
+- **`say`** — Voce vorbită: Textul de rostit
+- **`sound`** — Efect sonor: bell, siren, knock, static (clopot, sirenă, ciocănit, statică)
+- **`blackout`** — Ecran negru: 1;text sau 0
+- **`fakecall`** — Apel fantomă: Nume;număr;cuvinte rostite
+- **`realcall`** — Apel real (deschide formatorul): Numărul de format, ex. +40721000111
+- **`panic`** — PANICĂ: oprește tot: (fără text)
+- **`color`** — Culoare pe tot ecranul: #RRGGBB;secunde;pulsuri pe secundă (max 2)
+- **`poll`** — Sondaj (votul publicului): întrebare;opțiunea 1;opțiunea 2;… (2–6 opțiuni)
+- **`pollend`** — Încheie sondajul și arată rezultatul: (fără text)
+- **`image`** — Imagine pe ecran: cod fișier;secunde (trimite întâi fișierul; gol = ultimul)
+- **`video`** — Video pe ecran: cod fișier;secunde (trimite întâi fișierul; gol = ultimul)
+- **`clip`** — Clip audio: cod fișier;secunde (trimite întâi fișierul; gol = ultimul)
+- **`caption`** — Subtitrare pe ecran: text, sau en=Hello|ro=Salut|fr=Bonjour (fiecare telefon arată limba lui; {name} = numele telefonului)
+- **`dmx`** — Lumini: Art‑Net/DMX (telefonul Regiei): univers;canal=valoare,interval=valoare;fade ms — ex. 0;1=255,2-4=128;2000
+- **`midi`** — Ieșire MIDI (telefonul Regiei): note 60 127 [can] · off 60 [can] · cc 7 100 [can] · pc 5 [can] · mmc play|stop|record
+- **`morse`** — Cod Morse prin vibrații: textul de transmis (litere și cifre; ~ 60 de caractere)
+- **`house`** — Lumini de sală (siguranță: oprire + ecran alb): (opțional) mesajul afișat pe ecranul alb
+- **Declanșatoare și acțiuni de reguli** — O regulă pe linie: ‹când› > ‹cine› | ‹tip replică› | ‹text›. Când: `zone 3 [once]`, `pollwin 0` (opțiunea câștigătoare, de la 0), `meter noise|motion 70` (media ≥ 70). Cine: all, staff, spectators, actors, self (cel care a declanșat), num:/id:/grp:. Tipul `goto` sare la un pas din scenariu după nume sau număr. Textul poate folosi {name}. Și `solved` (un secret fragmentat a fost ghicit).
 
 ---
 

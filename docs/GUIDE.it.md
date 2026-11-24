@@ -95,7 +95,7 @@ _Versione: 1.8.0 · Ultimo aggiornamento: 2026-11-24_
 - **Cue media** — sul telefono della regia, scheda Cue → *Invia un file…* sceglie un'immagine, un video o un audio (fino a 8 MB) e lo invia a pezzi ai telefoni scelti; ognuno verifica dimensione e checksum e ignora un file danneggiato. Poi usa *Immagine a schermo*, *Video a schermo* o *Clip audio* (testo vuoto = ultimo file, o `codice;secondi`). Una pressione lunga chiude immagine o video. I telefoni entrati dopo non hanno il file: invialo di nuovo.
 - **OSC in uscita** — Impostazioni → *OSC*: ogni cue è inviato anche come `/cuplaj/cue <verso> <tipo> <testo>` via UDP a un mixer luci o audio, QLab o Companion.
 - **OSC in ingresso** — il mixer può inviare `/cuplaj/<PIN hub>/go`, `/panic`, `/stop` o `/cue <verso> <tipo> <testo>` alla regia (porta 8473 predefinita). Il PIN nell'indirizzo è l'unica protezione: tieni privata la rete dello spettacolo. Al massimo 20 messaggi al secondo.
-- **Non inclusi** — iOS (solo Android), MIDI, program feed e più canali dei gruppi esistenti.
+- **Non inclusi** — iOS (solo Android), program feed e più canali dei gruppi esistenti.
 
 ## 14. Spettacolo intelligente (1.7)
 
@@ -114,6 +114,35 @@ _Versione: 1.8.0 · Ultimo aggiornamento: 2026-11-24_
 - **Registratore fantasma** — registra fino a 60 s dal microfono di un telefono sull'hub e lo riproduce poi a un gruppo, come una voce dal nulla (sorgente riservata 253).
 - **Luci di sala** — cue *house*: ferma tutto (come PANICO), vibra, schermo bianco e messaggio calmo. **Morse** — cue *morse*: vibra un testo in Morse.
 - **Rapporto** — *Strumenti → Rapporto*: file Markdown con totali, chiamate/messaggi/ingressi in zona/batteria per telefono e cronologia completa.
+
+## 16. Riferimento dei cue (tutti i tipi)
+
+- **Prefissi** — `@3.5;` fa partire il cue dopo 3,5 s su tutti i telefoni insieme; `~150;` (dopo `@…;`) lo invia ai telefoni uno dopo l'altro, a 150 ms; `en=Hello|ro=Salut` sceglie la lingua di ogni telefono; `{name}` e `{number}` sono sostituiti su ogni telefono.
+- **`text`** — Testo a schermo: Testo mostrato a tutto schermo
+- **`vibrate`** — Vibrazione: Durata in ms (es. 800)
+- **`ring`** — Squillo: (nessun testo necessario)
+- **`flash`** — Flash: Durata in ms (es. 1500)
+- **`speaker`** — Altoparlante: 1 = acceso, 0 = spento
+- **`contact`** — Aggiungi contatto: Nome;numero (es. Mamma;204455)
+- **`era`** — Cambia epoca: 1985, 1995 o 2003
+- **`say`** — Voce parlata: Testo da pronunciare
+- **`sound`** — Effetto sonoro: bell, siren, knock, static (campana, sirena, bussare, disturbo)
+- **`blackout`** — Schermo nero: 1;testo oppure 0
+- **`fakecall`** — Chiamata fantasma: Nome;numero;parole pronunciate
+- **`realcall`** — Chiamata reale (apre il tastierino): Numero da comporre, es. +40721000111
+- **`panic`** — PANICO: ferma tutto: (senza testo)
+- **`color`** — Colore a schermo intero: #RRGGBB;secondi;impulsi al secondo (max 2)
+- **`poll`** — Sondaggio (voto del pubblico): domanda;opzione 1;opzione 2;… (2–6 opzioni)
+- **`pollend`** — Chiudi il sondaggio e mostra il risultato: (senza testo)
+- **`image`** — Immagine a schermo: codice file;secondi (invia prima il file; vuoto = ultimo)
+- **`video`** — Video a schermo: codice file;secondi (invia prima il file; vuoto = ultimo)
+- **`clip`** — Clip audio: codice file;secondi (invia prima il file; vuoto = ultimo)
+- **`caption`** — Sottotitolo a schermo: testo, oppure en=Hello|ro=Salut|fr=Bonjour (ogni telefono mostra la sua lingua; {name} = nome del telefono)
+- **`dmx`** — Luci: Art‑Net/DMX (telefono della regia): universo;canale=valore,intervallo=valore;dissolvenza ms — es. 0;1=255,2-4=128;2000
+- **`midi`** — Uscita MIDI (telefono della regia): note 60 127 [can] · off 60 [can] · cc 7 100 [can] · pc 5 [can] · mmc play|stop|record
+- **`morse`** — Codice Morse a vibrazione: testo da trasmettere (lettere e cifre; ~ 60 caratteri)
+- **`house`** — Luci di sala (sicurezza: stop + schermo bianco): (facoltativo) messaggio mostrato sullo schermo bianco
+- **Trigger e azioni delle regole** — Una regola per riga: ‹quando› > ‹chi› | ‹tipo di cue› | ‹testo›. Quando: `zone 3 [once]`, `pollwin 0` (opzione vincente, da 0), `meter noise|motion 70` (media ≥ 70). Chi: all, staff, spectators, actors, self (chi ha attivato), num:/id:/grp:. Il tipo `goto` salta a un passo del copione per nome o numero. Il testo può usare {name}. Anche `solved` (un segreto frammentato è stato indovinato).
 
 ---
 

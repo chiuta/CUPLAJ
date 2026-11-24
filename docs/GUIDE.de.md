@@ -95,7 +95,7 @@ _Version: 1.8.0 · Letzte Aktualisierung: 2026-11-24_
 - **Medien‑Cues** — am Regie‑Telefon: Reiter Cues → *Datei senden…* wählt Bild, Video oder Audio (bis 8 MB) und sendet es stückweise an die gewählten Telefone; jedes prüft Größe und Prüfsumme und ignoriert beschädigte Dateien. Danach *Bild auf dem Bildschirm*, *Video auf dem Bildschirm* oder *Audioclip* verwenden (leerer Text = letzte Datei, oder `Code;Sekunden`). Langer Druck schließt Bild oder Video. Später beigetretene Telefone haben die Datei nicht: erneut senden.
 - **OSC aus** — Einstellungen → *OSC*: jeder Cue wird auch als `/cuplaj/cue <an> <Typ> <Text>` per UDP an ein Licht‑ oder Tonpult, QLab oder Companion gesendet.
 - **OSC ein** — das Pult kann `/cuplaj/<Hub‑PIN>/go`, `/panic`, `/stop` oder `/cue <an> <Typ> <Text>` an die Regie senden (Standardport 8473). Die PIN in der Adresse ist der einzige Schutz: das Show‑Netz privat halten. Höchstens 20 Nachrichten pro Sekunde.
-- **Nicht enthalten** — iOS (nur Android), MIDI, Programm‑Feed und mehr Kanäle als die vorhandenen Gruppen.
+- **Nicht enthalten** — iOS (nur Android), Programm‑Feed und mehr Kanäle als die vorhandenen Gruppen.
 
 ## 14. Intelligente Show (1.7)
 
@@ -114,6 +114,35 @@ _Version: 1.8.0 · Letzte Aktualisierung: 2026-11-24_
 - **Geisterband** — nimmt bis zu 60 s vom Mikrofon eines Telefons auf dem Hub auf und spielt sie später einer Gruppe vor, wie eine Stimme aus dem Nichts (reservierte Quelle 253).
 - **Saallicht** — Cue *house*: stoppt alles (wie PANIK), vibriert, weißer Bildschirm und ruhige Meldung. **Morse** — Cue *morse*: vibriert einen Text in Morsecode.
 - **Bericht** — *Werkzeuge → Bericht*: Markdown‑Datei mit Summen, Anrufen/Nachrichten/Zonenbesuchen/Akku pro Telefon und vollständiger Zeitleiste.
+
+## 16. Cue‑Referenz (alle Arten)
+
+- **Präfixe** — `@3.5;` löst den Cue nach 3,5 s auf allen Telefonen gleichzeitig aus; `~150;` (nach `@…;`) sendet ihn nacheinander an die Telefone, im Abstand von 150 ms; `en=Hello|ro=Salut` wählt die Sprache jedes Telefons; `{name}` und `{number}` werden auf jedem Telefon ersetzt.
+- **`text`** — Text auf dem Bildschirm: Text im Vollbild
+- **`vibrate`** — Vibration: Dauer in ms (z. B. 800)
+- **`ring`** — Klingeln: (kein Text nötig)
+- **`flash`** — Blitz: Dauer in ms (z. B. 1500)
+- **`speaker`** — Lautsprecher: 1 = an, 0 = aus
+- **`contact`** — Kontakt hinzufügen: Name;Nummer (z. B. Mutter;204455)
+- **`era`** — Epoche wechseln: 1985, 1995 oder 2003
+- **`say`** — Gesprochene Stimme: Zu sprechender Text
+- **`sound`** — Klangeffekt: bell, siren, knock, static (Glocke, Sirene, Klopfen, Rauschen)
+- **`blackout`** — Schwarzer Bildschirm: 1;Text oder 0
+- **`fakecall`** — Geisteranruf: Name;Nummer;gesprochener Text
+- **`realcall`** — Echter Anruf (öffnet die Wähl-App): Zu wählende Nummer, z. B. +40721000111
+- **`panic`** — PANIK: alles stoppen: (kein Text)
+- **`color`** — Vollbildfarbe: #RRGGBB;Sekunden;Pulse pro Sekunde (max. 2)
+- **`poll`** — Umfrage (Publikumsabstimmung): Frage;Option 1;Option 2;… (2–6 Optionen)
+- **`pollend`** — Umfrage beenden und Ergebnis zeigen: (kein Text)
+- **`image`** — Bild auf dem Bildschirm: Dateicode;Sekunden (Datei zuerst senden; leer = letzte)
+- **`video`** — Video auf dem Bildschirm: Dateicode;Sekunden (Datei zuerst senden; leer = letzte)
+- **`clip`** — Audioclip: Dateicode;Sekunden (Datei zuerst senden; leer = letzte)
+- **`caption`** — Untertitel auf dem Bildschirm: Text oder en=Hello|ro=Salut|fr=Bonjour (jedes Telefon zeigt seine Sprache; {name} = Name des Telefons)
+- **`dmx`** — Licht: Art‑Net/DMX (Regie‑Telefon): Universum;Kanal=Wert,Bereich=Wert;Überblendung ms — z. B. 0;1=255,2-4=128;2000
+- **`midi`** — MIDI‑Ausgang (Regie‑Telefon): note 60 127 [Kanal] · off 60 [Kanal] · cc 7 100 [Kanal] · pc 5 [Kanal] · mmc play|stop|record
+- **`morse`** — Morsecode per Vibration: zu sendender Text (Buchstaben und Ziffern; ~ 60 Zeichen)
+- **`house`** — Saallicht (Sicherheit: Stopp + weißer Bildschirm): (optional) Meldung auf dem weißen Bildschirm
+- **Regel‑Auslöser und ‑Aktionen** — Eine Regel pro Zeile: ‹wann› > ‹wer› | ‹Cue‑Typ› | ‹Text›. Wann: `zone 3 [once]`, `pollwin 0` (Gewinneroption, ab 0), `meter noise|motion 70` (Mittel ≥ 70). Wer: all, staff, spectators, actors, self (wer ausgelöst hat), num:/id:/grp:. Typ `goto` springt zu einem Ablaufschritt per Name oder Nummer. Der Text darf {name} nutzen. Auch `solved` (ein geteiltes Geheimnis wurde erraten).
 
 ---
 

@@ -95,7 +95,7 @@ _Version: 1.8.0 · Last update: 2026-11-24_
 - **Media cues** — on the control phone, Cue tab → *Send a file…* picks an image, video or audio file (up to 8 MB) and sends it in pieces to the selected phones; each phone checks size and checksum and ignores a damaged file. Then use the cue kinds *Image on screen*, *Video on screen* or *Audio clip* (leave the text empty to use the last file, or `code;seconds`). Long‑press closes an image or video. Phones that join later do not have the file: send it again.
 - **OSC out** — Settings → *OSC*: every cue is also sent as `/cuplaj/cue <to> <kind> <text>` over UDP to a lighting or sound desk, QLab or Companion.
 - **OSC in** — the desk can send `/cuplaj/<hub PIN>/go`, `/panic`, `/stop` or `/cue <to> <kind> <text>` to the control phone (default port 8473). The PIN in the address is the only protection: keep the show network private. At most 20 messages per second are accepted.
-- **Not included** — iOS (Android only), MIDI, a program feed, and more than the existing group channels.
+- **Not included** — iOS (Android only), a program feed, and more than the existing group channels.
 
 ## 14. Smart show (1.7)
 
@@ -114,6 +114,35 @@ _Version: 1.8.0 · Last update: 2026-11-24_
 - **Ghost tape** — record up to 60 s of one phone's microphone on the hub and play it back later to any group, as a voice from nowhere (reserved source 253).
 - **House lights** — cue kind *house*: stops everything (like PANIC), vibrates, shows a white screen and a calm message. **Morse** — cue kind *morse* vibrates a text in Morse code.
 - **Report** — *Show tools → Report*: a Markdown file with totals, per‑phone calls/messages/zone entries/battery and the full timeline, shared with any app.
+
+## 16. Cue reference (all kinds)
+
+- **Prefixes** — `@3.5;` fires the cue after 3.5 s on every phone at once; `~150;` (after `@…;`) sends it to the phones one after another, 150 ms apart; `en=Hello|ro=Salut` picks each phone's language; `{name}` and `{number}` are replaced on each phone.
+- **`text`** — Text on screen: Text shown full-screen
+- **`vibrate`** — Vibration: Duration in ms (e.g. 800)
+- **`ring`** — Ring: (no text needed)
+- **`flash`** — Flash: Duration in ms (e.g. 1500)
+- **`speaker`** — Loudspeaker: 1 = on, 0 = off
+- **`contact`** — Add contact: Name;number (e.g. Mother;204455)
+- **`era`** — Change era: 1985, 1995 or 2003
+- **`say`** — Spoken voice: Text to be spoken
+- **`sound`** — Sound effect: bell, siren, knock, static
+- **`blackout`** — Black screen: 1;text or 0
+- **`fakecall`** — Phantom call: Name;number;spoken words
+- **`realcall`** — Real phone call (opens the dialler): Number to dial, e.g. +40721000111
+- **`panic`** — PANIC: stop everything: (no text)
+- **`color`** — Full-screen colour: #RRGGBB;seconds;pulses per second (max 2)
+- **`poll`** — Poll (audience vote): question;option 1;option 2;… (2–6 options)
+- **`pollend`** — End poll and show result: (no text)
+- **`image`** — Image on screen: file code;seconds (send the file first; empty = last file)
+- **`video`** — Video on screen: file code;seconds (send the file first; empty = last file)
+- **`clip`** — Audio clip: file code;seconds (send the file first; empty = last file)
+- **`caption`** — Caption (subtitle on screen): text, or en=Hello|ro=Salut|fr=Bonjour (each phone shows its own language; {name} = the phone's name)
+- **`dmx`** — Lights: Art‑Net/DMX (Regie phone): universe;channel=value,range=value;fade ms — e.g. 0;1=255,2-4=128;2000
+- **`midi`** — MIDI out (Regie phone): note 60 127 [ch] · off 60 [ch] · cc 7 100 [ch] · pc 5 [ch] · mmc play|stop|record
+- **`morse`** — Morse code by vibration: text to tap out (letters and digits; ~ 60 characters)
+- **`house`** — House lights (safety: stop + white screen): (optional) message shown on the white screen
+- **Rule triggers and actions** — One rule per line: ‹when› > ‹who› | ‹cue kind› | ‹text›. When: `zone 3 [once]`, `pollwin 0` (winning option, from 0), `meter noise|motion 70` (average ≥ 70). Who: all, staff, spectators, actors, self (the one who triggered), num:/id:/grp:. Cue kind `goto` jumps to a script step by name or number. Text may use {name}. Also `solved` (a split secret was guessed).
 
 ---
 

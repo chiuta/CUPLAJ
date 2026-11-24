@@ -95,7 +95,7 @@ _Version : 1.8.0 · Dernière mise à jour : 2026-11-24_
 - **Indices média** — sur le téléphone de régie, onglet Indices → *Envoyer un fichier…* choisit une image, une vidéo ou un audio (jusqu'à 8 Mo) et l'envoie par morceaux aux téléphones choisis ; chacun vérifie la taille et la somme de contrôle et ignore un fichier abîmé. Utilisez ensuite *Image à l'écran*, *Vidéo à l'écran* ou *Clip audio* (texte vide = dernier fichier, ou `code;secondes`). Un appui long ferme l'image ou la vidéo. Les téléphones arrivés plus tard n'ont pas le fichier : renvoyez‑le.
 - **OSC sortie** — Réglages → *OSC* : chaque indice est aussi envoyé en `/cuplaj/cue <vers> <type> <texte>` par UDP à un pupitre lumière ou son, QLab ou Companion.
 - **OSC entrée** — le pupitre peut envoyer `/cuplaj/<PIN du hub>/go`, `/panic`, `/stop` ou `/cue <vers> <type> <texte>` à la régie (port 8473 par défaut). Le PIN dans l'adresse est la seule protection : gardez le réseau du spectacle privé. 20 messages par seconde au plus.
-- **Non inclus** — iOS (Android seulement), MIDI, flux programme et plus de canaux que les groupes existants.
+- **Non inclus** — iOS (Android seulement), flux programme et plus de canaux que les groupes existants.
 
 ## 14. Spectacle intelligent (1.7)
 
@@ -114,6 +114,35 @@ _Version : 1.8.0 · Dernière mise à jour : 2026-11-24_
 - **Magnétophone fantôme** — enregistre jusqu'à 60 s du micro d'un téléphone sur le hub et le rejoue plus tard à un groupe, comme une voix venue de nulle part (source réservée 253).
 - **Lumière de salle** — signal *house* : arrête tout (comme PANIQUE), vibre, écran blanc et message calme. **Morse** — signal *morse* : vibre un texte en Morse.
 - **Rapport** — *Outils → Rapport* : fichier Markdown avec totaux, appels/messages/entrées de zone/batterie par téléphone et chronologie complète.
+
+## 16. Référence des signaux (tous les types)
+
+- **Préfixes** — `@3.5;` déclenche le signal après 3,5 s sur tous les téléphones à la fois ; `~150;` (après `@…;`) l'envoie aux téléphones l'un après l'autre, à 150 ms ; `en=Hello|ro=Salut` choisit la langue de chaque téléphone ; `{name}` et `{number}` sont remplacés sur chaque téléphone.
+- **`text`** — Texte à l'écran: Texte affiché en plein écran
+- **`vibrate`** — Vibration: Durée en ms (ex. 800)
+- **`ring`** — Sonnerie: (aucun texte nécessaire)
+- **`flash`** — Flash: Durée en ms (ex. 1500)
+- **`speaker`** — Haut-parleur: 1 = activé, 0 = désactivé
+- **`contact`** — Ajouter un contact: Nom;numéro (ex. Maman;204455)
+- **`era`** — Changer d'époque: 1985, 1995 ou 2003
+- **`say`** — Voix parlée: Texte à prononcer
+- **`sound`** — Effet sonore: bell, siren, knock, static (cloche, sirène, coups, parasites)
+- **`blackout`** — Écran noir: 1;texte ou 0
+- **`fakecall`** — Appel fantôme: Nom;numéro;paroles prononcées
+- **`realcall`** — Appel réel (ouvre le numéroteur): Numéro à composer, ex. +40721000111
+- **`panic`** — PANIQUE : tout arrêter: (sans texte)
+- **`color`** — Couleur plein écran: #RRGGBB;secondes;pulsations par seconde (max 2)
+- **`poll`** — Sondage (vote du public): question;option 1;option 2;… (2–6 options)
+- **`pollend`** — Clore le sondage et afficher le résultat: (sans texte)
+- **`image`** — Image à l'écran: code du fichier;secondes (envoyez d'abord le fichier ; vide = dernier)
+- **`video`** — Vidéo à l'écran: code du fichier;secondes (envoyez d'abord le fichier ; vide = dernier)
+- **`clip`** — Clip audio: code du fichier;secondes (envoyez d'abord le fichier ; vide = dernier)
+- **`caption`** — Sous‑titre à l'écran: texte, ou en=Hello|ro=Salut|fr=Bonjour (chaque téléphone affiche sa langue ; {name} = nom du téléphone)
+- **`dmx`** — Lumières : Art‑Net/DMX (téléphone de la régie): univers;canal=valeur,plage=valeur;fondu ms — ex. 0;1=255,2-4=128;2000
+- **`midi`** — Sortie MIDI (téléphone de la régie): note 60 127 [canal] · off 60 [canal] · cc 7 100 [canal] · pc 5 [canal] · mmc play|stop|record
+- **`morse`** — Code Morse par vibrations: texte à transmettre (lettres et chiffres ; ~ 60 caractères)
+- **`house`** — Lumière de salle (sécurité : arrêt + écran blanc): (facultatif) message affiché sur l’écran blanc
+- **Déclencheurs et actions de règles** — Une règle par ligne : ‹quand› > ‹qui› | ‹type d'indice› | ‹texte›. Quand : `zone 3 [once]`, `pollwin 0` (option gagnante, dès 0), `meter noise|motion 70` (moyenne ≥ 70). Qui : all, staff, spectators, actors, self (celui qui a déclenché), num:/id:/grp:. Le type `goto` saute à une étape du scénario par nom ou numéro. Le texte peut utiliser {name}. Aussi `solved` (un secret fragmenté a été deviné).
 
 ---
 

@@ -7,6 +7,25 @@ from docs_src import D, LANGS, NAMES
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION, DATE = "1.8.0", "2026-11-24"
 REPO = "https://github.com/chiuta/CUPLAJ"
+
+# ---- generated: full cue reference from the app's own strings (always matches the app)
+import csv
+_rows = list(csv.reader(open(os.path.join(ROOT, "app/src/main/assets/i18n.tsv"), encoding="utf-8"), delimiter="\t"))
+_hdr = _rows[0]; _hdr[0] = _hdr[0].lstrip("# ")
+_kinds = re.findall(r'"(\w+)"', re.search(r'val CUE_KINDS = listOf\((.*?)\)', open(os.path.join(ROOT, "app/src/main/kotlin/ro/trom/cuplaj/Tabs.kt"), encoding="utf-8").read()).group(1))
+_T = {"en": ("Cue reference (all kinds)", "**Prefixes** — `@3.5;` fires the cue after 3.5 s on every phone at once; `~150;` (after `@…;`) sends it to the phones one after another, 150 ms apart; `en=Hello|ro=Salut` picks each phone's language; `{name}` and `{number}` are replaced on each phone.", "**Rule triggers and actions** — "),
+ "ro": ("Referință cue‑uri (toate tipurile)", "**Prefixe** — `@3.5;` declanșează cue‑ul după 3,5 s pe toate telefoanele deodată; `~150;` (după `@…;`) îl trimite telefoanelor pe rând, la 150 ms; `en=Hello|ro=Salut` alege limba fiecărui telefon; `{name}` și `{number}` se înlocuiesc pe fiecare telefon.", "**Declanșatoare și acțiuni de reguli** — "),
+ "fr": ("Référence des signaux (tous les types)", "**Préfixes** — `@3.5;` déclenche le signal après 3,5 s sur tous les téléphones à la fois ; `~150;` (après `@…;`) l'envoie aux téléphones l'un après l'autre, à 150 ms ; `en=Hello|ro=Salut` choisit la langue de chaque téléphone ; `{name}` et `{number}` sont remplacés sur chaque téléphone.", "**Déclencheurs et actions de règles** — "),
+ "it": ("Riferimento dei cue (tutti i tipi)", "**Prefissi** — `@3.5;` fa partire il cue dopo 3,5 s su tutti i telefoni insieme; `~150;` (dopo `@…;`) lo invia ai telefoni uno dopo l'altro, a 150 ms; `en=Hello|ro=Salut` sceglie la lingua di ogni telefono; `{name}` e `{number}` sono sostituiti su ogni telefono.", "**Trigger e azioni delle regole** — "),
+ "es": ("Referencia de señales (todos los tipos)", "**Prefijos** — `@3.5;` lanza la señal a los 3,5 s en todos los teléfonos a la vez; `~150;` (tras `@…;`) la envía a los teléfonos uno tras otro, a 150 ms; `en=Hello|ro=Salut` elige el idioma de cada teléfono; `{name}` y `{number}` se sustituyen en cada teléfono.", "**Disparadores y acciones de reglas** — "),
+ "pt": ("Referência de sinais (todos os tipos)", "**Prefixos** — `@3.5;` dispara o sinal após 3,5 s em todos os telemóveis ao mesmo tempo; `~150;` (depois de `@…;`) envia‑o aos telemóveis um a um, com 150 ms; `en=Hello|ro=Salut` escolhe o idioma de cada telemóvel; `{name}` e `{number}` são substituídos em cada telemóvel.", "**Gatilhos e ações de regras** — "),
+ "de": ("Cue‑Referenz (alle Arten)", "**Präfixe** — `@3.5;` löst den Cue nach 3,5 s auf allen Telefonen gleichzeitig aus; `~150;` (nach `@…;`) sendet ihn nacheinander an die Telefone, im Abstand von 150 ms; `en=Hello|ro=Salut` wählt die Sprache jedes Telefons; `{name}` und `{number}` werden auf jedem Telefon ersetzt.", "**Regel‑Auslöser und ‑Aktionen** — "),
+ "hu": ("Jelzések referenciája (minden típus)", "**Előtagok** — az `@3.5;` 3,5 mp múlva, minden telefonon egyszerre indítja a jelzést; a `~150;` (az `@…;` után) egymás után küldi a telefonoknak, 150 ms különbséggel; az `en=Hello|ro=Salut` minden telefonnak a saját nyelvét választja; a `{name}` és `{number}` telefononként cserélődik.", "**Szabály‑kioldók és ‑műveletek** — ")}
+for _l in LANGS:
+    _c = _hdr.index(_l)
+    _m = {r[0]: re.sub(r"<([^<>]*)>", r"‹\1›", r[_c]) for r in _rows[1:] if len(r) > _c}
+    _items = [_T[_l][1]] + ["**`%s`** — %s: %s" % (k, _m["cue_" + k], _m["hint_" + k]) for k in _kinds] + [_T[_l][2] + _m["rules_hint"]]
+    D[_l]["g"] = D[_l]["g"] + [(_T[_l][0], _items)]
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
 
 def bar(prefix, cur, ext_en):

@@ -95,7 +95,7 @@ _Versión: 1.8.0 · Última actualización: 2026-11-24_
 - **Señales multimedia** — en el teléfono de regiduría, pestaña Señales → *Enviar un archivo…* elige una imagen, un vídeo o un audio (hasta 8 MB) y lo envía por partes a los teléfonos elegidos; cada uno comprueba tamaño y suma de control e ignora un archivo dañado. Luego usa *Imagen en pantalla*, *Vídeo en pantalla* o *Clip de audio* (texto vacío = último archivo, o `código;segundos`). Una pulsación larga cierra la imagen o el vídeo. Los teléfonos que entran después no tienen el archivo: envíalo de nuevo.
 - **OSC de salida** — Ajustes → *OSC*: cada señal se envía también como `/cuplaj/cue <a> <tipo> <texto>` por UDP a una mesa de luces o sonido, QLab o Companion.
 - **OSC de entrada** — la mesa puede enviar `/cuplaj/<PIN del hub>/go`, `/panic`, `/stop` o `/cue <a> <tipo> <texto>` a regiduría (puerto 8473 por defecto). El PIN en la dirección es la única protección: mantén privada la red del espectáculo. Máximo 20 mensajes por segundo.
-- **No incluido** — iOS (solo Android), MIDI, program feed y más canales que los grupos existentes.
+- **No incluido** — iOS (solo Android), program feed y más canales que los grupos existentes.
 
 ## 14. Espectáculo inteligente (1.7)
 
@@ -114,6 +114,35 @@ _Versión: 1.8.0 · Última actualización: 2026-11-24_
 - **Grabadora fantasma** — graba hasta 60 s del micrófono de un teléfono en el hub y los reproduce luego a un grupo, como una voz de la nada (fuente reservada 253).
 - **Luces de sala** — señal *house*: detiene todo (como PÁNICO), vibra, pantalla blanca y mensaje tranquilo. **Morse** — señal *morse*: vibra un texto en Morse.
 - **Informe** — *Herramientas → Informe*: archivo Markdown con totales, llamadas/mensajes/entradas de zona/batería por teléfono y cronología completa.
+
+## 16. Referencia de señales (todos los tipos)
+
+- **Prefijos** — `@3.5;` lanza la señal a los 3,5 s en todos los teléfonos a la vez; `~150;` (tras `@…;`) la envía a los teléfonos uno tras otro, a 150 ms; `en=Hello|ro=Salut` elige el idioma de cada teléfono; `{name}` y `{number}` se sustituyen en cada teléfono.
+- **`text`** — Texto en pantalla: Texto mostrado a pantalla completa
+- **`vibrate`** — Vibración: Duración en ms (p. ej. 800)
+- **`ring`** — Timbre: (no hace falta texto)
+- **`flash`** — Flash: Duración en ms (p. ej. 1500)
+- **`speaker`** — Altavoz: 1 = activado, 0 = desactivado
+- **`contact`** — Añadir contacto: Nombre;número (p. ej. Mamá;204455)
+- **`era`** — Cambiar época: 1985, 1995 o 2003
+- **`say`** — Voz hablada: Texto a pronunciar
+- **`sound`** — Efecto de sonido: bell, siren, knock, static (campana, sirena, golpes, estática)
+- **`blackout`** — Pantalla negra: 1;texto o 0
+- **`fakecall`** — Llamada fantasma: Nombre;número;palabras habladas
+- **`realcall`** — Llamada real (abre el marcador): Número a marcar, p. ej. +40721000111
+- **`panic`** — PÁNICO: parar todo: (sin texto)
+- **`color`** — Color a pantalla completa: #RRGGBB;segundos;pulsos por segundo (máx. 2)
+- **`poll`** — Encuesta (voto del público): pregunta;opción 1;opción 2;… (2–6 opciones)
+- **`pollend`** — Cerrar la encuesta y mostrar el resultado: (sin texto)
+- **`image`** — Imagen en pantalla: código del archivo;segundos (envía antes el archivo; vacío = último)
+- **`video`** — Vídeo en pantalla: código del archivo;segundos (envía antes el archivo; vacío = último)
+- **`clip`** — Clip de audio: código del archivo;segundos (envía antes el archivo; vacío = último)
+- **`caption`** — Subtítulo en pantalla: texto, o en=Hello|ro=Salut|fr=Bonjour (cada teléfono muestra su idioma; {name} = nombre del teléfono)
+- **`dmx`** — Luces: Art‑Net/DMX (teléfono de regiduría): universo;canal=valor,rango=valor;fundido ms — p. ej. 0;1=255,2-4=128;2000
+- **`midi`** — Salida MIDI (teléfono de regiduría): note 60 127 [canal] · off 60 [canal] · cc 7 100 [canal] · pc 5 [canal] · mmc play|stop|record
+- **`morse`** — Código Morse por vibración: texto a transmitir (letras y cifras; ~ 60 caracteres)
+- **`house`** — Luces de sala (seguridad: parar + pantalla blanca): (opcional) mensaje en la pantalla blanca
+- **Disparadores y acciones de reglas** — Una regla por línea: ‹cuándo› > ‹quién› | ‹tipo de señal› | ‹texto›. Cuándo: `zone 3 [once]`, `pollwin 0` (opción ganadora, desde 0), `meter noise|motion 70` (media ≥ 70). Quién: all, staff, spectators, actors, self (quien la activó), num:/id:/grp:. El tipo `goto` salta a un paso del guion por nombre o número. El texto puede usar {name}. También `solved` (se adivinó un secreto fragmentado).
 
 ---
 
