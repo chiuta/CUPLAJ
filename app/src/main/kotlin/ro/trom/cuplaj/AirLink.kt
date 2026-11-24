@@ -89,7 +89,7 @@ object AirLink {
                 if (p.data.isEmpty()) return
                 val kind = CUE_KINDS.getOrNull(p.data[0].toInt() and 0xFF) ?: return
                 // numai efecte locale inofensive prin aer; apelurile false/reale și schimbările de eră rămân pe rețea
-                if (kind !in setOf("text", "vibrate", "ring", "flash", "blackout", "sound")) return
+                if (kind !in setOf("text", "vibrate", "ring", "flash", "blackout", "sound", "panic", "color")) return
                 val text = String(p.data, 1, p.data.size - 1, Charsets.UTF_8)
                 App.airCue(kind, text)
             }

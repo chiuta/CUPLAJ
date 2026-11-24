@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.4.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.5.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -80,6 +80,14 @@ _Version : 1.4.0 · Dernière mise à jour : 2026-11-24_
 - **SONUS (son)** — le haut‑parleur joue un code de tons, quasi ultrasonore (inaudible pour la plupart des adultes) ou audible ; l'autre téléphone écoute avec son micro. Transporte des indices et une invitation au hub (adresse et PIN).
 - **TACTUS (vibration)** — le moteur de vibration envoie des impulsions courtes et longues ; un autre téléphone posé sur la même surface les sent avec son accéléromètre. Fonctionne dans le silence et le noir, pour de courts indices.
 - **Utilisation** — Réglages → *Liaisons par l'air* : activez les écoutes voulues (caméra / micro / accéléromètre ; le téléphone demande la permission), puis sur le téléphone de régie appuyez sur un bouton d'envoi. Les paquets portent une courte étiquette d'authentification dérivée de la clé réseau et ne peuvent pas être rejoués.
+
+## 12. Régie de spectacle (1.5)
+
+- **Même instant** — commencez le texte par `@3.5;` pour le déclencher dans 3,5 s sur tous les téléphones à la fois. Les téléphones synchronisent leur horloge avec le hub à la connexion puis chaque minute ; un indice en retard de plus de 10 s est abandonné.
+- **PANIQUE** — l'indice *PANIQUE : tout arrêter* coupe sonnerie, vibration, voix, effets sonores, écrans noirs et colorés, faux appels et indices programmés. Fonctionne aussi par AIR.
+- **Couleur** — `#RRGGBB;secondes;pulsations par seconde` remplit l'écran. Les pulsations sont plafonnées à 2 par seconde pour les spectateurs photosensibles ; un appui long ferme l'écran.
+- **Sondage** — `question;option 1;option 2;…` interroge spectateurs et acteurs ; un vote par téléphone (modifiable). *Clore le sondage* montre le résultat à la régie. Les sondages peuvent être des étapes du scénario.
+- **Livraison** — après chaque indice, la régie voit *envoyé à N téléphones sur M en ligne*. **PTT matériel** — Réglages → *Touche PTT matérielle* transforme le bouton du casque et volume + en push‑to‑talk quand l'appli est au premier plan.
 
 ---
 

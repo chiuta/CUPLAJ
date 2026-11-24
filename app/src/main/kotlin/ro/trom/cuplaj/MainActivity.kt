@@ -14,6 +14,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.text.InputType
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -208,6 +209,9 @@ class MainActivity : Activity() {
                 showStart()
             }
             k == "blackout" -> showBlackout()
+            k == "color" -> showColor()
+            k == "poll" -> showPoll()
+            k == "pollfinal" -> bigText(App.pollSummary)
             k == "log" -> logView?.let { v -> v.text = App.log.joinToString("\n") }
             screen == "main" -> {
                 updateHeader()
@@ -238,6 +242,60 @@ class MainActivity : Activity() {
         root.addView(o, FrameLayout.LayoutParams(MATCH, MATCH))
         overlay = o
     }
+
+    private var colorOv: View? = null
+    private var blinkVisible = true
+    private val blinkRun = object : Runnable {
+        override fun run() {
+            val cp = App.colorPlanNow ?: return
+            blinkVisible = !blinkVisible
+            colorOv?.visibility = if (blinkVisible) View.VISIBLE else View.INVISIBLE
+            App.ui.postDelayed(this, (500.0 / cp.hz).toLong())
+        }
+    }
+
+    /** Cue de culoare: tot ecranul într-o culoare (pulsează cel mult 2 Hz); apăsare lungă = închide. */
+    private fun showColor() {
+        colorOv?.let { root.removeView(it) }
+        colorOv = null
+        App.ui.removeCallbacks(blinkRun)
+        val cp = App.colorPlanNow ?: return
+        if (screen != "main") return
+        val o = View(this)
+        o.setBackgroundColor(cp.rgb)
+        o.isClickable = true
+        o.setOnLongClickListener { App.colorPlanNow = null; showColor(); true }
+        root.addView(o, FrameLayout.LayoutParams(MATCH, MATCH))
+        colorOv = o
+        blinkVisible = true
+        if (cp.hz > 0) App.ui.postDelayed(blinkRun, (500.0 / cp.hz).toLong())
+    }
+
+    /** Sondaj primit de la regie: întrebarea și opțiunile ca butoane. */
+    private fun showPoll() {
+        val m = App.pollCur ?: return
+        val os = m.optJSONArray("opts") ?: return
+        val items = Array(os.length()) { os.optString(it) }
+        AlertDialog.Builder(this).setTitle(m.optString("q")).setItems(items) { _, i -> App.vote(i) }.show()
+    }
+
+    override fun onKeyDown(code: Int, e: KeyEvent): Boolean {
+        if (App.hwPtt && App.net != null && screen == "main" && isPttKey(code)) {
+            if (e.repeatCount == 0) App.ptt(if (App.role == "regie") 1 else 2, true)
+            return true
+        }
+        return super.onKeyDown(code, e)
+    }
+
+    override fun onKeyUp(code: Int, e: KeyEvent): Boolean {
+        if (App.hwPtt && App.net != null && screen == "main" && isPttKey(code)) {
+            App.ptt(if (App.role == "regie") 1 else 2, false)
+            return true
+        }
+        return super.onKeyUp(code, e)
+    }
+
+    private fun isPttKey(c: Int) = c == KeyEvent.KEYCODE_HEADSETHOOK || c == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || c == KeyEvent.KEYCODE_VOLUME_UP
 
     // ------------------------------------------------------------------ ecran de pornire
 
@@ -498,6 +556,12 @@ class MainActivity : Activity() {
             col.addView(btn(L.t("btn_invite_ac")) { dlg?.dismiss(); shareInvite("actor") })
         }
         col.addView(btn(L.t("set_air")) { dlg?.dismiss(); airDialog() })
+        col.addView(btn(L.t(if (App.hwPtt) "hw_ptt_on" else "hw_ptt_off"), if (App.hwPtt) GREEN else BTN) {
+            App.hwPtt = !App.hwPtt
+            App.saveNet()
+            dlg?.dismiss()
+            settingsDialog()
+        })
         col.addView(tv(L.t("set_gateways"), 13f, DIM), lp().apply { topMargin = dp(12) })
         col.addView(btn(L.t("btn_sip")) { dlg?.dismiss(); sipDialog() })
         col.addView(btn(if (App.smsGw) L.t("sms_gw_on") else L.t("sms_gw_off"), if (App.smsGw) GREEN else BTN) {

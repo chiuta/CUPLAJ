@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · **Português** · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versão: 1.4.0 · Última atualização: 2026-11-24_
+_Versão: 1.5.0 · Última atualização: 2026-11-24_
 
 ## 1. Antes do espetáculo
 
@@ -80,6 +80,14 @@ _Versão: 1.4.0 · Última atualização: 2026-11-24_
 - **SONUS (som)** — o altifalante reproduz um código de tons, quase ultrassónico (inaudível para a maioria dos adultos) ou audível; o outro telemóvel ouve com o microfone. Leva sinais e um convite ao hub (endereço e PIN).
 - **TACTUS (vibração)** — o motor de vibração envia pulsos curtos e longos; outro telemóvel pousado na mesma superfície sente‑os com o acelerómetro. Funciona em silêncio e no escuro, para sinais curtos.
 - **Utilização** — Definições → *Ligações pelo ar*: ative as escutas pretendidas (câmara / microfone / acelerómetro; o telemóvel pede permissão) e, no telemóvel da Regia, prima um botão de envio. Os pacotes levam uma etiqueta curta de autenticação derivada da chave de rede e não podem ser repetidos.
+
+## 12. Controlo do espetáculo (1.5)
+
+- **Mesmo instante** — comece o texto com `@3.5;` para disparar daqui a 3,5 s em todos os telemóveis ao mesmo tempo. Os telemóveis sincronizam o relógio com o hub ao ligar e a cada minuto; um sinal com mais de 10 s de atraso é descartado.
+- **PÂNICO** — o sinal *PÂNICO: parar tudo* pára toque, vibração, voz, efeitos sonoros, ecrãs pretos e de cor, chamadas falsas e sinais agendados. Também funciona por AIR.
+- **Cor** — `#RRGGBB;segundos;pulsos por segundo` preenche o ecrã. Os pulsos são limitados a 2 por segundo para o público fotossensível; um toque longo fecha‑o.
+- **Sondagem** — `pergunta;opção 1;opção 2;…` pergunta a espectadores e atores; um voto por telemóvel (alterável). *Terminar a sondagem* mostra o resultado à Regia. As sondagens podem ser passos do guião.
+- **Entrega** — após cada sinal, a Regia vê *enviado a N de M telemóveis ligados*. **PTT físico** — Definições → *Tecla PTT física* transforma o botão do auricular e volume + em push‑to‑talk com a app em primeiro plano.
 
 ---
 

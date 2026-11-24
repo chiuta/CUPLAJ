@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.4.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.5.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -80,6 +80,14 @@ _Versiune: 1.4.0 · Ultima actualizare: 2026-11-24_
 - **SONUS (sunet)** — difuzorul redă un cod de tonuri, aproape ultrasonic (inaudibil pentru majoritatea adulților) sau audibil; celălalt telefon ascultă cu microfonul. Duce replici și o invitație la hub (adresă și PIN).
 - **TACTUS (vibrații)** — motorul de vibrații trimite pulsuri scurte și lungi; alt telefon așezat pe aceeași suprafață le simte cu accelerometrul. Merge în liniște și în întuneric, duce replici scurte.
 - **Folosire** — Setări → *Legături prin aer*: pornește receptoarele dorite (cameră / microfon / accelerometru; telefonul cere permisiunea), apoi pe telefonul Regiei apasă un buton de trimitere. Pachetele au o etichetă scurtă de autentificare din cheia de rețea și nu pot fi reluate.
+
+## 12. Control spectacol (1.5)
+
+- **Același moment** — începe textul replicii cu `@3.5;` ca să pornească peste 3,5 s pe toate telefoanele deodată. Telefoanele își sincronizează ceasul cu hubul la conectare și în fiecare minut; o replică întârziată cu peste 10 s se aruncă, nu pornește depășită.
+- **PANICĂ** — replica *PANICĂ: oprește tot* oprește sunerie, vibrații, voce, efecte sonore, ecrane negre și colorate, apeluri false și replicile programate. Merge și prin AIR.
+- **Culoare** — `#RRGGBB;secunde;pulsuri pe secundă` umple ecranul. Pulsurile sunt plafonate la 2 pe secundă pentru spectatorii fotosensibili; apăsarea lungă pe ecran îl închide.
+- **Sondaj** — `întrebare;opțiunea 1;opțiunea 2;…` întreabă spectatorii și actorii; fiecare telefon are un vot (se poate schimba). *Încheie sondajul* arată rezultatul telefonului Regiei. Sondajele pot fi pași în scenariu.
+- **Livrare** — după fiecare replică, Regia vede *trimisă la N din M telefoane conectate*. **PTT hardware** — Setări → *Buton PTT hardware* face din butonul căștilor și volum + un push‑to‑talk cât timp aplicația e în față.
 
 ---
 

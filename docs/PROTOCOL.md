@@ -115,3 +115,10 @@ Idle limits apply per channel: 10 s to send `hello`, 60 s of silence afterwards 
 **SONUS.** 8‑FSK, 3 bits per 50 ms symbol; tones 17.0–19.8 kHz in steps of 400 Hz (near‑ultrasonic) or 1.8–3.9 kHz in steps of 300 Hz (audible); preamble is a zig‑zag of all eight tones twice; 5 ms cosine ramps. Receiver runs Goertzel on a sliding window (hop = 1/8 symbol), scores the preamble, then reads symbols.
 
 **TACTUS.** Vibration bursts: long ≈ 240 ms = 1, short ≈ 100 ms = 0, gap ≈ 100 ms; preamble long, long, long, short. Receiver removes gravity with a moving average, takes a 40 ms envelope, applies hysteresis thresholds, measures burst lengths relative to the preamble.
+
+## v1.5: shared clock, polls, acknowledgements
+
+* `sync`: client sends `{"t":"sync","c":<client ms>}`, hub answers `{"t":"sync","c":<same>,"s":<hub ms>}`. Offset = s − (t0+t1)/2 of the sample with the lowest round trip among the last 8 (samples above 5 s are ignored). Sent five times after login and every 60 s.
+* `cue` (control only) may carry `at` (hub ms) and `id` (≤ 16 chars). The hub relays it unchanged and answers the sender `{"t":"cueack","id","sent","online"}`. A client waits until `at`; later than 10 s or more than 10 min ahead → dropped.
+* `poll` (control only): `{"to","q"≤120,"opts"[2..6 × ≤40],"id"?}`. The hub sends it to the non‑staff recipients and actors, one poll at a time. `vote`: `{"id","o"}`, accepted only from a recipient, for the open poll, with a valid option; last vote counts. The hub pushes `pollres` `{id,q,opts,counts,n,of,open}` to staff after each change and when `pollend` closes it.
+* New cue kinds: `panic`, `color` (`#RRGGBB;seconds;hz`, hz ≤ 2), `poll`, `pollend`.

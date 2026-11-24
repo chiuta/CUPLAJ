@@ -167,6 +167,7 @@ object App {
         smsGw = p.getBoolean("smsgw", false)
         btOn = p.getBoolean("bton", false)
         autoMode = p.getBoolean("auto", true)
+        hwPtt = p.getBoolean("hwptt", false)
         wfdOn = p.getBoolean("wfdon", false)
         Bt.ctx = ctx
         sipOn = p.getBoolean("sipon", false)
@@ -185,7 +186,7 @@ object App {
     }
 
     fun saveNet() {
-        prefs().edit().putBoolean("enc", encOn).putString("nkey", netKey).putBoolean("smsgw", smsGw).putBoolean("bton", btOn).putBoolean("auto", autoMode).putBoolean("wfdon", wfdOn).putString("jkey", joinKey)
+        prefs().edit().putBoolean("enc", encOn).putString("nkey", netKey).putBoolean("smsgw", smsGw).putBoolean("bton", btOn).putBoolean("auto", autoMode).putBoolean("hwptt", hwPtt).putBoolean("wfdon", wfdOn).putString("jkey", joinKey)
             .putBoolean("sipon", sipOn).putString("siph", sipHost).putInt("sipp", sipPort).putString("sipu", sipUser)
             .putString("sipw", sipPass).putString("sipd", sipDomain).putString("sipi", sipInbound).apply()
     }
@@ -519,6 +520,8 @@ object App {
         line = 0
         slot = 0
         blackoutOn = false
+        colorPlanNow = null
+        ui.removeCallbacks(syncTick)
         try {
             ctx.stopService(Intent(ctx, CoreService::class.java))
         } catch (_: Exception) {
@@ -591,6 +594,9 @@ object App {
                 if (tk.isNotEmpty()) prefs().edit().putString("tok_$curTarget", tk).apply()
                 ui.removeCallbacks(statTick)
                 ui.postDelayed(statTick, 1500)
+                ui.removeCallbacks(syncTick)
+                for (i in 0 until 5) ui.postDelayed({ send(jo("t" to "sync", "c" to System.currentTimeMillis())) }, 200L + i * 300L)
+                ui.postDelayed(syncTick, 60000)
                 notify("state")
             }
             "denied" -> {
@@ -640,8 +646,17 @@ object App {
                 vibrate(200)
                 notify("msg")
             }
-            "cue" -> cue(m)
+            "cue" -> cueTimed(m)
             "pong" -> {}
+            "sync" -> clock.add(m.optLong("c"), m.optLong("s"), System.currentTimeMillis())
+            "cueack" -> notify("toast:" + L.t("cue_sent_n", m.optInt("sent"), m.optInt("online")))
+            "poll" -> {
+                pollCur = m
+                playout.effect(Fx.beep(900, 120))
+                vibrate(300)
+                notify("poll")
+            }
+            "pollres" -> pollResult(m)
             "p2p" -> {
                 val l = p2pLink
                 val k = m.optString("key")
@@ -711,9 +726,75 @@ object App {
         }
     }
 
+    // ------------------------------------------------------------------ v1.5: ceas comun, panică, culoare, sondaj
+
+    val clock = ClockSync()
+    private val pending = java.util.concurrent.CopyOnWriteArrayList<Runnable>()
+    var colorPlanNow: ColorPlan? = null
+    var pollCur: JSONObject? = null
+    var pollSummary = ""
+    var hwPtt = false
+
+    private val syncTick = object : Runnable {
+        override fun run() {
+            send(jo("t" to "sync", "c" to System.currentTimeMillis()))
+            ui.postDelayed(this, 60000)
+        }
+    }
+
+    /** Cue cu oră comună (`at`, ora hubului): așteaptă până atunci, ca toate telefoanele să pornească odată. */
+    private fun cueTimed(m: JSONObject) {
+        val at = m.optLong("at", 0)
+        if (at <= 0) { cue(m); return }
+        val d = clock.delayFor(at, System.currentTimeMillis())
+        if (d == null) return
+        if (d == 0L) { cue(m); return }
+        val r = object : Runnable {
+            override fun run() { pending.remove(this); cue(m) }
+        }
+        pending.add(r)
+        ui.postDelayed(r, d)
+    }
+
+    /** PANICĂ: oprește tot ce a pornit un cue, pe acest telefon. */
+    fun panic() {
+        for (r in pending) ui.removeCallbacks(r)
+        pending.clear()
+        ringer.stop()
+        vibCancel()
+        Voice.stop()
+        playout.clearEffects()
+        blackoutOn = false
+        colorPlanNow = null
+        fake = null
+        if (ph == "ringing") enter("idle")
+        notify("blackout")
+        notify("color")
+    }
+
+    private fun pollResult(m: JSONObject) {
+        val os = m.optJSONArray("opts") ?: return
+        val cs = m.optJSONArray("counts") ?: return
+        val sb = StringBuilder(m.optString("q")).append("\n")
+        for (i in 0 until os.length()) sb.append(os.optString(i)).append(": ").append(cs.optInt(i)).append("\n")
+        sb.append(m.optInt("n")).append("/").append(m.optInt("of"))
+        pollSummary = sb.toString()
+        if (!m.optBoolean("open", true)) {
+            log.add(pollSummary.replace("\n", " · "))
+            notify("pollfinal")
+        }
+    }
+
     private fun cue(m: JSONObject) {
         val text = m.optString("text")
         when (m.optString("kind")) {
+            "panic" -> panic()
+            "color" -> {
+                val cp = colorPlan(text)
+                colorPlanNow = cp
+                notify("color")
+                if (cp != null) ui.postDelayed({ if (colorPlanNow === cp) { colorPlanNow = null; notify("color") } }, cp.ms)
+            }
             "text" -> {
                 msgs.add(Msg(L.t("role_regie"), m.optString("from"), text, false, "all"))
                 vibrate(500)
@@ -942,7 +1023,23 @@ object App {
     }
 
     fun sendCue(to: String, kind: String, text: String) {
-        send(jo("t" to "cue", "to" to to, "kind" to kind, "text" to text))
+        if (kind == "poll") {
+            // „întrebare;opțiune;opțiune…”
+            val p = text.split(";").map { it.trim() }.filter { it.isNotEmpty() }
+            if (p.size >= 3) send(jo("t" to "poll", "to" to to, "q" to p[0], "opts" to org.json.JSONArray(p.drop(1).take(6))))
+            return
+        }
+        if (kind == "pollend") { send(jo("t" to "pollend")); return }
+        val (delay, body) = parseAt(text)
+        val o = jo("t" to "cue", "to" to to, "kind" to kind, "text" to body, "id" to Integer.toHexString((System.nanoTime() and 0xFFFFFF).toInt()))
+        if (delay > 0) o.put("at", clock.hubNow(System.currentTimeMillis()) + delay)
+        send(o)
+        if (kind == "panic") panic()
+    }
+
+    fun vote(opt: Int) {
+        val id = pollCur?.optString("id") ?: return
+        send(jo("t" to "vote", "id" to id, "o" to opt))
     }
 
     // ------------------------------------------------------------------ scenariu

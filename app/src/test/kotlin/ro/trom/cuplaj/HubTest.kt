@@ -565,6 +565,11 @@ class HubTest {
     }
 
     @Test
+    fun v15() {
+        assertEquals(0L, runV15().toLong())
+    }
+
+    @Test
     fun air() {
         assertEquals(0L, runAir().toLong())
     }
@@ -902,5 +907,98 @@ fun runAir(): Int {
     check("TACTUS: telefon în mână (tremur lent) nu e pachet", Tactus.decode((0 until 3000).map { ASample(it * 5.0, 2.0 * Math.sin(it * 0.05), 1.0 * Math.sin(it * 0.03), 9.81 + 1.5 * Math.sin(it * 0.04)) }, key) == null)
     check("TACTUS: liniște => nimic", Tactus.decode((0 until 3000).map { ASample(it * 5.0, gauss(r, 0.02), gauss(r, 0.02), 9.81 + gauss(r, 0.02)) }, key) == null)
     println(if (fails == 0) "AIR OK" else "$fails ESECURI AIR")
+    return fails
+}
+
+// ---------------------------------------------------------------- v1.5: ceas comun, cue programat, culoare, sondaj, confirmare
+
+fun runV15(): Int {
+    fails = 0
+    // ---- ceas
+    val rnd = java.util.Random(5)
+    val cs = ClockSync()
+    val trueOff = 5000L
+    var now = 1_000_000L
+    for (i in 0 until 12) {
+        val up = 5L + rnd.nextInt(60)       // dus și întors asimetrice, uneori mari
+        val down = 5L + rnd.nextInt(60)
+        val t0 = now
+        val hub = t0 + up + trueOff
+        val t1 = t0 + up + down
+        cs.add(t0, hub, t1)
+        now += 1000
+    }
+    check("ceas: decalaj estimat în 40 ms de cel real (asimetrie ≤ 60 ms)", Math.abs(cs.offset() - trueOff) <= 40)
+    check("ceas: eșantion cu RTT absurd ignorat", ClockSync().also { it.add(0, 99999, 9000) }.ready().not())
+    check("cue programat: peste 2 s => așteaptă ≈2 s", cs.delayFor(cs.hubNow(now) + 2000, now)!!.let { it in 1900..2100 })
+    check("cue programat: întârziat 3 s => rulează acum", cs.delayFor(cs.hubNow(now) - 3000, now) == 0L)
+    check("cue programat: întârziat 20 s => aruncat (nu reluare veche)", cs.delayFor(cs.hubNow(now) - 20_000, now) == null)
+    check("cue programat: peste 20 min => respins", cs.delayFor(cs.hubNow(now) + 1_200_000, now) == null)
+    check("prefix @: „@3.5;salut”", parseAt("@3.5;salut") == Pair(3500L, "salut"))
+    check("prefix @: fără prefix, la 600 s plafonat, text cu @ în mijloc", parseAt("salut@3;x") == Pair(0L, "salut@3;x") && parseAt("@999;a").first == 600_000L)
+    // ---- culoare, siguranță fotosensibilă
+    val c1 = colorPlan("#FF0000;5;10")!!
+    check("culoare: pulsații plafonate la 2 Hz", c1.hz == 2.0 && c1.ms == 5000L && (c1.rgb and 0xFFFFFF) == 0xFF0000)
+    check("culoare: durata între 0,2 s și 600 s", colorPlan("00ff00;0.01")!!.ms == 200L && colorPlan("00ff00;99999")!!.ms == 600_000L)
+    check("culoare: valori greșite respinse", colorPlan("rosu") == null && colorPlan("#12345") == null && colorPlan("#GG0000") == null && colorPlan("") == null)
+    check("culoare: fără pulsații = fix", colorPlan("#0000ff")!!.hz == 0.0)
+
+    // ---- hub
+    val port = 18530
+    val hub = Hub("V", "1234", "", port, null, false)
+    hub.start(); Thread.sleep(400)
+    val r = C("r", "Regia", "regie", pin = "1234", room = "", port = port)
+    val s1 = C("s1", "Ana", "spectator", room = "", port = port)
+    val s2 = C("s2", "Bob", "spectator", room = "", port = port)
+    val a1 = C("a1", "Actor", "actor", room = "", port = port)
+    for (x in listOf(r, s1, s2, a1)) x.drain()
+    val t0 = System.currentTimeMillis()
+    s1.send("t" to "sync", "c" to t0)
+    val sy = s1.next("sync")
+    check("sync: hubul întoarce c și ora lui", sy != null && sy.getLong("c") == t0 && Math.abs(sy.getLong("s") - System.currentTimeMillis()) < 1500)
+    r.send("t" to "cue", "to" to "spectators", "kind" to "color", "text" to "#ff0000;2", "id" to "c1", "at" to t0 + 4000)
+    val q1 = s1.next("cue"); val q2 = s2.next("cue")
+    check("cue cu `at` ajunge neschimbat la ambii spectatori", q1?.optLong("at") == t0 + 4000 && q2?.optLong("at") == t0 + 4000)
+    val ack = r.next("cueack")
+    check("confirmare de livrare: 2 trimise din 3 online (fără regie)", ack != null && ack.getInt("sent") == 2 && ack.getInt("online") == 3 && ack.getString("id") == "c1")
+    s1.send("t" to "cue", "to" to "all", "kind" to "panic", "text" to "", "id" to "x")
+    check("spectatorul nu poate trimite cue-uri (nici confirmare)", s2.next("cue", 500) == null && s1.next("cueack", 300) == null)
+    r.send("t" to "cue", "to" to "all", "kind" to "panic", "text" to "")
+    check("panică ajunge la toți", s1.next("cue")?.optString("kind") == "panic" && a1.next("cue")?.optString("kind") == "panic")
+    // sondaj
+    for (x in listOf(r, s1, s2, a1)) x.drain()
+    s1.send("t" to "poll", "to" to "all", "q" to "Intri?", "opts" to org.json.JSONArray(listOf("da", "nu")))
+    check("sondaj: spectatorul nu poate lansa", s2.next("poll", 500) == null)
+    r.send("t" to "poll", "to" to "all", "q" to "Intri?", "opts" to org.json.JSONArray(listOf("o")))
+    check("sondaj: o singură opțiune respinsă", s2.next("poll", 500) == null)
+    r.send("t" to "poll", "id" to "p9", "to" to "all", "q" to "Intri?", "opts" to org.json.JSONArray(listOf("da", "nu", "poate")))
+    val pa = s1.next("poll"); val pb = s2.next("poll"); val pc = a1.next("poll")
+    check("sondaj: primit de spectatori și actori", pa?.optString("q") == "Intri?" && pb != null && pc != null && pa.getJSONArray("opts").length() == 3)
+    r.drain()
+    val late = C("s3", "Cip", "spectator", room = "", port = port); late.drain()
+    s1.send("t" to "vote", "id" to "p9", "o" to 0)
+    s2.send("t" to "vote", "id" to "p9", "o" to 1)
+    late.send("t" to "vote", "id" to "p9", "o" to 2)       // nu era destinatar
+    s1.send("t" to "vote", "id" to "p9", "o" to 7)          // opțiune inexistentă
+    s2.send("t" to "vote", "id" to "gresit", "o" to 0)      // alt sondaj
+    a1.send("t" to "vote", "id" to "p9", "o" to 1)
+    Thread.sleep(500)
+    var last: JSONObject? = null
+    while (true) { val x = r.next("pollres", 300) ?: break; last = x }
+    check("sondaj: regia vede 3 voturi valide (1/2/0) din 3", last != null && last.getInt("n") == 3 && last.getInt("of") == 3 && last.getJSONArray("counts").let { it.getInt(0) == 1 && it.getInt(1) == 2 && it.getInt(2) == 0 })
+    s1.send("t" to "vote", "id" to "p9", "o" to 1)
+    Thread.sleep(300)
+    var l2: JSONObject? = null
+    while (true) { val x = r.next("pollres", 300) ?: break; l2 = x }
+    check("sondaj: schimbarea votului nu dublează", l2 != null && l2.getInt("n") == 3 && l2.getJSONArray("counts").getInt(1) == 3)
+    s1.send("t" to "pollend")
+    r.drain()
+    r.send("t" to "pollend")
+    val fin = r.next("pollres")
+    check("sondaj: încheiat de regie, rezultat final (open=false)", fin != null && !fin.getBoolean("open") && fin.getInt("n") == 3)
+    s2.send("t" to "vote", "id" to "p9", "o" to 0)
+    check("sondaj: vot după încheiere ignorat", r.next("pollres", 500) == null)
+    hub.stop(); Thread.sleep(200)
+    println(if (fails == 0) "V15 OK" else "$fails ESECURI V15")
     return fails
 }

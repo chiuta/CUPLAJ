@@ -6,7 +6,7 @@
 
 > **Telefonia a linea condivisa per il teatro immersivo**
 
-_Versione: 1.4.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.5.0 · Ultimo aggiornamento: 2026-11-24_
 
 CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefonica privata per il teatro immersivo. Organizzatori e attori parlano con gli spettatori (e tra loro) tramite il Wi‑Fi locale del luogo — senza cloud, senza account, senza pubblicità. La sua funzione distintiva è il *cuplaj*: la **linea condivisa** dei telefoni fissi dagli anni '80 fino al 2006 circa, in cui due abbonati dividevano la stessa linea, squillavano con cadenze diverse e potevano ascoltarsi a vicenda.
 
@@ -27,6 +27,7 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 - **Più modi per collegarsi (1.2)** — Bluetooth (senza router, circa 7 telefoni), Wi‑Fi Direct (il telefono della regia crea una propria rete Wi‑Fi) e scoperta mDNS, oltre a Wi‑Fi, hotspot, tethering USB, Ethernet e dati mobili.
 - **Plug and play (1.3)** — il telefono della regia apre da solo tutti i collegamenti utili; gli altri toccano *Trova e unisciti automaticamente* o un link d'invito. Aggiunge Wi‑Fi Aware.
 - **Rinforzato e senza rete (1.4)** — audit con pubblico ostile e correzioni, e CUPLAJ‑AIR: tre protocolli originali che trasportano cue e inviti senza alcuna rete (torcia → fotocamera, altoparlante → microfono, vibrazione → accelerometro).
+- **Controllo dello spettacolo (1.5)** — cue che scattano nello stesso istante, cue PANICO, colore a schermo intero, sondaggi col pubblico, conferma di consegna e tasto PTT hardware. Confronto con Unity Intercom, Zello, Augmented Theatre, QLab/SOLOstudio e Livecube in `docs/COMPARISON.md`.
 
 ## Avvio rapido
 
@@ -63,7 +64,7 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 
 ## Stato reale
 
-La logica dell'hub (chiamate, linea condivisa, permessi, limiti, persistenza) è coperta da ~55 verifiche automatiche eseguite su una JVM. L'interfaccia Android e il percorso audio hanno superato il controllo dei tipi rispetto all'SDK Android 14 ma **non sono ancora stati provati su dispositivi reali**; l'APK è costruito da GitHub Actions. Prova con qualche telefono prima dello spettacolo. Il traffico sulla rete locale non è cifrato (PIN e codice sala tengono fuori gli estranei in buona fede, non sono crittografia). La rete della versione 1.1 (cifratura, P2P, SIP, SMS) è coperta da test dell'hub contro un server SIP simulato, ma **non** è stata provata su operatori, NAT o SIM reali. I collegamenti Bluetooth, Wi‑Fi Direct e mDNS (1.2) usano lo stesso livello di trasporto, testato su JVM con canali simulati, ma **non** sono stati provati su dispositivi reali; il comportamento varia tra i produttori. Il plug and play (collegamento automatico, inviti, Wi‑Fi Aware, 1.3) **non** è stato provato su dispositivi; il formato degli inviti è coperto da test JVM. Le correzioni dell'audit 1.4 e i codec AIR sono coperti da test JVM (rumore simulato, deriva di clock, chiave errata, interferenza); il codice per torcia, fotocamera, microfono, altoparlante, motore e accelerometro **non** è testato su telefoni reali, e portata e velocità reali saranno diverse.
+La logica dell'hub (chiamate, linea condivisa, permessi, limiti, persistenza) è coperta da ~55 verifiche automatiche eseguite su una JVM. L'interfaccia Android e il percorso audio hanno superato il controllo dei tipi rispetto all'SDK Android 14 ma **non sono ancora stati provati su dispositivi reali**; l'APK è costruito da GitHub Actions. Prova con qualche telefono prima dello spettacolo. Il traffico sulla rete locale non è cifrato (PIN e codice sala tengono fuori gli estranei in buona fede, non sono crittografia). La rete della versione 1.1 (cifratura, P2P, SIP, SMS) è coperta da test dell'hub contro un server SIP simulato, ma **non** è stata provata su operatori, NAT o SIM reali. I collegamenti Bluetooth, Wi‑Fi Direct e mDNS (1.2) usano lo stesso livello di trasporto, testato su JVM con canali simulati, ma **non** sono stati provati su dispositivi reali; il comportamento varia tra i produttori. Il plug and play (collegamento automatico, inviti, Wi‑Fi Aware, 1.3) **non** è stato provato su dispositivi; il formato degli inviti è coperto da test JVM. Le correzioni dell'audit 1.4 e i codec AIR sono coperti da test JVM (rumore simulato, deriva di clock, chiave errata, interferenza); il codice per torcia, fotocamera, microfono, altoparlante, motore e accelerometro **non** è testato su telefoni reali, e portata e velocità reali saranno diverse. Le funzioni 1.5 sono coperte da test JVM (stima dell'orologio, ritardi, regole del sondaggio, limiti fotosensibili); le sovrapposizioni dello schermo, il tasto dell'auricolare e la precisione reale dell'orologio **non** sono testati su dispositivi.
 
 ## Compilazione
 

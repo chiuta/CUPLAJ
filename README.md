@@ -6,7 +6,7 @@
 
 > **Party-line telephony for immersive theatre**
 
-_Version: 1.4.0 · Last update: 2026-11-24_
+_Version: 1.5.0 · Last update: 2026-11-24_
 
 CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchange for immersive theatre. Organisers and actors talk to spectators (and to each other) over the venue's local Wi‑Fi — no cloud, no accounts, no ads. Its signature feature is the *cuplaj*: the shared **party line** of fixed telephones from the 1980s to about 2006, where two subscribers shared one line, rang with different cadences, and could overhear each other.
 
@@ -27,6 +27,7 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 - **More ways to connect (1.2)** — Bluetooth (no router, about 7 phones), Wi‑Fi Direct (the control phone makes its own Wi‑Fi network) and mDNS discovery, in addition to Wi‑Fi, hotspot, USB tethering, Ethernet and mobile data.
 - **Plug and play (1.3)** — the control phone opens every fitting link by itself; other phones tap *Find and join automatically*, or tap an invitation link. Adds Wi‑Fi Aware.
 - **Hardened and cut off from the network (1.4)** — a hostile‑audience audit with fixes, and CUPLAJ‑AIR: three original protocols that carry cues and invitations with no network at all (torch → camera, speaker → microphone, vibration → accelerometer).
+- **Show control (1.5)** — cues that fire at one shared instant, a PANIC cue, full‑screen colour cues, audience polls, delivery confirmation and a hardware PTT key. Compared with Unity Intercom, Zello, Augmented Theatre, QLab/SOLOstudio and Livecube in `docs/COMPARISON.md`.
 
 ## Quick start
 
@@ -63,7 +64,7 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 
 ## Honest status
 
-The hub logic (calls, party line, permissions, limits, persistence) is covered by ~55 automated checks that run on a JVM. The Android user interface and audio path have been type‑checked against the Android 14 SDK but **not yet tested on physical devices**; the APK is built by GitHub Actions. Test with a handful of phones before a show. Traffic on the local network is not encrypted (the PIN and room code keep honest strangers out, they are not cryptography). Version 1.1 networking (encryption, P2P, SIP, SMS) is covered by hub tests against a simulated SIP server, but has **not** been tried on real operators, NATs or SIM cards. Bluetooth, Wi‑Fi Direct and mDNS links (1.2) share the same transport layer, tested on the JVM with simulated channels, but have **not** been tried on real devices; behaviour differs between phone makers. Plug and play (auto‑join, invitations, Wi‑Fi Aware, 1.3) is **not** tested on devices; the invitation format is covered by JVM tests. The 1.4 audit fixes and the AIR codecs are covered by JVM tests (simulated noise, clock drift, wrong key, interference); the torch, camera, microphone, speaker, motor and accelerometer code is **not** tested on real phones, and real‑world range and speed will differ.
+The hub logic (calls, party line, permissions, limits, persistence) is covered by ~55 automated checks that run on a JVM. The Android user interface and audio path have been type‑checked against the Android 14 SDK but **not yet tested on physical devices**; the APK is built by GitHub Actions. Test with a handful of phones before a show. Traffic on the local network is not encrypted (the PIN and room code keep honest strangers out, they are not cryptography). Version 1.1 networking (encryption, P2P, SIP, SMS) is covered by hub tests against a simulated SIP server, but has **not** been tried on real operators, NATs or SIM cards. Bluetooth, Wi‑Fi Direct and mDNS links (1.2) share the same transport layer, tested on the JVM with simulated channels, but have **not** been tried on real devices; behaviour differs between phone makers. Plug and play (auto‑join, invitations, Wi‑Fi Aware, 1.3) is **not** tested on devices; the invitation format is covered by JVM tests. The 1.4 audit fixes and the AIR codecs are covered by JVM tests (simulated noise, clock drift, wrong key, interference); the torch, camera, microphone, speaker, motor and accelerometer code is **not** tested on real phones, and real‑world range and speed will differ. The 1.5 features are covered by JVM tests (clock estimation, delays, poll rules, photosensitive limits); the screen overlays, headset‑button handling and real clock accuracy on phones are **not** tested on devices.
 
 ## Build
 

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.4.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.5.0 · Letzte Aktualisierung: 2026-11-24_
 
 ## 1. Vor der Vorstellung
 
@@ -80,6 +80,14 @@ _Version: 1.4.0 · Letzte Aktualisierung: 2026-11-24_
 - **SONUS (Schall)** — der Lautsprecher spielt einen Tonkode, nahe Ultraschall (für die meisten Erwachsenen unhörbar) oder hörbar; das andere Telefon hört mit dem Mikrofon. Überträgt Cues und eine Hub‑Einladung (Adresse und PIN).
 - **TACTUS (Vibration)** — der Vibrationsmotor sendet kurze und lange Impulse; ein anderes Telefon auf derselben Fläche spürt sie mit dem Beschleunigungssensor. Funktioniert in Stille und Dunkelheit für kurze Cues.
 - **Benutzung** — Einstellungen → *Luftverbindungen*: gewünschte Empfänger einschalten (Kamera / Mikrofon / Beschleunigungssensor; das Telefon fragt nach der Berechtigung), dann am Regie‑Telefon eine Sende‑Taste drücken. Pakete tragen ein kurzes Authentifizierungs‑Tag aus dem Netzwerkschlüssel und lassen sich nicht wiedereinspielen.
+
+## 12. Show‑Steuerung (1.5)
+
+- **Derselbe Augenblick** — Text mit `@3.5;` beginnen, dann löst der Cue in 3,5 s auf allen Telefonen gleichzeitig aus. Die Telefone gleichen ihre Uhr beim Verbinden und jede Minute mit dem Hub ab; ein Cue mit mehr als 10 s Verspätung wird verworfen.
+- **PANIK** — der Cue *PANIK: alles stoppen* beendet Klingeln, Vibration, Sprache, Klangeffekte, schwarze und farbige Bildschirme, falsche Anrufe und geplante Cues. Funktioniert auch über AIR.
+- **Farbe** — `#RRGGBB;Sekunden;Pulse pro Sekunde` füllt den Bildschirm. Pulse sind für lichtempfindliche Zuschauer auf 2 pro Sekunde begrenzt; langer Druck schließt den Bildschirm.
+- **Umfrage** — `Frage;Option 1;Option 2;…` fragt Zuschauer und Schauspieler; eine Stimme pro Telefon (änderbar). *Umfrage beenden* zeigt der Regie das Ergebnis. Umfragen können Schritte im Ablauf sein.
+- **Zustellung** — nach jedem Cue zeigt die Regie *an N von M Telefonen online gesendet*. **Hardware‑PTT** — Einstellungen → *Hardware‑PTT‑Taste* macht Headset‑Taste und Lauter zu Push‑to‑Talk, solange die App vorn ist.
 
 ---
 

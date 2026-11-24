@@ -393,7 +393,7 @@ class VoiceTab(a: MainActivity) : Tab(a) {
 
 // ====================================================================== REGIE
 
-val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall")
+val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend")
 
 /** Țintele pentru indicii: poziție în spinner → șir de țintă. */
 fun targetOptions(): List<String> = listOf(L.t("tgt_all"), L.t("tgt_spectators"), L.t("tgt_actors"), L.t("tgt_selected"), L.t("tgt_group"), L.t("tgt_number"))

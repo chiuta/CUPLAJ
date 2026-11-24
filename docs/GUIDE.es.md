@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.4.0 · Última actualización: 2026-11-24_
+_Versión: 1.5.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -80,6 +80,14 @@ _Versión: 1.4.0 · Última actualización: 2026-11-24_
 - **SONUS (sonido)** — el altavoz reproduce un código de tonos, casi ultrasónico (inaudible para la mayoría de adultos) o audible; el otro teléfono escucha con el micrófono. Lleva señales y una invitación al hub (dirección y PIN).
 - **TACTUS (vibración)** — el motor de vibración envía pulsos cortos y largos; otro teléfono apoyado en la misma superficie los siente con el acelerómetro. Funciona en silencio y a oscuras, para señales cortas.
 - **Uso** — Ajustes → *Enlaces por aire*: activa las escuchas deseadas (cámara / micrófono / acelerómetro; el teléfono pide permiso) y en el teléfono de regiduría pulsa un botón de envío. Los paquetes llevan una etiqueta corta de autenticación derivada de la clave de red y no pueden repetirse.
+
+## 12. Control del espectáculo (1.5)
+
+- **Mismo instante** — empieza el texto con `@3.5;` para que salte dentro de 3,5 s en todos los teléfonos a la vez. Los teléfonos sincronizan el reloj con el hub al conectar y cada minuto; una señal con más de 10 s de retraso se descarta.
+- **PÁNICO** — la señal *PÁNICO: parar todo* detiene timbre, vibración, voz, efectos de sonido, pantallas negras y de color, llamadas falsas y señales programadas. También funciona por AIR.
+- **Color** — `#RRGGBB;segundos;pulsos por segundo` llena la pantalla. Los pulsos se limitan a 2 por segundo para el público fotosensible; una pulsación larga la cierra.
+- **Encuesta** — `pregunta;opción 1;opción 2;…` pregunta a espectadores y actores; un voto por teléfono (modificable). *Cerrar la encuesta* muestra el resultado a regiduría. Las encuestas pueden ser pasos del guion.
+- **Entrega** — tras cada señal, regiduría ve *enviada a N de M teléfonos en línea*. **PTT físico** — Ajustes → *Tecla PTT física* convierte el botón del auricular y volumen + en push‑to‑talk con la app en primer plano.
 
 ---
 

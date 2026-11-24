@@ -153,6 +153,10 @@ class Playout {
         srcs.clear()
     }
 
+    fun clearEffects() {
+        effects.clear()
+    }
+
     fun effect(d: ShortArray) {
         if (d.isNotEmpty()) effects.add(Effect(d))
     }

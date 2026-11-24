@@ -2,6 +2,16 @@
 
 Documentation language: English only.
 
+## 1.5.0 — 2026‑11‑24
+
+* Comparison with Unity Intercom, Zello, Augmented Theatre, QLab Remote / SOLOstudio / MiX16 and Livecube: `docs/COMPARISON.md`.
+* Shared clock: phones estimate the hub's clock (lowest round trip of the last 8 samples); a cue text starting `@3.5;` fires 3.5 s later on every phone at once; cues more than 10 s late are dropped.
+* PANIC cue: stops ringing, vibration, speech, sound effects, black and colour screens, fake calls and pending timed cues; also accepted over AIR.
+* Full‑screen colour cue (`#RRGGBB;seconds;pulses per second`), pulses capped at 2 Hz, long press closes it.
+* Audience polls (2–6 options, one changeable vote per phone, result to the control phone); poll and end‑poll are cue kinds, so they work in scripts.
+* Delivery confirmation after each cue (sent to N of M online phones).
+* Optional hardware PTT key: headset button and volume‑up.
+
 ## 1.4.0 — 2026‑11‑24
 
 * Adversarial audit with fixes: random 6‑digit hub PIN; per‑connection session key (HMAC of both nonces) and 100 000 PBKDF2 iterations; plain `denied bad_key` / `no_key`; frame limits (2 KB before login, 32 KB after); pre‑login and per‑origin connection caps; lockout after repeated bad PINs; constant‑time secret comparison; eviction of offline spectators when full; loopback no longer trusted; P2P candidates limited to private addresses; dialled numbers stripped of USSD characters; invitation links need confirmation.

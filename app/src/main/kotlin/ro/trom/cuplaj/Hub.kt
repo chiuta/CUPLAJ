@@ -523,6 +523,29 @@ class Hub(
         }
     }
 
+    private class Poll(val id: String, val q: String, val opts: List<String>, val rec: Set<String>) {
+        val votes = ConcurrentHashMap<String, Int>()
+    }
+
+    @Volatile
+    private var poll: Poll? = null
+    private var pollSeq = 0
+
+    private fun pollJson(pl: Poll, open: Boolean): JSONObject {
+        val counts = IntArray(pl.opts.size)
+        for (v in pl.votes.values) if (v in counts.indices) counts[v]++
+        val ar = JSONArray()
+        for (c in counts) ar.put(c)
+        val os = JSONArray()
+        for (o in pl.opts) os.put(o)
+        return jo("t" to "pollres", "id" to pl.id, "q" to pl.q, "opts" to os, "counts" to ar, "n" to pl.votes.size, "of" to pl.rec.size, "open" to open)
+    }
+
+    private fun pushPoll(pl: Poll, open: Boolean) {
+        val j = pollJson(pl, open)
+        for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, j)
+    }
+
     private fun welcome(q: Peer) = jo(
         "t" to "welcome", "number" to q.number, "name" to q.name, "src" to q.src,
         "hub" to hubName, "role" to q.role, "tok" to q.tok, "group" to q.group
@@ -591,8 +614,46 @@ class Hub(
             }
             "cue" -> if (reg) {
                 m.put("from", p.number)
-                for (r in targets(m.optString("to", "all"), p)) sendTo(r, m)
+                val list = targets(m.optString("to", "all"), p)
+                for (r in list) sendTo(r, m)
                 logEvent("cue " + m.optString("kind") + " → " + m.optString("to"))
+                val cid = clean(m.optString("id"), 16)
+                if (cid.isNotEmpty()) sendTo(p, jo("t" to "cueack", "id" to cid, "sent" to list.size, "online" to peers.values.count { it.online && it !== p }))
+            }
+            "sync" -> sendTo(p, jo("t" to "sync", "c" to m.optLong("c"), "s" to System.currentTimeMillis()))
+            "poll" -> if (reg) {
+                val oa = m.optJSONArray("opts")
+                val opts = ArrayList<String>()
+                if (oa != null) for (i in 0 until minOf(oa.length(), 6)) clean(oa.optString(i), 40).let { if (it.isNotEmpty()) opts.add(it) }
+                val q = clean(m.optString("q"), 120)
+                if (opts.size >= 2 && q.isNotEmpty()) {
+                    val rec = targets(m.optString("to", "all"), p).filter { !isStaff(it) || it.role == "actor" }
+                    val id = clean(m.optString("id"), 16).ifEmpty { "p" + (++pollSeq) }
+                    val pl = Poll(id, q, opts, rec.map { it.id }.toSet())
+                    poll = pl
+                    val os = JSONArray()
+                    for (o in opts) os.put(o)
+                    val out = jo("t" to "poll", "id" to id, "q" to q, "opts" to os)
+                    for (r in rec) sendTo(r, out)
+                    pushPoll(pl, true)
+                    logEvent("sondaj \"" + q + "\" → " + rec.size)
+                }
+            }
+            "vote" -> {
+                val pl = poll
+                val o = m.optInt("o", -1)
+                if (pl != null && !reg && m.optString("id") == pl.id && p.id in pl.rec && o in pl.opts.indices) {
+                    pl.votes[p.id] = o
+                    pushPoll(pl, true)
+                }
+            }
+            "pollend" -> if (reg) {
+                val pl = poll
+                if (pl != null) {
+                    pushPoll(pl, false)
+                    logEvent("sondaj încheiat: " + pl.votes.size + "/" + pl.rec.size)
+                    poll = null
+                }
             }
             "offhook" -> { offhook(p); broadcastPeers() }
             "onhook", "hangup" -> { hangup(p); broadcastPeers() }

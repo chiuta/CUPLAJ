@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.4.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.5.0 · Ultimo aggiornamento: 2026-11-24_
 
 ## 1. Prima dello spettacolo
 
@@ -80,6 +80,14 @@ _Versione: 1.4.0 · Ultimo aggiornamento: 2026-11-24_
 - **SONUS (suono)** — l'altoparlante riproduce un codice di toni, quasi ultrasonico (inudibile per la maggior parte degli adulti) o udibile; l'altro telefono ascolta col microfono. Porta cue e un invito all'hub (indirizzo e PIN).
 - **TACTUS (vibrazione)** — il motore di vibrazione invia impulsi brevi e lunghi; un altro telefono appoggiato sulla stessa superficie li sente con l'accelerometro. Funziona in silenzio e al buio, per cue brevi.
 - **Uso** — Impostazioni → *Collegamenti via aria*: attiva gli ascolti voluti (fotocamera / microfono / accelerometro; il telefono chiede il permesso), poi sul telefono della regia premi un pulsante di invio. I pacchetti hanno una breve etichetta di autenticazione derivata dalla chiave di rete e non possono essere riprodotti.
+
+## 12. Controllo dello spettacolo (1.5)
+
+- **Stesso istante** — inizia il testo con `@3.5;` per farlo scattare tra 3,5 s su tutti i telefoni insieme. I telefoni sincronizzano l'orologio con l'hub alla connessione e ogni minuto; un cue in ritardo di oltre 10 s viene scartato.
+- **PANICO** — il cue *PANICO: ferma tutto* ferma suoneria, vibrazione, voce, effetti sonori, schermi neri e colorati, finte chiamate e cue programmati. Funziona anche via AIR.
+- **Colore** — `#RRGGBB;secondi;impulsi al secondo` riempie lo schermo. Gli impulsi sono limitati a 2 al secondo per il pubblico fotosensibile; una pressione lunga chiude lo schermo.
+- **Sondaggio** — `domanda;opzione 1;opzione 2;…` interroga spettatori e attori; un voto per telefono (modificabile). *Chiudi il sondaggio* mostra il risultato alla regia. I sondaggi possono essere passi del copione.
+- **Consegna** — dopo ogni cue la regia vede *inviato a N telefoni su M online*. **PTT hardware** — Impostazioni → *Tasto PTT hardware* trasforma il tasto dell'auricolare e volume + in push‑to‑talk con l'app in primo piano.
 
 ---
 

@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.4.0 · Last update: 2026-11-24_
+_Version: 1.5.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -80,6 +80,14 @@ _Version: 1.4.0 · Last update: 2026-11-24_
 - **SONUS (sound)** — the speaker plays a tone code, near‑ultrasonic (inaudible to most adults) or audible; the other phone listens with its microphone. Carries cues and a hub invitation (address and PIN).
 - **TACTUS (vibration)** — the vibration motor sends short and long pulses; another phone resting on the same surface feels them with its accelerometer. Works in silence and darkness, carries short cues.
 - **Using it** — Settings → *Air links*: switch on the listeners you want (camera / microphone / accelerometer; the phone asks for permission), then on the control phone press a send button. Packets carry a short authentication tag from the network key and cannot be replayed.
+
+## 12. Show control (1.5)
+
+- **Shared instant** — begin the cue text with `@3.5;` to fire it 3.5 s from now on every phone at once. Phones sync their clock with the hub on connect and every minute; a cue more than 10 s late is dropped instead of firing out of date.
+- **PANIC** — cue kind *PANIC: stop everything* silences ringing, vibration, speech, sound effects, black and colour screens, fake calls and pending timed cues. Also works over AIR.
+- **Colour** — `#RRGGBB;seconds;pulses per second` fills the screen. Pulses are capped at 2 per second for photosensitive audience members; a long press on the screen closes it.
+- **Poll** — `question;option 1;option 2;…` asks spectators and actors; each phone gets one vote (changeable). *End poll* shows the result to the control phone. Polls can be steps in the script.
+- **Delivery** — after each cue the control phone shows *sent to N of M phones online*. **Hardware PTT** — Settings → *Hardware PTT key* turns the headset button and volume‑up into push‑to‑talk while the app is in front.
 
 ---
 

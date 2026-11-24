@@ -12,7 +12,7 @@ import java.net.Socket
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
-const val VERSION = "1.4.0"
+const val VERSION = "1.5.0"
 const val VERSION_DATE = "2026-11-24"
 const val PORT = 8470
 const val BEACON_PORT = 8471
@@ -338,4 +338,61 @@ fun safeNumber(n: String): String {
     val d = n.filter { it.isDigit() || it == '+' }
     val plus = d.startsWith("+")
     return (if (plus) "+" else "") + d.filter { it.isDigit() }.take(20)
+}
+
+
+// ====================================================================== v1.5: ceas comun, cue programat, culoare
+
+/** Ceasul hubului văzut de client: ping–pong repetat, se păstrează estimarea cu cel mai mic RTT din ultimele 8. */
+class ClockSync {
+    private val rtts = LongArray(8) { Long.MAX_VALUE }
+    private val offs = LongArray(8)
+    private var n = 0
+
+    @Synchronized
+    fun add(t0: Long, hub: Long, t1: Long) {
+        val rtt = t1 - t0
+        if (rtt < 0 || rtt > 5000) return
+        val i = n++ % 8
+        rtts[i] = rtt
+        offs[i] = hub - (t0 + t1) / 2
+    }
+
+    /** hub = local + offset */
+    @Synchronized
+    fun offset(): Long {
+        var b = -1
+        for (i in 0 until 8) if (rtts[i] != Long.MAX_VALUE && (b < 0 || rtts[i] < rtts[b])) b = i
+        return if (b < 0) 0 else offs[b]
+    }
+
+    @Synchronized
+    fun ready() = rtts.any { it != Long.MAX_VALUE }
+
+    fun hubNow(local: Long) = local + offset()
+
+    /** Cât să aștepte (ms) pentru un cue cu ora hubului `at`; null = prea departe sau prea vechi (> 10 s întârziere). */
+    fun delayFor(at: Long, local: Long): Long? {
+        val d = at - hubNow(local)
+        return if (d > 600_000 || d < -10_000) null else maxOf(0L, d)
+    }
+}
+
+/** „@3.5;text” → (3500 ms, „text”); fără prefix → (0, text). */
+fun parseAt(text: String): Pair<Long, String> {
+    val m = Regex("^@(\\d{1,3})(?:\\.(\\d))?;").find(text) ?: return Pair(0L, text)
+    val ms = m.groupValues[1].toLong() * 1000 + (m.groupValues[2].ifEmpty { "0" }.toLong() * 100)
+    return Pair(minOf(ms, 600_000L), text.substring(m.value.length))
+}
+
+/** Cue de culoare pe tot ecranul. Cadența e plafonată la 2 Hz (siguranță fotosensibilă), durata între 0,2 s și 10 min. */
+class ColorPlan(val rgb: Int, val ms: Long, val hz: Double)
+
+fun colorPlan(text: String): ColorPlan? {
+    val p = text.split(";").map { it.trim() }
+    val c = p.getOrNull(0)?.removePrefix("#") ?: return null
+    if (!Regex("[0-9a-fA-F]{6}").matches(c)) return null
+    val ms = ((p.getOrNull(1)?.toDoubleOrNull() ?: 3.0) * 1000).toLong().coerceIn(200L, 600_000L)
+    val hz = (p.getOrNull(2)?.toDoubleOrNull() ?: 0.0).coerceIn(0.0, 2.0)
+    return ColorPlan(0xFF000000.toInt() or c.toInt(16), ms, hz)
 }

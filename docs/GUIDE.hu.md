@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.4.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.5.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -80,6 +80,14 @@ _Verzió: 1.4.0 · Utolsó frissítés: 2026-11-24_
 - **SONUS (hang)** — a hangszóró hangkódot játszik le, közel ultrahangosat (a legtöbb felnőtt nem hallja) vagy hallhatót; a másik telefon mikrofonnal figyel. Jelzéseket és hub‑meghívót (cím és PIN) visz.
 - **TACTUS (rezgés)** — a rezgőmotor rövid és hosszú impulzusokat küld; egy ugyanazon a felületen fekvő másik telefon gyorsulásmérővel érzékeli. Csendben és sötétben is működik, rövid jelzésekhez.
 - **Használat** — Beállítások → *Légi kapcsolatok*: kapcsold be a kívánt figyelőket (kamera / mikrofon / gyorsulásmérő; a telefon engedélyt kér), majd a rendezői telefonon nyomj egy küldő gombot. A csomagok a hálózati kulcsból képzett rövid hitelesítő címkét hordoznak, és nem játszhatók vissza.
+
+## 12. Előadásvezérlés (1.5)
+
+- **Ugyanaz a pillanat** — kezdd a szöveget `@3.5;` előtaggal, és a jelzés 3,5 mp múlva egyszerre indul minden telefonon. A telefonok csatlakozáskor és percenként szinkronizálják az óráját a hubbal; a 10 mp-nél későbbi jelzés elvetésre kerül.
+- **PÁNIK** — a *PÁNIK: mindent leállít* jelzés leállítja a csengést, rezgést, beszédet, hangeffekteket, fekete és színes képernyőket, hamis hívásokat és az időzített jelzéseket. AIR-en is működik.
+- **Szín** — `#RRGGBB;másodperc;impulzus/másodperc` kitölti a képernyőt. Az impulzusok a fényérzékeny nézők miatt másodpercenként 2-re korlátozottak; hosszú nyomás bezárja.
+- **Szavazás** — `kérdés;1. lehetőség;2. lehetőség;…` megkérdezi a nézőket és színészeket; telefononként egy szavazat (módosítható). A *Szavazás lezárása* az eredményt a rendezői telefonon mutatja. A szavazás a forgatókönyv lépése is lehet.
+- **Kézbesítés** — minden jelzés után a rendező látja: *N / M online telefonra elküldve*. **Hardveres PTT** — Beállítások → *Hardveres PTT gomb*: a headset gomb és a hangerő + adó-gombbá válik, amíg az app előtérben van.
 
 ---
 
