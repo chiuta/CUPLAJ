@@ -12,7 +12,7 @@ import java.net.Socket
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
-const val VERSION = "1.6.0"
+const val VERSION = "1.7.0"
 const val VERSION_DATE = "2026-11-24"
 const val PORT = 8470
 const val BEACON_PORT = 8471

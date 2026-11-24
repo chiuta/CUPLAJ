@@ -95,6 +95,17 @@ Open items: SIP/RTP are unencrypted; key strength depends on the passphrase; Blu
 5. **Range and speed are physical limits**: LUMEN needs line of sight and a dim room; SONUS depends on speaker and microphone response above 17 kHz (many phones filter it; use audible mode); TACTUS needs a shared surface.
 6. **Not tested on real phones.** Codecs are tested against simulated noise, clock drift, wrong keys and interference only.
 
+## K. Versions 1.5–1.7 risks
+
+1. **OSC input is authenticated only by the hub PIN in the address** (OSC has no login) and sent in clear on the LAN; keep the show network private. Rate limit 20 messages per second; packets over 2 KB or malformed are dropped.
+2. **Media files** come only from the control phone, are checked for order, size, SHA‑256 and path‑safe names, limited to 8 MB and 3 open transfers, and are decoded by the system image and video players: a malformed file could still hit a bug in those players. Send only your own files.
+3. **Photosensitivity.** Colour pulses are capped at 2 Hz, but video or image cues are the producer's responsibility.
+4. **Zone beacons** carry a 4‑byte HMAC with the network key but can be recorded and replayed once per sequence number: zones are for atmosphere, not security. Near‑ultrasonic sound can disturb pets and some people.
+5. **Crowd meter** sends only a number (never audio) but needs the microphone and accelerometer; the answer is voluntary only in the sense that the permission was granted.
+6. **Rules** run on the hub with the control phone's authority; `realcall`, `poll` and `pollend` are excluded from rules. A rule can fire for many phones at once, so test them with a few phones first.
+7. **Voice effects** run on the speaker's phone; they do not hide identity from someone who sees the phone.
+8. Not tested on real phones: see the status line in each guide.
+
 ## H. Version 1.3 risks and mitigations
 
 1. **Invitation links carry the network key and PIN.** Anyone who gets the link can join as spectator (or actor if it is the actor link). Links are parsed strictly: scheme and host fixed, length capped, fields sanitised, roles limited to spectator/actor so a link can never create a control phone.

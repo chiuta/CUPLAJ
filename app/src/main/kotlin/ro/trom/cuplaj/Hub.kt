@@ -36,6 +36,9 @@ class Peer(val id: String) {
     var offhook = false
     var muted = false
     var bat = -1
+    var zone = 0           // zona de spectacol auzită (0 = nicio zonă)
+    var zoneAt = 0L
+    var fx = ""            // efect de voce atribuit de regie
     var p2p = false        // clientul știe P2P direct
     var local = false      // telefonul Regiei însuși (conexiune loopback)
     var udp: java.net.InetSocketAddress? = null  // adresa UDP văzută de hub (după NAT)
@@ -487,7 +490,7 @@ class Hub(
             if (counted) preauth.decrementAndGet()
             val q = me
             if (q != null) {
-                q.seen = System.currentTimeMillis()
+                q.seen = System.currentTimeMillis(); q.zone = 0
                 synchronized(lock) {
                     if (q.conn === c) {
                         hangup(q)
@@ -546,9 +549,64 @@ class Hub(
         for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, j)
     }
 
+    // ---- reguli, zone, contor de public, efecte de voce (v1.7)
+    @Volatile
+    private var rules: List<Rule> = emptyList()
+    private val fired = ConcurrentHashMap<String, Long>()
+
+    private class Meter(val id: String, val kind: String, val rec: Set<String>) {
+        val vals = ConcurrentHashMap<String, Int>()
+    }
+
+    @Volatile
+    private var meter: Meter? = null
+    private var meterSeq = 0
+
+    private fun fire(r: Rule, who: Peer?) {
+        val key = r.id + ":" + (who?.id ?: "")
+        val now = System.currentTimeMillis()
+        val prev = fired[key]
+        if (prev != null && (r.once || now - prev < 3000)) return
+        fired[key] = now
+        val to = if (r.to == "self") (if (who != null && who.online) listOf(who) else emptyList()) else targets(r.to, null).filter { it.role != "regie" || r.kind == "goto" }
+        if (r.kind == "goto") {
+            for (q in peers.values) if (q.role == "regie" && q.online) sendTo(q, jo("t" to "goto", "step" to r.text))
+        } else {
+            val cue = jo("t" to "cue", "kind" to r.kind, "text" to r.text, "from" to "rule")
+            for (q in to) sendTo(q, cue)
+        }
+        logEvent("regulă " + r.id + " (" + r.on + ") → " + r.to + " " + r.kind + (if (who != null) " [" + label(who) + "]" else ""))
+    }
+
+    private fun fireRules(on: String, who: Peer?, arg: Int, mk: String = "", v: Int = 0) {
+        for (r in rules) {
+            if (r.on != on) continue
+            val ok = when (on) {
+                "zone", "pollwin" -> r.arg == arg
+                "meter" -> r.meterKind == mk && v >= r.arg
+                else -> false
+            }
+            if (ok) fire(r, who)
+        }
+    }
+
+    private fun meterJson(m: Meter, open: Boolean): JSONObject {
+        val v = m.vals.values
+        return jo("t" to "meterres", "id" to m.id, "kind" to m.kind, "avg" to (if (v.isEmpty()) 0 else v.sum() / v.size), "max" to (v.maxOrNull() ?: 0), "n" to v.size, "of" to m.rec.size, "open" to open)
+    }
+
+    private fun closeMeter(m: Meter) {
+        if (meter !== m) return
+        meter = null
+        val j = meterJson(m, false)
+        for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, j)
+        if (m.vals.isNotEmpty()) fireRules("meter", null, 0, m.kind, j.getInt("avg"))
+        logEvent("contor " + m.kind + ": medie " + j.getInt("avg") + ", max " + j.getInt("max") + ", " + m.vals.size + "/" + m.rec.size)
+    }
+
     private fun welcome(q: Peer) = jo(
         "t" to "welcome", "number" to q.number, "name" to q.name, "src" to q.src,
-        "hub" to hubName, "role" to q.role, "tok" to q.tok, "group" to q.group
+        "hub" to hubName, "role" to q.role, "tok" to q.tok, "group" to q.group, "fx" to q.fx
     )
 
     private fun sendTo(p: Peer, o: JSONObject) {
@@ -583,6 +641,7 @@ class Hub(
                 jo(
                     "id" to q.id, "name" to q.name, "role" to q.role, "number" to q.number, "group" to q.group,
                     "line" to q.line, "slot" to q.slot, "online" to q.online, "muted" to q.muted, "bat" to q.bat,
+                    "zone" to q.zone, "fx" to q.fx,
                     "busy" to (q.callId != 0 || q.offhook),
                     "mon" to (q.callId != 0 && calls[q.callId]?.connected == true)
                 )
@@ -629,6 +688,56 @@ class Hub(
                     if (m.optInt("i") == 0) logEvent("media " + m.optString("kind") + " " + mid + " → " + m.optString("to"))
                 }
             }
+            "rules" -> if (reg) {
+                rules = Rules.fromJson(m.optJSONArray("list"))
+                fired.clear()
+                sendTo(p, jo("t" to "rulesok", "n" to rules.size))
+            }
+            "zone" -> if (!reg) {
+                val z = m.optInt("z", -1)
+                val now = System.currentTimeMillis()
+                if (z in 0..99 && z != p.zone && now - p.zoneAt > 2000) {
+                    p.zone = z
+                    p.zoneAt = now
+                    logEvent(label(p) + " → zona " + z)
+                    broadcastPeers()
+                    if (z > 0) fireRules("zone", p, z)
+                }
+            }
+            "setfx" -> if (reg) {
+                val q = peers[m.optString("id")]
+                val k = m.optString("k")
+                if (q != null && (k.isEmpty() || k in VoiceFx.KINDS)) {
+                    q.fx = k
+                    sendTo(q, jo("t" to "fx", "k" to k))
+                    broadcastPeers()
+                }
+            }
+            "meter" -> if (reg) {
+                val kind = m.optString("kind")
+                val secs = m.optInt("secs", 5).coerceIn(1, 30)
+                if (kind == "noise" || kind == "motion") {
+                    val rec = targets(m.optString("to", "all"), p).filter { it.role != "regie" }
+                    val mt = Meter("m" + (++meterSeq), kind, rec.map { it.id }.toSet())
+                    meter = mt
+                    val req = jo("t" to "meterreq", "id" to mt.id, "kind" to kind, "secs" to secs)
+                    for (r in rec) sendTo(r, req)
+                    Thread {
+                        try { Thread.sleep(secs * 1000L + 3000) } catch (_: Exception) {}
+                        closeMeter(mt)
+                    }.apply { isDaemon = true; start() }
+                    sendTo(p, meterJson(mt, true))
+                }
+            }
+            "meterval" -> {
+                val mt = meter
+                val v = m.optInt("v", -1)
+                if (mt != null && !reg && m.optString("id") == mt.id && p.id in mt.rec && v in 0..100) {
+                    mt.vals[p.id] = v
+                    val j = meterJson(mt, true)
+                    for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, j)
+                }
+            }
             "sync" -> sendTo(p, jo("t" to "sync", "c" to m.optLong("c"), "s" to System.currentTimeMillis()))
             "poll" -> if (reg) {
                 val oa = m.optJSONArray("opts")
@@ -661,6 +770,10 @@ class Hub(
                 if (pl != null) {
                     pushPoll(pl, false)
                     logEvent("sondaj încheiat: " + pl.votes.size + "/" + pl.rec.size)
+                    val cnt = IntArray(pl.opts.size)
+                    for (v in pl.votes.values) if (v in cnt.indices) cnt[v]++
+                    val mx = cnt.maxOrNull() ?: 0
+                    if (mx > 0 && cnt.count { it == mx } == 1) fireRules("pollwin", null, cnt.indexOf(mx))
                     poll = null
                 }
             }

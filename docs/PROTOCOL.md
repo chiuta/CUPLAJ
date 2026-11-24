@@ -128,3 +128,11 @@ Idle limits apply per channel: 10 s to send `hello`, 60 s of silence afterwards 
 * `media` (control only): `{"to","mid"[a-z0-9]{1,16},"kind":"image|video|clip","i","n","b64"≤17000 chars}`, first piece also `size` (≤ 8 MB) and `sha` (SHA‑256 hex). The hub relays pieces unchanged to the targets and keeps nothing. Clients accept pieces strictly in order, at most 3 open transfers, verify size and hash, store as `<mid>.img|.vid|.snd`; a bad piece drops the transfer. Cues `image`, `video`, `clip` carry `mid[;seconds]`.
 * PA audio (mode 1) is forwarded with source byte 254; receivers scale all other sources by 0.3 (fast attack, 160 ms hold, slow release).
 * OSC 1.0 over UDP (string, int, float): out `/cuplaj/cue to kind text`; in `/cuplaj/<hub PIN>/go`, `/panic`, `/stop`, `/cue to kind text`; the PIN is compared in constant time, bundles are ignored, packets over 2 KB are dropped.
+
+## v1.7: zones, rules, meter, voice effects, languages
+
+* AIR type 3 (`T_ZONE`): data = 1 byte zone id (1–99), 4‑byte tag with the network key; emitted every 7 s over SONUS by a beacon phone. Receivers send `{"t":"zone","z":n}` when the zone changes (hub accepts one change per 2 s per phone, 0..99) and `z:0` after 30 s of silence. The hub zeroes a phone's zone when it disconnects.
+* `rules` (control only): `{"list":[{id,on:"zone|pollwin|meter",arg,mk,to,kind,text,once}]}`, ≤ 50; kinds exclude `poll`, `pollend`, `realcall`; targets all/staff/spectators/actors/self/num:/id:/grp:. A rule fires at most once per 3 s per (rule, phone), or once ever with `once`. `pollwin` fires only for a unique winning option. `goto` sends `{"t":"goto","step"}` to the control phone.
+* `meter` (control only): `{kind:"noise|motion",secs 1..30,to}` → recipients get `meterreq`, answer `meterval {id,v 0..100}`; the hub pushes `meterres {avg,max,n,of,open}` and closes after secs + 3 s, then evaluates `meter` rules on the average.
+* `setfx` (control only): `{id,k}`, k in robot, radio, echo, deep, high, lofi or empty; the hub sends `fx` to that phone and includes it in `welcome` and the peer list.
+* Cue text: `pickLang` (all parts must be `xx=…`), then `{name}` and `{number}` are replaced locally.

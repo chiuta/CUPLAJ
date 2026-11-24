@@ -23,6 +23,26 @@ object AirLink {
         return if (k.isEmpty()) null else Sec.deriveKey(k)
     }
 
+    // ---- semnal de poziționare: telefonul pus în încăpere emite periodic id‑ul zonei (sunet), cu etichetă HMAC
+    var beaconZone = 0
+    private var beaconRun: Runnable? = null
+
+    fun setBeacon(z: Int) {
+        beaconZone = z.coerceIn(0, 99)
+        beaconRun?.let { App.ui.removeCallbacks(it) }
+        beaconRun = null
+        if (beaconZone == 0) return
+        val r = object : Runnable {
+            override fun run() {
+                if (beaconZone == 0) return
+                if (!busy) transmit("sound", Air.pack(AirPacket(Air.T_ZONE, nextSeq(), byteArrayOf(beaconZone.toByte())), key(), 4), true)
+                App.ui.postDelayed(this, 7000)
+            }
+        }
+        beaconRun = r
+        App.ui.post(r)
+    }
+
     private fun nextSeq(): Int { seq = (seq + 1) and 0xFF; return seq }
 
     /** Cue scurt (≤ 11 octeți de text) pe lumină, sunet sau vibrații. Întoarce false dacă mediul nu e disponibil. */
@@ -89,9 +109,12 @@ object AirLink {
                 if (p.data.isEmpty()) return
                 val kind = CUE_KINDS.getOrNull(p.data[0].toInt() and 0xFF) ?: return
                 // numai efecte locale inofensive prin aer; apelurile false/reale și schimbările de eră rămân pe rețea
-                if (kind !in setOf("text", "vibrate", "ring", "flash", "blackout", "sound", "panic", "color")) return
+                if (kind !in setOf("text", "vibrate", "ring", "flash", "blackout", "sound", "panic", "color", "caption")) return
                 val text = String(p.data, 1, p.data.size - 1, Charsets.UTF_8)
                 App.airCue(kind, text)
+            }
+            Air.T_ZONE -> {
+                if (p.data.size == 1 && App.role != "regie") App.zoneHeard(p.data[0].toInt() and 0xFF)
             }
             Air.T_INVITE -> {
                 if (p.data.size != 7 || App.role == "regie") return

@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from docs_src import D, LANGS, NAMES
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION, DATE = "1.6.0", "2026-11-24"
+VERSION, DATE = "1.7.0", "2026-11-24"
 REPO = "https://github.com/chiuta/CUPLAJ"
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
 

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.6.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.7.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -96,6 +96,14 @@ _Versiune: 1.6.0 · Ultima actualizare: 2026-11-24_
 - **OSC ieșire** — Setări → *OSC*: fiecare replică se trimite și ca `/cuplaj/cue <către> <tip> <text>` prin UDP către un pupitru de lumini sau sunet, QLab sau Companion.
 - **OSC intrare** — pupitrul poate trimite `/cuplaj/<PIN hub>/go`, `/panic`, `/stop` sau `/cue <către> <tip> <text>` telefonului Regiei (port implicit 8473). PIN‑ul din adresă e singura protecție: ține rețeaua spectacolului privată. Se acceptă cel mult 20 de mesaje pe secundă.
 - **Nu sunt incluse** — iOS (doar Android), MIDI, program feed și mai multe canale decât grupurile existente.
+
+## 14. Spectacol inteligent (1.7)
+
+- **Zone** — pune un telefon într‑o încăpere (sau în buzunarul unui personaj), Setări → *Legături prin aer* → *Semnal de zonă* și apasă până arată numărul zonei 1–9: emite din 7 în 7 s un cod aproape ultrasonic, inaudibil pentru cei mai mulți. Telefoanele publicului cu *Ascult: SONUS* pornit raportează ce zonă aud; telefonul Regiei arată 📍 lângă nume. 30 s de tăcere înseamnă că au plecat.
+- **Reguli** — telefonul Regiei, Setări → *Reguli*, câte una pe linie: `zone 3 once > self | text | Bun venit, {name}`, `pollwin 1 > all | color | #00ff00;3`, `meter noise 70 > all | blackout | 1;`, `pollwin 2 > all | goto | Finalul B`. *self* este persoana care a declanșat regula; `goto` sare în scenariu la un pas după nume sau număr, deci un sondaj poate alege povestea.
+- **Contor de public** — în fila Replici: *Măsoară zgomotul* sau *mișcarea* 5 s pe telefoanele alese. Fiecare telefon trimite doar un număr 0–100, niciodată sunet. Vezi media, vârful și câte au răspuns, iar regulile pot reacționa.
+- **Efecte de voce** — alege telefoane în lista Regiei, *Efect de voce…*: robot, radio vechi, ecou, grav, ascuțit, lo‑fi. Efectul se aplică pe telefonul respectiv înainte de trimitere, deci toți cei care îl aud primesc aceeași voce.
+- **Subtitrări și limbi** — tipul *Subtitrare* arată subtitrări mari; orice replică text poate purta `en=Hello|ro=Salut|fr=Bonjour` și fiecare telefon o folosește pe a lui (apoi engleza, apoi prima). `{name}` și `{number}` devin numele și numărul telefonului care primește.
 
 ---
 

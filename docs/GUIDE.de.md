@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.6.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.7.0 · Letzte Aktualisierung: 2026-11-24_
 
 ## 1. Vor der Vorstellung
 
@@ -96,6 +96,14 @@ _Version: 1.6.0 · Letzte Aktualisierung: 2026-11-24_
 - **OSC aus** — Einstellungen → *OSC*: jeder Cue wird auch als `/cuplaj/cue <an> <Typ> <Text>` per UDP an ein Licht‑ oder Tonpult, QLab oder Companion gesendet.
 - **OSC ein** — das Pult kann `/cuplaj/<Hub‑PIN>/go`, `/panic`, `/stop` oder `/cue <an> <Typ> <Text>` an die Regie senden (Standardport 8473). Die PIN in der Adresse ist der einzige Schutz: das Show‑Netz privat halten. Höchstens 20 Nachrichten pro Sekunde.
 - **Nicht enthalten** — iOS (nur Android), MIDI, Programm‑Feed und mehr Kanäle als die vorhandenen Gruppen.
+
+## 14. Intelligente Show (1.7)
+
+- **Zonen** — ein Telefon in einen Raum legen (oder in die Tasche einer Figur), Einstellungen → *Luftverbindungen* → *Zonen‑Bake* und antippen, bis die Zahl 1–9 erscheint: alle 7 s sendet es einen nahezu ultraschallnahen, für die meisten unhörbaren Code. Publikumstelefone mit *Empfangen: SONUS* melden die gehörte Zone; die Regie sieht 📍 neben dem Namen. 30 s Stille = gegangen.
+- **Regeln** — Regie‑Telefon, Einstellungen → *Regeln*, eine pro Zeile: `zone 3 once > self | text | Willkommen, {name}`, `pollwin 1 > all | color | #00ff00;3`, `meter noise 70 > all | blackout | 1;`, `pollwin 2 > all | goto | Ende B`. *self* ist, wer die Regel ausgelöst hat; `goto` springt im Ablauf zu einem Schritt per Name oder Nummer: eine Umfrage kann die Geschichte wählen.
+- **Publikumsmesser** — Reiter Cues: *Lärm* oder *Bewegung messen*, 5 s auf den gewählten Telefonen. Jedes sendet nur eine Zahl 0–100, nie Ton. Sie sehen Mittel, Spitze und wie viele geantwortet haben; Regeln können reagieren.
+- **Stimmeffekte** — Telefone in der Regie‑Liste wählen, *Stimmeffekt…*: Roboter, altes Radio, Echo, tief, hoch, Lo‑Fi. Der Effekt wird auf diesem Telefon vor dem Senden angewendet: alle hören dieselbe Stimme.
+- **Untertitel und Sprachen** — der Cue *Untertitel* zeigt große Untertitel; jeder Text‑Cue kann `en=Hello|ro=Salut|fr=Bonjour` tragen, jedes Telefon nimmt seine Sprache (dann Englisch, dann die erste). `{name}` und `{number}` werden zu Name und Nummer des empfangenden Telefons.
 
 ---
 

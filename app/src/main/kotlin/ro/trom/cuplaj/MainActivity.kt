@@ -211,6 +211,8 @@ class MainActivity : Activity() {
             k == "blackout" -> showBlackout()
             k == "color" -> showColor()
             k == "media" -> showMedia()
+            k == "caption" -> showCaption()
+            k == "meterfinal" -> bigText(App.meterSummary)
             k == "poll" -> showPoll()
             k == "pollfinal" -> bigText(App.pollSummary)
             k == "log" -> logView?.let { v -> v.text = App.log.joinToString("\n") }
@@ -273,6 +275,41 @@ class MainActivity : Activity() {
     }
 
     private var mediaOv: View? = null
+    private var capView: TextView? = null
+
+    /** Subtitrare mare în josul ecranului (în limba telefonului dacă textul are variante `ro=…|en=…`). */
+    private fun showCaption() {
+        capView?.let { root.removeView(it) }
+        capView = null
+        if (App.captionText.isEmpty() || screen != "main") return
+        val t = tv(App.captionText, 26f * App.textScale, Color.WHITE)
+        t.gravity = Gravity.CENTER
+        t.setBackgroundColor(Color.parseColor("#CC000000"))
+        t.setPadding(dp(16), dp(14), dp(16), dp(14))
+        root.addView(t, FrameLayout.LayoutParams(MATCH, WRAP, Gravity.BOTTOM))
+        capView = t
+    }
+
+    private fun rulesDialog() {
+        val sv = ScrollView(this)
+        val col = LinearLayout(this)
+        col.orientation = LinearLayout.VERTICAL
+        col.setPadding(dp(16), dp(12), dp(16), dp(12))
+        sv.addView(col)
+        col.addView(tv(L.t("rules_hint"), 12f, DIM))
+        val et = EditText(this)
+        et.setText(App.rulesText)
+        et.setTextColor(Color.WHITE)
+        et.hint = "zone 3 once > self | text | Bun venit, {name}"
+        et.setHintTextColor(DIM)
+        et.minLines = 6
+        et.gravity = Gravity.TOP
+        col.addView(et)
+        AlertDialog.Builder(this).setView(sv).setPositiveButton(L.t("ok")) { _, _ ->
+            App.rulesText = et.text.toString()
+            App.saveRules()
+        }.show()
+    }
 
     /** Imagine sau video primite de la regie, pe tot ecranul; apăsare lungă = închide. */
     private fun showMedia() {
@@ -662,6 +699,7 @@ class MainActivity : Activity() {
         }
         col.addView(btn(L.t("set_air")) { dlg?.dismiss(); airDialog() })
         if (App.role == "regie") col.addView(btn(L.t("set_osc")) { dlg?.dismiss(); oscDialog() })
+        if (App.role == "regie") col.addView(btn(L.t("set_rules")) { dlg?.dismiss(); rulesDialog() })
         col.addView(btn(L.t(if (App.playout.duckOn) "duck_on" else "duck_off"), if (App.playout.duckOn) GREEN else BTN) {
             App.playout.duckOn = !App.playout.duckOn
             dlg?.dismiss()
@@ -719,6 +757,10 @@ class MainActivity : Activity() {
         tog(L.t("air_rx_light"), AirLink.rxLight) { AirLink.rxLight = !AirLink.rxLight }
         tog(L.t("air_rx_sound"), AirLink.rxSound) { AirLink.rxSound = !AirLink.rxSound }
         tog(L.t("air_rx_vibe"), AirLink.rxVibe) { AirLink.rxVibe = !AirLink.rxVibe }
+        col.addView(btn(L.t("beacon_btn", if (AirLink.beaconZone == 0) L.t("air_off") else AirLink.beaconZone.toString())) {
+            AirLink.setBeacon((AirLink.beaconZone + 1) % 10)
+            dlg?.dismiss(); airDialog()
+        })
         col.addView(btn(L.t(if (AirLink.ultra) "air_ultra" else "air_audible")) { AirLink.ultra = !AirLink.ultra; dlg?.dismiss(); airApply(); airDialog() })
         if (App.role == "regie" && App.net != null) {
             col.addView(tv(L.t("air_send_cue"), 13f, DIM), lp().apply { topMargin = dp(12) })

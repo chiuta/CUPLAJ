@@ -23,6 +23,7 @@ class AirPacket(val type: Int, val seq: Int, val data: ByteArray)
 object Air {
     const val T_CUE = 1
     const val T_INVITE = 2
+    const val T_ZONE = 3
     private val OPEN_KEY = "CUPLAJ-AIR-OPEN".toByteArray()
 
     private fun mac(key: ByteArray?, msg: ByteArray, n: Int): ByteArray {

@@ -30,7 +30,7 @@ class Msg(val from: String, val num: String, val text: String, val mine: Boolean
 class PeerInfo(
     val id: String, val name: String, val role: String, val number: String, val group: String,
     val line: Int, val slot: Int, val online: Boolean, val busy: Boolean, val mon: Boolean,
-    val muted: Boolean, val bat: Int
+    val muted: Boolean, val bat: Int, val zone: Int = 0, val fx: String = ""
 )
 
 class Found(val name: String, val host: String, val locked: Boolean, val keyed: Boolean = false, val via: String = "lan")
@@ -49,7 +49,11 @@ object App {
     var net: Net? = null
     val playout = Playout()
     val ringer = Ringer()
-    val mic = Mic { f ->
+    @Volatile
+    var myFx: VoiceFx? = null
+
+    val mic = Mic { f0 ->
+        val f = myFx?.processBytes(f0) ?: f0
         val l = p2pLink
         if (micMode == 0 && p2pOn && l != null && l.sendPcm(f)) Unit else net?.sendAudio(micMode, f)
     }
@@ -167,6 +171,7 @@ object App {
         smsGw = p.getBoolean("smsgw", false)
         btOn = p.getBoolean("bton", false)
         autoMode = p.getBoolean("auto", true)
+        rulesText = p.getString("rules", "") ?: ""
         oscOutHost = p.getString("oscoh", "") ?: ""
         oscOutPort = p.getInt("oscop", 53000)
         oscInOn = p.getBoolean("oscin", false)
@@ -592,6 +597,8 @@ object App {
         when (m.optString("t")) {
             "welcome" -> {
                 number = m.optString("number")
+                myFx = m.optString("fx").takeIf { it in VoiceFx.KINDS }?.let { VoiceFx(it) }
+                if (role == "regie") ui.postDelayed({ sendRules() }, 800)
                 myGroup = m.optString("group")
                 connected = true
                 status = L.t("connected_to", m.optString("hub")) + netIcon()
@@ -629,7 +636,7 @@ object App {
                             PeerInfo(
                                 o.optString("id"), o.optString("name"), o.optString("role"), o.optString("number"),
                                 o.optString("group"), o.optInt("line"), o.optInt("slot"), o.optBoolean("online"),
-                                o.optBoolean("busy"), o.optBoolean("mon"), o.optBoolean("muted"), o.optInt("bat", -1)
+                                o.optBoolean("busy"), o.optBoolean("mon"), o.optBoolean("muted"), o.optInt("bat", -1), o.optInt("zone"), o.optString("fx")
                             )
                         )
                     }
@@ -664,6 +671,21 @@ object App {
             }
             "pollres" -> pollResult(m)
             "media" -> mediaChunk(m)
+            "fx" -> myFx = m.optString("k").takeIf { it in VoiceFx.KINDS }?.let { VoiceFx(it) }
+            "goto" -> gotoStep(m.optString("step"))
+            "meterreq" -> {
+                val id = m.optString("id"); val kind = m.optString("kind"); val secs = m.optInt("secs", 5).coerceIn(1, 30)
+                Thread {
+                    val v = if (kind == "noise") Meter.noise(ctx, secs) else Meter.motion(ctx, secs)
+                    if (v != null) send(jo("t" to "meterval", "id" to id, "v" to v))
+                }.apply { isDaemon = true; start() }
+            }
+            "meterres" -> if (!m.optBoolean("open", true)) {
+                meterSummary = L.t("meter_result", L.t("meter_" + m.optString("kind")), m.optInt("avg"), m.optInt("max"), m.optInt("n"), m.optInt("of"))
+                log.add(meterSummary)
+                notify("meterfinal")
+            }
+            "rulesok" -> notify("toast:" + L.t("rules_saved", m.optInt("n")))
             "p2p" -> {
                 val l = p2pLink
                 val k = m.optString("key")
@@ -741,6 +763,48 @@ object App {
     var pollCur: JSONObject? = null
     var pollSummary = ""
     var hwPtt = false
+    var meterSummary = ""
+    var rulesText = ""
+    var captionText = ""
+    var curZone = 0
+    private var lastZoneAt = 0L
+    private var zoneWatch = false
+
+    fun saveRules() {
+        prefs().edit().putString("rules", rulesText).apply()
+        sendRules()
+    }
+
+    fun sendRules() {
+        if (role != "regie" || net == null) return
+        send(jo("t" to "rules", "list" to Rules.toJson(Rules.parse(rulesText))))
+    }
+
+    fun sendMeter(kind: String, to: String) {
+        send(jo("t" to "meter", "kind" to kind, "secs" to 5, "to" to to))
+    }
+
+    /** O zonă de spectacol a fost auzită (semnal sonor de poziționare); se raportează la schimbare, iar după 30 s de tăcere se iese din zonă. */
+    fun zoneHeard(z: Int) {
+        lastZoneAt = System.currentTimeMillis()
+        if (z != curZone) { curZone = z; send(jo("t" to "zone", "z" to z)); notify("zone") }
+        if (!zoneWatch) {
+            zoneWatch = true
+            ui.postDelayed(object : Runnable {
+                override fun run() {
+                    if (curZone != 0 && System.currentTimeMillis() - lastZoneAt > 30000) { curZone = 0; send(jo("t" to "zone", "z" to 0)); notify("zone") }
+                    if (curZone != 0) ui.postDelayed(this, 5000) else zoneWatch = false
+                }
+            }, 5000)
+        }
+    }
+
+    /** Ramificare: Regia sare la pasul numit (sau numerotat de la 1) din scenariu. */
+    private fun gotoStep(s: String) {
+        val t = s.trim()
+        val i = t.toIntOrNull()?.minus(1) ?: script.indexOfFirst { it.name.equals(t, ignoreCase = true) }
+        if (i != null && i in script.indices) playFrom(i)
+    }
 
     private val syncTick = object : Runnable {
         override fun run() {
@@ -864,6 +928,8 @@ object App {
         vibCancel()
         Voice.stop()
         playout.clearEffects()
+        captionText = ""
+        notify("caption")
         try { clip?.release() } catch (_: Exception) {}
         clip = null
         if (mediaShow != null) { mediaShow = null; notify("media") }
@@ -889,8 +955,14 @@ object App {
     }
 
     private fun cue(m: JSONObject) {
-        val text = m.optString("text")
+        val text = expandTokens(pickLang(m.optString("text"), L.lang), myName, number)
         when (m.optString("kind")) {
+            "caption" -> {
+                captionText = text
+                notify("caption")
+                val t = text
+                ui.postDelayed({ if (captionText === t) { captionText = ""; notify("caption") } }, (3000L + t.length * 70L).coerceAtMost(20000L))
+            }
             "image", "video", "clip" -> mediaPlay(m.optString("kind"), text)
             "panic" -> panic()
             "color" -> {

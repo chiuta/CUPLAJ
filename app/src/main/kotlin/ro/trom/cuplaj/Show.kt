@@ -108,7 +108,7 @@ object Osc {
         }
     }
 
-    val CUE_KIND_NAMES = setOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip")
+    val CUE_KIND_NAMES = setOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip", "caption")
 }
 
 /** Ieșire OSC: fiecare cue trimis de Regie e repetat ca `/cuplaj/cue to kind text`. */
@@ -251,5 +251,156 @@ class MediaAsm(private val dir: File) {
         val fs = (dir.listFiles() ?: return).filter { it.isFile }.sortedBy { it.lastModified() }
         var tot = fs.sumOf { it.length() }
         for (f in fs) { if (tot <= maxBytes) break; tot -= f.length(); f.delete() }
+    }
+}
+
+// ====================================================================== v1.7: text multilingv și personalizat
+
+/** „en=Hello|ro=Salut|fr=Bonjour” → textul în limba telefonului (apoi en, apoi primul). Text obișnuit rămâne neschimbat. */
+fun pickLang(text: String, lang: String): String {
+    val parts = text.split("|")
+    if (parts.size < 2 || !parts.all { Regex("^[a-z]{2}=.*", RegexOption.DOT_MATCHES_ALL).matches(it) }) return text
+    val m = parts.associate { it.substring(0, 2) to it.substring(3) }
+    return m[lang] ?: m["en"] ?: parts[0].substring(3)
+}
+
+/** {name} și {number} din telefonul care primește; fără alt cod, deci textul nu poate scoate alte date. */
+fun expandTokens(text: String, name: String, number: String): String =
+    text.replace("{name}", name.filter { it >= ' ' }.take(40)).replace("{number}", number.filter { it.isDigit() || it == '+' }.take(20))
+
+// ====================================================================== efecte de voce (8 kHz, cadre de 20 ms)
+
+class VoiceFx(val kind: String) {
+    companion object {
+        val KINDS = listOf("robot", "radio", "echo", "deep", "high", "lofi")
+        private const val L = 400   // fereastra pitch‑shifterului: 50 ms
+    }
+
+    private val dl = FloatArray(4096)
+    private var w = 0
+    private var tap = 0.0
+    private var ph = 0.0
+    private var lp1 = 0f; private var lp2 = 0f; private var hp1 = 0f; private var hpPrev = 0f
+    private val ech = FloatArray(1440)
+    private var ei = 0
+    private var hold = 0f; private var hc = 0
+
+    private fun shift(x: Float, r: Double): Float {
+        dl[w] = x
+        val adv = (1.0 - r) / L
+        tap = ((tap + adv) % 1.0 + 1.0) % 1.0
+        fun rd(p: Double): Float {
+            val d = p * L + 2
+            val pos = w - d
+            val i0 = Math.floor(pos).toInt()
+            val fr = (pos - i0).toFloat()
+            val a = dl[(i0 % dl.size + dl.size) % dl.size]
+            val b = dl[((i0 + 1) % dl.size + dl.size) % dl.size]
+            return a + (b - a) * fr
+        }
+        val p2 = (tap + 0.5) % 1.0
+        val g1 = Math.sin(Math.PI * tap).let { it * it }.toFloat()
+        val g2 = 1f - g1
+        val y = rd(tap) * g1 + rd(p2) * g2
+        w = (w + 1) % dl.size
+        return y
+    }
+
+    fun process(f: ShortArray): ShortArray {
+        val o = ShortArray(f.size)
+        for (i in f.indices) {
+            var x = f[i] / 32768f
+            val y: Float = when (kind) {
+                "robot" -> { ph += 2 * Math.PI * 55.0 / 8000; if (ph > 2 * Math.PI) ph -= 2 * Math.PI; x * Math.sin(ph).toFloat() * 1.6f }
+                "radio" -> {
+                    hp1 += 0.31f * (x - hp1); val h1 = x - hp1          // trece‑sus ≈ 400 Hz, două trepte
+                    hpPrev += 0.31f * (h1 - hpPrev); val hpv = h1 - hpPrev
+                    lp1 += 0.8f * (hpv - lp1); lp2 += 0.8f * (lp1 - lp2)  // trece‑jos ≈ 2,5 kHz
+                    Math.tanh((lp2 * 3f).toDouble()).toFloat() * 0.8f
+                }
+                "echo" -> { val d = ech[ei]; ech[ei] = x + d * 0.4f; ei = (ei + 1) % ech.size; x + d * 0.5f }
+                "deep" -> shift(x, 0.75)
+                "high" -> shift(x, 1.5)
+                "lofi" -> { if (hc++ % 3 == 0) hold = Math.round(x * 15f) / 15f; hold }
+                else -> x
+            }
+            o[i] = (y.coerceIn(-1f, 1f) * 32767f).toInt().toShort()
+        }
+        return o
+    }
+
+    /** Cadru PCM16 little‑endian de la microfon. */
+    fun processBytes(b: ByteArray): ByteArray {
+        val n = b.size / 2
+        val s = ShortArray(n) { ((b[2 * it + 1].toInt() shl 8) or (b[2 * it].toInt() and 0xFF)).toShort() }
+        val r = process(s)
+        val out = ByteArray(b.size)
+        for (i in 0 until n) { out[2 * i] = r[i].toByte(); out[2 * i + 1] = (r[i].toInt() shr 8).toByte() }
+        return out
+    }
+}
+
+// ====================================================================== reguli (zonă, sondaj, contor → replică)
+
+/** O regulă a Regiei, evaluată de hub. `on`: zone (arg = zona), pollwin (arg = opțiunea câștigătoare, de la 0), meter (kind + prag). */
+class Rule(val id: String, val on: String, val arg: Int, val meterKind: String, val to: String, val kind: String, val text: String, val once: Boolean)
+
+object Rules {
+    val ALLOWED = Osc.CUE_KIND_NAMES - setOf("poll", "pollend", "realcall") + "goto"
+
+    /**
+     * Linii: `zone 3 once > self | text | Bine ai venit, {name}`; `pollwin 0 > all | color | #00ff00;3`;
+     * `meter noise 70 > all | blackout | 1;` ; ținta: all, staff, spectators, actors, self (cel care a declanșat), num:/id:/grp:.
+     */
+    fun parse(text: String): List<Rule> {
+        val out = ArrayList<Rule>()
+        for ((n, raw) in text.lines().withIndex()) {
+            val line = raw.trim()
+            if (line.isEmpty() || line.startsWith("#")) continue
+            val gt = line.indexOf('>')
+            if (gt < 0) continue
+            val left = line.substring(0, gt).trim().split(Regex("\\s+")).toMutableList()
+            val right = line.substring(gt + 1).split("|", limit = 3).map { it.trim() }
+            if (right.size < 2) continue
+            val once = left.remove("once")
+            val on = left.getOrNull(0) ?: continue
+            val (arg, mk) = when (on) {
+                "zone", "pollwin" -> Pair(left.getOrNull(1)?.toIntOrNull() ?: continue, "")
+                "meter" -> {
+                    val k = left.getOrNull(1) ?: continue
+                    if (k != "noise" && k != "motion") continue
+                    Pair(left.getOrNull(2)?.toIntOrNull()?.coerceIn(1, 100) ?: continue, k)
+                }
+                else -> continue
+            }
+            val to = right[0]
+            val kind = right[1]
+            if (kind !in ALLOWED) continue
+            if (!(to in setOf("all", "staff", "spectators", "actors", "self") || Regex("(num|id|grp):[A-Za-z0-9 _.-]{1,40}").matches(to))) continue
+            out.add(Rule("r" + (n + 1), on, arg, mk, to, kind, right.getOrElse(2) { "" }.take(200), once))
+            if (out.size >= 50) break
+        }
+        return out
+    }
+
+    fun toJson(rs: List<Rule>): org.json.JSONArray {
+        val a = org.json.JSONArray()
+        for (r in rs) a.put(jo("id" to r.id, "on" to r.on, "arg" to r.arg, "mk" to r.meterKind, "to" to r.to, "kind" to r.kind, "text" to r.text, "once" to r.once))
+        return a
+    }
+
+    fun fromJson(a: org.json.JSONArray?): List<Rule> {
+        val out = ArrayList<Rule>()
+        if (a == null) return out
+        for (i in 0 until minOf(a.length(), 50)) {
+            val o = a.optJSONObject(i) ?: continue
+            val kind = o.optString("kind")
+            val on = o.optString("on")
+            val to = o.optString("to")
+            if (kind !in ALLOWED || on !in setOf("zone", "pollwin", "meter")) continue
+            if (!(to in setOf("all", "staff", "spectators", "actors", "self") || Regex("(num|id|grp):[A-Za-z0-9 _.-]{1,40}").matches(to))) continue
+            out.add(Rule(o.optString("id").filter { it.isLetterOrDigit() }.take(8).ifEmpty { "r$i" }, on, o.optInt("arg"), o.optString("mk"), to, kind, o.optString("text").filter { it >= ' ' }.take(200), o.optBoolean("once")))
+        }
+        return out
     }
 }

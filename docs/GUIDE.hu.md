@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.6.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.7.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -96,6 +96,14 @@ _Verzió: 1.6.0 · Utolsó frissítés: 2026-11-24_
 - **OSC kimenet** — Beállítások → *OSC*: minden jelzés `/cuplaj/cue <cél> <típus> <szöveg>` üzenetként is megy UDP-n egy fény- vagy hangpultra, QLab-ra vagy Companionra.
 - **OSC bemenet** — a pult `/cuplaj/<hub PIN>/go`, `/panic`, `/stop` vagy `/cue <cél> <típus> <szöveg>` üzenetet küldhet a rendezői telefonnak (alap port: 8473). A címben lévő PIN az egyetlen védelem: tartsd privátban az előadás hálózatát. Másodpercenként legfeljebb 20 üzenet fogadható.
 - **Nem része** — iOS (csak Android), MIDI, program feed és a meglévő csoportoknál több csatorna.
+
+## 14. Okos előadás (1.7)
+
+- **Zónák** — tegyél egy telefont egy szobába (vagy egy szereplő zsebébe), Beállítások → *Légi kapcsolatok* → *Zónajelző*, és koppints, amíg az 1–9 szám megjelenik: 7 mp-enként közel ultrahangos kódot ad, amit a legtöbben nem hallanak. A *Figyel: SONUS* bekapcsolt közönségtelefonok jelentik a hallott zónát; a rendező a név mellett 📍-t lát. 30 mp csend = elmentek.
+- **Szabályok** — rendezői telefon, Beállítások → *Szabályok*, soronként egy: `zone 3 once > self | text | Üdv, {name}`, `pollwin 1 > all | color | #00ff00;3`, `meter noise 70 > all | blackout | 1;`, `pollwin 2 > all | goto | B vég`. A *self* az, aki kiváltotta a szabályt; a `goto` név vagy szám szerint a forgatókönyv egy lépésére ugrik: egy szavazás választhat történetet.
+- **Közönségmérő** — Jelzések fül: *Zaj* vagy *mozgás mérése* 5 mp-ig a kijelölt telefonokon. Mindegyik csak egy 0–100 számot küld, hangot soha. Látod az átlagot, a csúcsot és hányan válaszoltak; a szabályok reagálhatnak.
+- **Hangeffektek** — jelölj ki telefonokat a rendezői listában, *Hangeffekt…*: robot, régi rádió, visszhang, mély, magas, lo‑fi. Az effekt azon a telefonon, küldés előtt érvényesül: mindenki ugyanazt a hangot hallja.
+- **Feliratok és nyelvek** — a *Felirat* jelzés nagy feliratot mutat; bármely szöveges jelzés hordozhat `en=Hello|ro=Salut|fr=Bonjour` formát, és minden telefon a saját nyelvét használja (aztán angol, aztán az első). A `{name}` és `{number}` a fogadó telefon nevévé és számává válik.
 
 ---
 

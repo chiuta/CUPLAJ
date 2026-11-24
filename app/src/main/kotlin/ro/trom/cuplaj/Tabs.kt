@@ -393,7 +393,7 @@ class VoiceTab(a: MainActivity) : Tab(a) {
 
 // ====================================================================== REGIE
 
-val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip")
+val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip", "caption")
 
 /** Țintele pentru indicii: poziție în spinner → șir de țintă. */
 fun targetOptions(): List<String> = listOf(L.t("tgt_all"), L.t("tgt_spectators"), L.t("tgt_actors"), L.t("tgt_selected"), L.t("tgt_group"), L.t("tgt_number"))
@@ -480,6 +480,17 @@ class RegieTab(a: MainActivity) : Tab(a) {
         txt.hint = L.t("hint_text")
         col.addView(txt)
         col.addView(a.btn(L.t("btn_send_cue"), GREEN) { sendCue(CUE_KINDS[kind.selectedItemPosition], txt.text.toString()) })
+        col.addView(row(
+            a.btn(L.t("meter_noise_btn"), BTN) { val ts = targetsNow(); if (ts.isEmpty()) a.toast(L.t("sel_one")) else ts.forEach { App.sendMeter("noise", it) } },
+            a.btn(L.t("meter_motion_btn"), BTN) { val ts = targetsNow(); if (ts.isEmpty()) a.toast(L.t("sel_one")) else ts.forEach { App.sendMeter("motion", it) } }
+        ))
+        col.addView(a.btn(L.t("fx_btn"), BTN) {
+            if (sel.isEmpty()) { a.toast(L.t("sel_one")); return@btn }
+            val names = (listOf("") + VoiceFx.KINDS)
+            android.app.AlertDialog.Builder(a).setTitle(L.t("fx_btn")).setItems(names.map { if (it.isEmpty()) L.t("fx_none") else L.t("fx_$it") }.toTypedArray()) { _, i ->
+                for (id in sel) App.send(jo("t" to "setfx", "id" to id, "k" to names[i]))
+            }.show()
+        })
         col.addView(a.btn(L.t("media_send"), BTN) {
             val ts = targetsNow()
             if (ts.isEmpty()) a.toast(L.t("sel_one")) else a.pickMedia(ts)
@@ -611,7 +622,8 @@ class RegieTab(a: MainActivity) : Tab(a) {
             val st = (if (p.online) "● " else "○ ") + (if (p.busy) "☎ " else "") + (if (p.muted) "🔇 " else "")
             val bat = if (p.bat in 0..100) "  " + p.bat + "%" + (if (p.bat < 20) " ⚠" else "") else ""
             val grp = if (p.group.isNotEmpty()) "  [" + p.group + "]" else ""
-            val t = a.tv(st + p.name + " · " + roleLabel(p.role) + " · " + fmtNum(p.number) + line + grp + bat, 15f, if (p.online) Color.WHITE else DIM)
+            val zf = (if (p.zone > 0) "  📍" + p.zone else "") + (if (p.fx.isNotEmpty()) "  🎙" + L.t("fx_" + p.fx) else "")
+            val t = a.tv(st + p.name + " · " + roleLabel(p.role) + " · " + fmtNum(p.number) + line + grp + bat + zf, 15f, if (p.online) Color.WHITE else DIM)
             t.setPadding(a.dp(8), a.dp(8), a.dp(8), a.dp(8))
             t.background = a.box(if (p.id in sel) ACC else c("#2B2F36"))
             t.setOnClickListener {

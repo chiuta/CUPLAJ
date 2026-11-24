@@ -14,6 +14,7 @@ Written 2026‑11‑24 from the public store listings and articles named below. 
 | PA priority (other sounds duck) | Yes (1.6) | "priority ducking" slider (store notes) | Not checked | Not stated | n/a | n/a |
 | Image / video / audio cues delivered to phones | Yes (1.6, ≤ 8 MB, through the hub) | No | No | Yes | n/a | Content on phones |
 | OSC / MIDI to lighting and sound desks | OSC in and out (1.6); no MIDI | Not stated | No | Not stated | MIDI and OSC cues | Not stated |
+| Location zones, rules, crowd meter, voice effects, per‑language captions | Yes (1.7; zones by sound, no GPS) | No | No | Not stated | No | Audience input only |
 | Cues fire at one shared instant (clock sync) | Yes (1.5) | Not stated | No | Yes ("in step") | n/a | Not stated |
 | Panic / stop everything | Yes (1.5), also over AIR | n/a | n/a | Not stated | Yes (SOLOstudio) | Not stated |
 | Audience polls / votes | Yes (1.5) | No | No | Not stated | No | Yes (core) |

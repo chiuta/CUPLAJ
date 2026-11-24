@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.6.0 · Last update: 2026-11-24_
+_Version: 1.7.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -96,6 +96,14 @@ _Version: 1.6.0 · Last update: 2026-11-24_
 - **OSC out** — Settings → *OSC*: every cue is also sent as `/cuplaj/cue <to> <kind> <text>` over UDP to a lighting or sound desk, QLab or Companion.
 - **OSC in** — the desk can send `/cuplaj/<hub PIN>/go`, `/panic`, `/stop` or `/cue <to> <kind> <text>` to the control phone (default port 8473). The PIN in the address is the only protection: keep the show network private. At most 20 messages per second are accepted.
 - **Not included** — iOS (Android only), MIDI, a program feed, and more than the existing group channels.
+
+## 14. Smart show (1.7)
+
+- **Zones** — put a phone in a room (or hold it in a character's pocket), Settings → *Air links* → *Zone beacon* and tap until it shows the zone number 1–9: it plays an inaudible‑to‑most near‑ultrasonic code every 7 s. Audience phones with *Listen: SONUS* on report which zone they hear; the control phone shows 📍 next to their name. Silence for 30 s means they left.
+- **Rules** — control phone, Settings → *Rules*, one per line: `zone 3 once > self | text | Welcome, {name}`, `pollwin 1 > all | color | #00ff00;3`, `meter noise 70 > all | blackout | 1;`, `pollwin 2 > all | goto | Ending B`. *self* is the person who triggered the rule; `goto` jumps the script to a step by name or number, so a poll can choose the story.
+- **Crowd meter** — in the cue tab: *Measure noise* or *movement* for 5 s on the selected phones. Each phone sends only a number 0–100, never sound. You see average, peak and how many answered, and rules can react.
+- **Voice effects** — select phones in the control list, *Voice effect…*: robot, old radio, echo, deep, high, lo‑fi. The effect is applied on that phone before sending, so everyone who hears it gets the same voice.
+- **Captions and languages** — cue kind *Caption* shows large subtitles; any text cue can carry `en=Hello|ro=Salut|fr=Bonjour` and each phone uses its own language (then English, then the first). `{name}` and `{number}` become the receiving phone's own name and number.
 
 ---
 

@@ -2,6 +2,14 @@
 
 Documentation language: English only.
 
+## 1.7.0 — 2026‑11‑24
+
+* **Show zones**: a phone left in a room plays an authenticated near‑ultrasonic beacon (AIR type 3); audience phones that hear it report the zone to the hub; the control phone sees 📍zone next to each name. No GPS, Bluetooth or Wi‑Fi scan needed.
+* **Rules engine** on the hub: `zone 3 once > self | text | Bun venit, {name}`, `pollwin 0 > …`, `meter noise 70 > …`; targets include *self* (the person who triggered). Action `goto` jumps the control phone's script to a step (story branching by poll result).
+* **Crowd meter**: noise or movement over 5 s; phones send only a number 0–100 (never audio); average, peak and answer count shown to the control phone and usable in rules.
+* **Voice effects** assigned by the control phone to a phone: robot, old radio, echo, deep, high, lo‑fi; applied on the speaker's phone before sending, so every listener hears it.
+* **Captions** (cue kind *caption*) and multilingual text: `en=Hello|ro=Salut` shows each phone its own language (also for text, say, blackout, fake call); `{name}` and `{number}` personalise a cue per phone.
+
 ## 1.6.0 — 2026‑11‑24
 
 * PA priority (ducking): PA announcements travel on a reserved audio source; other sounds drop to 30 % while it plays and return smoothly (setting).

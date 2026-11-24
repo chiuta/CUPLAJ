@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.6.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.7.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -96,6 +96,14 @@ _Version : 1.6.0 · Dernière mise à jour : 2026-11-24_
 - **OSC sortie** — Réglages → *OSC* : chaque indice est aussi envoyé en `/cuplaj/cue <vers> <type> <texte>` par UDP à un pupitre lumière ou son, QLab ou Companion.
 - **OSC entrée** — le pupitre peut envoyer `/cuplaj/<PIN du hub>/go`, `/panic`, `/stop` ou `/cue <vers> <type> <texte>` à la régie (port 8473 par défaut). Le PIN dans l'adresse est la seule protection : gardez le réseau du spectacle privé. 20 messages par seconde au plus.
 - **Non inclus** — iOS (Android seulement), MIDI, flux programme et plus de canaux que les groupes existants.
+
+## 14. Spectacle intelligent (1.7)
+
+- **Zones** — posez un téléphone dans une pièce (ou dans la poche d'un personnage), Réglages → *Liaisons par l'air* → *Balise de zone* et touchez jusqu'au numéro 1–9 : il émet toutes les 7 s un code quasi ultrasonore, inaudible pour la plupart. Les téléphones du public avec *Écouter : SONUS* signalent la zone entendue ; la régie voit 📍 près du nom. 30 s de silence = ils sont partis.
+- **Règles** — téléphone de régie, Réglages → *Règles*, une par ligne : `zone 3 once > self | text | Bienvenue, {name}`, `pollwin 1 > all | color | #00ff00;3`, `meter noise 70 > all | blackout | 1;`, `pollwin 2 > all | goto | Fin B`. *self* est la personne qui a déclenché la règle ; `goto` saute à une étape du scénario par nom ou numéro : un sondage peut donc choisir l'histoire.
+- **Compteur de public** — onglet Indices : *Mesurer le bruit* ou *le mouvement* 5 s sur les téléphones choisis. Chacun n'envoie qu'un nombre 0–100, jamais de son. Vous voyez moyenne, pic et nombre de réponses ; les règles peuvent réagir.
+- **Effets de voix** — choisissez des téléphones dans la liste de la régie, *Effet de voix…* : robot, vieille radio, écho, grave, aigu, lo‑fi. L'effet est appliqué sur ce téléphone avant l'envoi : tous les auditeurs entendent la même voix.
+- **Sous‑titres et langues** — l'indice *Sous‑titre* affiche de grands sous‑titres ; tout indice texte peut porter `en=Hello|ro=Salut|fr=Bonjour` et chaque téléphone prend sa langue (puis l'anglais, puis le premier). `{name}` et `{number}` deviennent le nom et le numéro du téléphone récepteur.
 
 ---
 

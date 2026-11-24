@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.6.0 · Última actualización: 2026-11-24_
+_Versión: 1.7.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -96,6 +96,14 @@ _Versión: 1.6.0 · Última actualización: 2026-11-24_
 - **OSC de salida** — Ajustes → *OSC*: cada señal se envía también como `/cuplaj/cue <a> <tipo> <texto>` por UDP a una mesa de luces o sonido, QLab o Companion.
 - **OSC de entrada** — la mesa puede enviar `/cuplaj/<PIN del hub>/go`, `/panic`, `/stop` o `/cue <a> <tipo> <texto>` a regiduría (puerto 8473 por defecto). El PIN en la dirección es la única protección: mantén privada la red del espectáculo. Máximo 20 mensajes por segundo.
 - **No incluido** — iOS (solo Android), MIDI, program feed y más canales que los grupos existentes.
+
+## 14. Espectáculo inteligente (1.7)
+
+- **Zonas** — pon un teléfono en una sala (o en el bolsillo de un personaje), Ajustes → *Enlaces por aire* → *Baliza de zona* y toca hasta ver el número 1–9: cada 7 s emite un código casi ultrasónico, inaudible para la mayoría. Los teléfonos del público con *Escuchar: SONUS* activo informan de la zona que oyen; regiduría ve 📍 junto al nombre. 30 s de silencio = se fueron.
+- **Reglas** — teléfono de regiduría, Ajustes → *Reglas*, una por línea: `zone 3 once > self | text | Bienvenido, {name}`, `pollwin 1 > all | color | #00ff00;3`, `meter noise 70 > all | blackout | 1;`, `pollwin 2 > all | goto | Final B`. *self* es quien activó la regla; `goto` salta a un paso del guion por nombre o número: una encuesta puede elegir la historia.
+- **Contador de público** — pestaña Señales: *Medir el ruido* o *el movimiento* durante 5 s en los teléfonos elegidos. Cada uno envía solo un número 0–100, nunca sonido. Ves media, pico y cuántos respondieron; las reglas pueden reaccionar.
+- **Efectos de voz** — elige teléfonos en la lista de regiduría, *Efecto de voz…*: robot, radio antigua, eco, grave, aguda, lo‑fi. El efecto se aplica en ese teléfono antes de enviar: todos oyen la misma voz.
+- **Subtítulos e idiomas** — la señal *Subtítulo* muestra subtítulos grandes; cualquier señal de texto puede llevar `en=Hello|ro=Salut|fr=Bonjour` y cada teléfono usa su idioma (luego inglés, luego el primero). `{name}` y `{number}` pasan a ser el nombre y número del teléfono receptor.
 
 ---
 

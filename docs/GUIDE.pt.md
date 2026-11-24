@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · **Português** · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versão: 1.6.0 · Última atualização: 2026-11-24_
+_Versão: 1.7.0 · Última atualização: 2026-11-24_
 
 ## 1. Antes do espetáculo
 
@@ -96,6 +96,14 @@ _Versão: 1.6.0 · Última atualização: 2026-11-24_
 - **OSC de saída** — Definições → *OSC*: cada sinal é também enviado como `/cuplaj/cue <para> <tipo> <texto>` por UDP a uma mesa de luz ou som, QLab ou Companion.
 - **OSC de entrada** — a mesa pode enviar `/cuplaj/<PIN do hub>/go`, `/panic`, `/stop` ou `/cue <para> <tipo> <texto>` à Regia (porta 8473 por defeito). O PIN no endereço é a única proteção: mantenha privada a rede do espetáculo. No máximo 20 mensagens por segundo.
 - **Não incluído** — iOS (só Android), MIDI, program feed e mais canais do que os grupos existentes.
+
+## 14. Espetáculo inteligente (1.7)
+
+- **Zonas** — ponha um telemóvel numa sala (ou no bolso de uma personagem), Definições → *Ligações pelo ar* → *Baliza de zona* e toque até aparecer o número 1–9: emite de 7 em 7 s um código quase ultrassónico, inaudível para a maioria. Os telemóveis do público com *Ouvir: SONUS* ligado indicam a zona que ouvem; a Regia vê 📍 junto ao nome. 30 s de silêncio = saíram.
+- **Regras** — telemóvel da Regia, Definições → *Regras*, uma por linha: `zone 3 once > self | text | Bem‑vindo, {name}`, `pollwin 1 > all | color | #00ff00;3`, `meter noise 70 > all | blackout | 1;`, `pollwin 2 > all | goto | Final B`. *self* é quem ativou a regra; `goto` salta para um passo do guião por nome ou número: uma sondagem pode escolher a história.
+- **Contador de público** — separador Sinais: *Medir o ruído* ou *o movimento* durante 5 s nos telemóveis escolhidos. Cada um envia só um número 0–100, nunca som. Vê média, pico e quantos responderam; as regras podem reagir.
+- **Efeitos de voz** — escolha telemóveis na lista da Regia, *Efeito de voz…*: robô, rádio antigo, eco, grave, aguda, lo‑fi. O efeito aplica‑se nesse telemóvel antes de enviar: todos ouvem a mesma voz.
+- **Legendas e línguas** — o sinal *Legenda* mostra legendas grandes; qualquer sinal de texto pode levar `en=Hello|ro=Salut|fr=Bonjour` e cada telemóvel usa a sua língua (depois inglês, depois a primeira). `{name}` e `{number}` passam a ser o nome e número do telemóvel que recebe.
 
 ---
 

@@ -565,6 +565,11 @@ class HubTest {
     }
 
     @Test
+    fun v17() {
+        assertEquals(0L, runV17().toLong())
+    }
+
+    @Test
     fun show() {
         assertEquals(0L, runShow().toLong())
     }
@@ -1114,5 +1119,125 @@ fun runShow(): Int {
     check("PA: anunțul Regiei poartă sursa rezervată 254 (prioritate)", src == 254)
     hub.stop(); Thread.sleep(200)
     println(if (fails == 0) "SHOW OK" else "$fails ESECURI SHOW")
+    return fails
+}
+
+// ---------------------------------------------------------------- v1.7: limbi, voce, reguli, zone, contor
+
+private fun gz(x: FloatArray, f: Double): Double {
+    val c = 2 * Math.cos(2 * Math.PI * f / 8000); var s1 = 0.0; var s2 = 0.0
+    for (v in x) { val s0 = v + c * s1 - s2; s2 = s1; s1 = s0 }
+    return s1 * s1 + s2 * s2 - c * s1 * s2
+}
+
+private fun fxEnergy(kind: String, f: Double, freq: Double): Double {
+    val fx = VoiceFx(kind)
+    val n = 8000
+    val inp = ShortArray(n) { (0.4 * 32767 * Math.sin(2 * Math.PI * f * it / 8000)).toInt().toShort() }
+    val out = ArrayList<Short>()
+    for (i in 0 until n step 160) out.addAll(fx.process(inp.copyOfRange(i, i + 160)).toList())
+    return gz(FloatArray(4000) { out[4000 + it] / 32768f }, freq)
+}
+
+fun runV17(): Int {
+    fails = 0
+    // ---- limbi și personalizare
+    check("limbă: alege ro, apoi en, apoi primul", pickLang("en=Hi|ro=Salut|fr=Salut!", "ro") == "Salut" && pickLang("en=Hi|ro=Salut", "de") == "Hi" && pickLang("ro=Salut|fr=Bonjour", "de") == "Salut")
+    check("limbă: text obișnuit cu | rămâne neschimbat", pickLang("a|b", "ro") == "a|b" && pickLang("Salut", "ro") == "Salut" && pickLang("en=Hi|nimic", "ro") == "en=Hi|nimic")
+    check("jetoane: {name} și {number}, curățate", expandTokens("Bună, {name} ({number})", "Ana\u0001\u0002", "21 1234") == "Bună, Ana (211234)" && expandTokens("{x} {NAME}", "A", "1") == "{x} {NAME}")
+    // ---- efecte de voce
+    val e400 = fxEnergy("deep", 400.0, 400.0); val e300 = fxEnergy("deep", 400.0, 300.0)
+    check("voce grav: 400 Hz coboară spre 300 Hz", e300 > 4 * e400)
+    check("voce ascuțit: 400 Hz urcă spre 600 Hz", fxEnergy("high", 400.0, 600.0) > 4 * fxEnergy("high", 400.0, 400.0))
+    check("voce robot: purtătoarea dispare, apar benzile laterale (≈345/455 Hz)", fxEnergy("robot", 400.0, 400.0) < 0.2 * (fxEnergy("robot", 400.0, 345.0) + fxEnergy("robot", 400.0, 455.0)))
+    check("voce radio: 100 Hz atenuat de >10× față de 1 kHz", fxEnergy("radio", 100.0, 100.0) * 10 < fxEnergy("radio", 1000.0, 1000.0))
+    val ef = VoiceFx("echo"); val burst = ShortArray(160) { (8000 * Math.sin(it * 0.3)).toInt().toShort() }
+    ef.process(burst); val silence = ShortArray(160); var tail = 0.0
+    for (i in 0 until 12) tail += ef.process(silence).sumOf { Math.abs(it.toInt()).toDouble() }
+    check("voce ecou: rămâne sunet după sfârșitul rafalei", tail > 20000)
+    val bytes = ByteArray(320) { (it * 7).toByte() }
+    check("voce: processBytes păstrează lungimea; fără efect nu stricați cadrul", VoiceFx("robot").processBytes(bytes).size == 320 && VoiceFx("nimic").process(ShortArray(160) { 100 }).all { it.toInt() in 99..101 })
+    var clipOk = true
+    for (k in VoiceFx.KINDS) { val o = VoiceFx(k).process(ShortArray(160) { if (it % 2 == 0) 32767.toShort() else (-32768).toShort() }); if (o.size != 160) clipOk = false }
+    check("voce: intrare saturată nu depășește limitele", clipOk)
+    // ---- reguli
+    val rs = Rules.parse("""
+        # comentariu
+        zone 3 once > self | text | Bun venit, {name}
+        pollwin 1 > all | color | #00ff00;3
+        meter noise 70 > spectators | blackout | 1;
+        zone 4 > all | realcall | 112
+        zone 5 > toți | text | x
+        zone x > all | text | y
+        meter vibes 50 > all | text | z
+        pollwin 0 > regie | text | nu
+        pollwin 2 > id:s1 | goto | Final B
+    """.trimIndent())
+    check("reguli: 4 valide, restul respinse (realcall, țintă, argument, tip)", rs.size == 4 && rs[0].once && rs[2].meterKind == "noise" && rs[2].arg == 70 && rs[3].kind == "goto")
+    check("reguli: dus‑întors prin JSON", Rules.fromJson(Rules.toJson(rs)).map { it.id + it.kind + it.arg } == rs.map { it.id + it.kind + it.arg })
+    check("reguli: JSON ostil (tip/ținta/realcall) respins", Rules.fromJson(org.json.JSONArray("[{\"on\":\"zone\",\"arg\":1,\"to\":\"all\",\"kind\":\"realcall\",\"text\":\"1\"},{\"on\":\"x\",\"kind\":\"text\",\"to\":\"all\"},{\"on\":\"zone\",\"kind\":\"text\",\"to\":\"..\"}]")).isEmpty())
+    check("reguli: cel mult 50", Rules.parse((1..80).joinToString("\n") { "zone $it > all | text | x" }).size == 50)
+
+    // ---- hub
+    val port = 18593
+    val hub = Hub("Z", "1234", "", port, null, false)
+    hub.start(); Thread.sleep(400)
+    val r = C("r", "Regia", "regie", pin = "1234", room = "", port = port)
+    val s1 = C("s1", "Ana", "spectator", room = "", port = port)
+    val s2 = C("s2", "Bob", "spectator", room = "", port = port)
+    val a1 = C("a1", "Actor", "actor", room = "", port = port)
+    for (x in listOf(r, s1, s2, a1)) x.drain()
+    s1.send("t" to "rules", "list" to Rules.toJson(Rules.parse("zone 9 > all | text | spectatorul nu poate")))
+    check("reguli: doar Regia le poate seta", r.next("rulesok", 500) == null)
+    r.send("t" to "rules", "list" to Rules.toJson(rs))
+    check("reguli: Regia setează 4", r.next("rulesok")?.optInt("n") == 4)
+    s1.send("t" to "zone", "z" to 3)
+    val c1 = s1.next("cue")
+    check("zonă 3: regula „self” trimite replica doar celui care a intrat", c1 != null && c1.optString("text").startsWith("Bun venit") && s2.next("cue", 400) == null)
+    Thread.sleep(2100)
+    s1.send("t" to "zone", "z" to 0); Thread.sleep(2100); s1.send("t" to "zone", "z" to 3)
+    check("regulă „once”: a doua intrare în aceeași zonă nu mai declanșează", s1.next("cue", 600) == null)
+    s2.send("t" to "zone", "z" to 150); s2.send("t" to "zone", "z" to -4)
+    Thread.sleep(300); r.drain()
+    r.send("t" to "peers")
+    val pj = r.next("peers")
+    check("peers: zona lui s1 vizibilă regiei, zone invalide ignorate", pj != null && (0 until pj.getJSONArray("list").length()).map { pj.getJSONArray("list").getJSONObject(it) }.let { l -> l.first { it.getString("id") == "s1" }.getInt("zone") == 3 && l.first { it.getString("id") == "s2" }.getInt("zone") == 0 })
+    s2.send("t" to "zone", "z" to 4); s2.send("t" to "zone", "z" to 5)
+    Thread.sleep(300)
+    check("zone fără regulă nu declanșează nimic; schimbarea prea rapidă ignorată", s2.next("cue", 400) == null)
+    // sondaj → ramură
+    for (x in listOf(r, s1, s2, a1)) x.drain()
+    r.send("t" to "poll", "id" to "pw", "to" to "spectators", "q" to "Alegi?", "opts" to org.json.JSONArray(listOf("A", "B", "C")))
+    s1.next("poll"); s2.next("poll")
+    s1.send("t" to "vote", "id" to "pw", "o" to 1); s2.send("t" to "vote", "id" to "pw", "o" to 2)
+    Thread.sleep(200); r.send("t" to "pollend")
+    check("sondaj la egalitate: nicio ramură", s1.next("cue", 500) == null)
+    r.send("t" to "poll", "id" to "pw2", "to" to "spectators", "q" to "Alegi?", "opts" to org.json.JSONArray(listOf("A", "B", "C")))
+    s1.next("poll"); s2.next("poll")
+    s1.send("t" to "vote", "id" to "pw2", "o" to 1); s2.send("t" to "vote", "id" to "pw2", "o" to 1)
+    Thread.sleep(200); r.send("t" to "pollend")
+    check("sondaj cu câștigător (B): replica „all” ajunge la spectatori", s1.next("cue")?.optString("kind") == "color" && s2.next("cue")?.optString("kind") == "color")
+    // contor
+    for (x in listOf(r, s1, s2, a1)) x.drain()
+    r.send("t" to "meter", "kind" to "noise", "secs" to 1, "to" to "spectators")
+    val rq = s1.next("meterreq"); s2.next("meterreq")
+    check("contor: cererea ajunge la spectatori, nu la actor", rq != null && rq.getString("kind") == "noise" && a1.next("meterreq", 300) == null)
+    s1.send("t" to "meterval", "id" to rq!!.getString("id"), "v" to 90)
+    s2.send("t" to "meterval", "id" to rq.getString("id"), "v" to 60)
+    a1.send("t" to "meterval", "id" to rq.getString("id"), "v" to 100)
+    s1.send("t" to "meterval", "id" to "gresit", "v" to 100)
+    r.drain()
+    val fin = r.nextOf(setOf("meterres"), 6000).let { var x = it; var last: JSONObject? = null; while (x != null) { last = x; if (!x.getBoolean("open")) break; x = r.next("meterres", 6000) }; last }
+    check("contor: medie 75 din 2, valorile ostile ignorate, rezultat final", fin != null && !fin.getBoolean("open") && fin.getInt("avg") == 75 && fin.getInt("max") == 90 && fin.getInt("n") == 2)
+    check("contor: regula noise ≥ 70 declanșează negru pe spectatori", s1.next("cue", 1500)?.optString("kind") == "blackout")
+    // efecte de voce
+    s1.send("t" to "setfx", "id" to "s2", "k" to "robot")
+    check("efect de voce: doar Regia îl poate atribui", s2.next("fx", 400) == null)
+    r.send("t" to "setfx", "id" to "s2", "k" to "robot")
+    check("efect de voce: ajunge la telefon", s2.next("fx")?.optString("k") == "robot")
+    r.send("t" to "setfx", "id" to "s2", "k" to "xx")
+    check("efect de voce necunoscut respins", s2.next("fx", 400) == null)
+    hub.stop(); Thread.sleep(200)
+    println(if (fails == 0) "V17 OK" else "$fails ESECURI V17")
     return fails
 }
