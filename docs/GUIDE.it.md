@@ -145,6 +145,14 @@ _Versione: 1.8.0 · Ultimo aggiornamento: 2026-11-24_
 - **`house`** — Luci di sala (sicurezza: stop + schermo bianco): (facoltativo) messaggio mostrato sullo schermo bianco
 - **Trigger e azioni delle regole** — Una regola per riga: ‹quando› > ‹chi› | ‹tipo di cue› | ‹testo›. Quando: `zone 3 [once]`, `pollwin 0` (opzione vincente, da 0), `meter noise|motion 70` (media ≥ 70). Chi: all, staff, spectators, actors, self (chi ha attivato), num:/id:/grp:. Il tipo `goto` salta a un passo del copione per nome o numero. Il testo può usare {name}. Anche `solved` (un segreto frammentato è stato indovinato).
 
+## 17. Schermate e pulsanti (esattamente come nell'app)
+
+- **Voce** — `ANNUNCIO a tutti i telefoni` · `SOLO ALLA SQUADRA`
+- **Regia** — `Numero` · `Gruppo` · `Accoppia 2` · `Disaccoppia` · `Coppie auto` · `Ascolta` · `Muto` · `Dimentica` · `Registro` · `Chiama` · `Epoca …` · `Vicino in ascolto: …` · `Clic al sollevamento: …` · `Messaggi tra telefoni: …` · `Chiamate dirette (P2P): …` · `Invia il segnale` · `Misura il rumore (5 s)` · `Misura il movimento (5 s)` · `Effetto voce per i telefoni scelti…` · `Invia un file (immagine, video, audio) ai telefoni scelti…` · `Strumenti: catena, segreto, registratore, rapporto`
+- **Copione** — `Aggiungi passo` · `GO ▶` · `⏮ Inizio` · `Elimina` · `Esporta` · `Importa`
+- **Impostazioni (menu Aa)** — `DIMENSIONE DEL TESTO` · `Mantieni l'app attiva (ottimizzazione batteria)` · `🔍 Trova e unisciti automaticamente` · `Cerca via Bluetooth` · `Cerca Wi‑Fi Direct` · `Rendi visibile via Bluetooth (5 min)` · `Condividi invito per spettatori` · `Condividi invito per attori` · `Linea VoIP / SIP…` · `Collegamenti via aria: luce, suono, vibrazioni` · `Segnale di zona (questo telefono, altoparlante): …` · `OSC: mixer luci / audio, QLab…` · `Uscita Art‑Net / DMX (luci)` · `Regole: zona, sondaggio, pubblico → cue` · `Priorità PA: gli altri suoni si abbassano quando parla la regia` · `Tasto PTT hardware: attivo (tasto auricolare, volume +)` · `Di’ la frase segreta` · `Azzera la memoria dell'hub (numeri, accoppiamenti)` · `Informazioni su CUPLAJ` · `Esci`
+- Impostazioni e opzioni della regia mostrano anche lo stato (attivo/spento).
+
 ---
 
 [← README](../README.it.md)

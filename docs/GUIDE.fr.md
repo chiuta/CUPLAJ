@@ -145,6 +145,14 @@ _Version : 1.8.0 · Dernière mise à jour : 2026-11-24_
 - **`house`** — Lumière de salle (sécurité : arrêt + écran blanc): (facultatif) message affiché sur l’écran blanc
 - **Déclencheurs et actions de règles** — Une règle par ligne : ‹quand› > ‹qui› | ‹type d'indice› | ‹texte›. Quand : `zone 3 [once]`, `pollwin 0` (option gagnante, dès 0), `meter noise|motion 70` (moyenne ≥ 70). Qui : all, staff, spectators, actors, self (celui qui a déclenché), num:/id:/grp:. Le type `goto` saute à une étape du scénario par nom ou numéro. Le texte peut utiliser {name}. Aussi `solved` (un secret fragmenté a été deviné).
 
+## 17. Écrans et boutons (exactement comme dans l'application)
+
+- **Voix** — `ANNONCE à tous les téléphones` · `SEULEMENT À L'ÉQUIPE`
+- **Régie** — `Numéro` · `Groupe` · `Coupler 2` · `Découpler` · `Paires auto` · `Écouter` · `Muet` · `Oublier` · `Journal` · `Appeler` · `Époque …` · `Voisin à l'écoute : …` · `Clic au décrochage : …` · `Messages entre téléphones : …` · `Appels directs (P2P) : …` · `Envoyer l'indice` · `Mesurer le bruit (5 s)` · `Mesurer le mouvement (5 s)` · `Effet de voix pour les téléphones choisis…` · `Envoyer un fichier (image, vidéo, audio) aux téléphones choisis…` · `Outils : chaîne, secret, magnétophone, rapport`
+- **Scénario** — `Ajouter l'étape` · `GO ▶` · `⏮ Début` · `Supprimer` · `Exporter` · `Importer`
+- **Réglages (menu Aa)** — `TAILLE DU TEXTE` · `Garder l'app active (optimisation batterie)` · `🔍 Trouver et rejoindre automatiquement` · `Chercher par Bluetooth` · `Chercher Wi‑Fi Direct` · `Rendre visible par Bluetooth (5 min)` · `Partager l'invitation pour spectateurs` · `Partager l'invitation pour acteurs` · `Ligne VoIP / SIP…` · `Liaisons par l'air : lumière, son, vibrations` · `Balise de zone (ce téléphone, haut‑parleur) : …` · `OSC : pupitres lumière / son, QLab…` · `Sortie Art‑Net / DMX (lumières)` · `Règles : zone, sondage, public → indice` · `Priorité PA : les autres sons baissent quand la régie parle` · `Touche PTT matérielle : activée (bouton casque, volume +)` · `Dire la phrase secrète` · `Réinitialiser la mémoire du hub (numéros, couplages)` · `À propos de CUPLAJ` · `Quitter`
+- Les réglages et options de la régie indiquent aussi leur état (activé/désactivé).
+
 ---
 
 [← README](../README.fr.md)

@@ -145,6 +145,14 @@ _Versión: 1.8.0 · Última actualización: 2026-11-24_
 - **`house`** — Luces de sala (seguridad: parar + pantalla blanca): (opcional) mensaje en la pantalla blanca
 - **Disparadores y acciones de reglas** — Una regla por línea: ‹cuándo› > ‹quién› | ‹tipo de señal› | ‹texto›. Cuándo: `zone 3 [once]`, `pollwin 0` (opción ganadora, desde 0), `meter noise|motion 70` (media ≥ 70). Quién: all, staff, spectators, actors, self (quien la activó), num:/id:/grp:. El tipo `goto` salta a un paso del guion por nombre o número. El texto puede usar {name}. También `solved` (se adivinó un secreto fragmentado).
 
+## 17. Pantallas y botones (exactamente como en la app)
+
+- **Voz** — `ANUNCIO a todos los teléfonos` · `SOLO AL EQUIPO`
+- **Regiduría** — `Número` · `Grupo` · `Acoplar 2` · `Desacoplar` · `Parejas auto` · `Escuchar` · `Silenciar` · `Olvidar` · `Registro` · `Llamar` · `Época …` · `Vecino escucha: …` · `Clic al descolgar: …` · `Mensajes entre teléfonos: …` · `Llamadas directas (P2P): …` · `Enviar la señal` · `Medir el ruido (5 s)` · `Medir el movimiento (5 s)` · `Efecto de voz para los teléfonos elegidos…` · `Enviar un archivo (imagen, vídeo, audio) a los teléfonos elegidos…` · `Herramientas: cadena, secreto, grabadora, informe`
+- **Guion** — `Añadir paso` · `GO ▶` · `⏮ Inicio` · `Borrar` · `Exportar` · `Importar`
+- **Ajustes (menú Aa)** — `TAMAÑO DEL TEXTO` · `Mantener la app activa (optimización de batería)` · `🔍 Buscar y unirme automáticamente` · `Buscar por Bluetooth` · `Buscar Wi‑Fi Direct` · `Hacer visible por Bluetooth (5 min)` · `Compartir invitación para espectadores` · `Compartir invitación para actores` · `Línea VoIP / SIP…` · `Enlaces por aire: luz, sonido, vibración` · `Baliza de zona (este teléfono, altavoz): …` · `OSC: mesas de luces / sonido, QLab…` · `Salida Art‑Net / DMX (luces)` · `Reglas: zona, encuesta, público → señal` · `Prioridad PA: los demás sonidos bajan cuando habla regiduría` · `Tecla PTT física: activada (botón de auricular, volumen +)` · `Decir la frase secreta` · `Restablecer la memoria del hub (números, acoplamientos)` · `Acerca de CUPLAJ` · `Salir`
+- Los ajustes y opciones de regiduría muestran también su estado (activado/desactivado).
+
 ---
 
 [← README](../README.es.md)

@@ -145,6 +145,14 @@ _Version: 1.8.0 · Letzte Aktualisierung: 2026-11-24_
 - **`house`** — Saallicht (Sicherheit: Stopp + weißer Bildschirm): (optional) Meldung auf dem weißen Bildschirm
 - **Regel‑Auslöser und ‑Aktionen** — Eine Regel pro Zeile: ‹wann› > ‹wer› | ‹Cue‑Typ› | ‹Text›. Wann: `zone 3 [once]`, `pollwin 0` (Gewinneroption, ab 0), `meter noise|motion 70` (Mittel ≥ 70). Wer: all, staff, spectators, actors, self (wer ausgelöst hat), num:/id:/grp:. Typ `goto` springt zu einem Ablaufschritt per Name oder Nummer. Der Text darf {name} nutzen. Auch `solved` (ein geteiltes Geheimnis wurde erraten).
 
+## 17. Bildschirme und Schaltflächen (genau wie in der App)
+
+- **Stimme** — `DURCHSAGE an alle Telefone` · `NUR ZUM TEAM`
+- **Regie** — `Nummer` · `Gruppe` · `2 koppeln` · `Entkoppeln` · `Auto-Paare` · `Mithören` · `Stumm` · `Vergessen` · `Protokoll` · `Anrufen` · `Epoche …` · `Nachbar hört mit: …` · `Klick beim Abheben: …` · `Nachrichten zwischen Telefonen: …` · `Direktgespräche (P2P): …` · `Signal senden` · `Lärm messen (5 s)` · `Bewegung messen (5 s)` · `Stimmeffekt für gewählte Telefone…` · `Datei (Bild, Video, Audio) an die gewählten Telefone senden…` · `Werkzeuge: Kette, Geheimnis, Rekorder, Bericht`
+- **Ablauf** — `Schritt hinzufügen` · `GO ▶` · `⏮ Anfang` · `Löschen` · `Exportieren` · `Importieren`
+- **Einstellungen (Menü Aa)** — `TEXTGRÖSSE` · `App aktiv halten (Akkuoptimierung)` · `🔍 Automatisch finden und beitreten` · `Per Bluetooth suchen` · `Wi‑Fi Direct suchen` · `Per Bluetooth sichtbar machen (5 Min.)` · `Einladung für Zuschauer teilen` · `Einladung für Schauspieler teilen` · `VoIP-/SIP-Leitung…` · `Luftverbindungen: Licht, Schall, Vibration` · `Zonen‑Bake (dieses Telefon, Lautsprecher): …` · `OSC: Licht‑/Tonpulte, QLab…` · `Art‑Net / DMX‑Ausgang (Licht)` · `Regeln: Zone, Umfrage, Publikum → Cue` · `PA‑Vorrang: andere Töne werden leiser, wenn die Regie spricht` · `Hardware‑PTT‑Taste: an (Headset‑Taste, Lauter)` · `Geheimen Satz sagen` · `Hub-Gedächtnis zurücksetzen (Nummern, Kopplungen)` · `Über CUPLAJ` · `Beenden`
+- Einstellungen und Regie‑Optionen zeigen auch ihren Zustand (an/aus).
+
 ---
 
 [← README](../README.de.md)

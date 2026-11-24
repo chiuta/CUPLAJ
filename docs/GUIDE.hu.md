@@ -145,6 +145,14 @@ _Verzió: 1.8.0 · Utolsó frissítés: 2026-11-24_
 - **`house`** — Nézőtéri fények (biztonság: leállítás + fehér képernyő): (opcionális) a fehér képernyőn megjelenő üzenet
 - **Szabály‑kioldók és ‑műveletek** — Soronként egy szabály: ‹mikor› > ‹kinek› | ‹jelzés típusa› | ‹szöveg›. Mikor: `zone 3 [once]`, `pollwin 0` (nyertes opció, 0-tól), `meter noise|motion 70` (átlag ≥ 70). Kinek: all, staff, spectators, actors, self (aki kiváltotta), num:/id:/grp:. A `goto` típus név vagy szám szerint a forgatókönyv egy lépésére ugrik. A szöveg használhatja a {name} jelölést. Valamint `solved` (megfejtették a szétosztott titkot).
 
+## 17. Képernyők és gombok (pontosan, ahogy az appban)
+
+- **Hang** — `BEMONDÁS minden telefonra` · `CSAK A STÁBNAK`
+- **Rendezés** — `Szám` · `Csoport` · `2 összekapcsol` · `Szétválaszt` · `Auto párok` · `Belehallgat` · `Némít` · `Töröl` · `Napló` · `Hívás` · `… korszak` · `Szomszéd hallgat: …` · `Kattanás felvételkor: …` · `Üzenetek telefonok között: …` · `Közvetlen hívások (P2P): …` · `Jelzés küldése` · `Zaj mérése (5 mp)` · `Mozgás mérése (5 mp)` · `Hangeffekt a kiválasztott telefonokra…` · `Fájl (kép, videó, hang) küldése a kiválasztott telefonokra…` · `Eszközök: lánc, titok, magnó, jelentés`
+- **Forgatókönyv** — `Lépés hozzáadása` · `GO ▶` · `⏮ Eleje` · `Törlés` · `Exportálás` · `Importálás`
+- **Beállítások (Aa menü)** — `SZÖVEGMÉRET` · `Az app maradjon aktív (akkumulátor-optimalizálás)` · `🔍 Automatikus keresés és csatlakozás` · `Keresés Bluetoothon` · `Wi‑Fi Direct keresése` · `Láthatóvá tétel Bluetoothon (5 perc)` · `Meghívó küldése nézőknek` · `Meghívó küldése színészeknek` · `VoIP / SIP vonal…` · `Légi kapcsolatok: fény, hang, rezgés` · `Zónajelző (ez a telefon, hangszóró): …` · `OSC: fény‑/hangpultok, QLab…` · `Art‑Net / DMX kimenet (fények)` · `Szabályok: zóna, szavazás, közönség → jelzés` · `PA elsőbbség: a többi hang halkul, amikor a rendező beszél` · `Hardveres PTT gomb: be (headset gomb, hangerő +)` · `Mondd a titkos mondatot` · `A hub memóriájának törlése (számok, párosítások)` · `A CUPLAJ-ról` · `Kilépés`
+- A beállítások és a rendezői opciók az állapotukat (be/ki) is mutatják.
+
 ---
 
 [← README](../README.hu.md)

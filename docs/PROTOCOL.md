@@ -1,4 +1,4 @@
-# CUPLAJ protocol (v1.3)
+# CUPLAJ protocol (v1.8)
 
 Documentation language: English only (the app UI, README and user guide are available in 8 languages).
 
@@ -41,7 +41,7 @@ Hub → client: `{"t":"welcome","number":…,"group":…,"tok":…,"hub":…}` o
 
 Targets (`to`): `all`, `staff`, `spectators`, `actors`, `num:<number>`, `id:<device id>`, `grp:<group>`.
 
-Cue kinds: `text`, `vibrate`, `ring`, `flash`, `speaker`, `era`, `contact`, `say`, `sound`, `blackout`, `fakecall`. Non‑control senders are ignored for `cue`.
+Cue kinds (all versions): `text`, `vibrate`, `ring`, `flash`, `speaker`, `contact`, `era`, `say`, `sound`, `blackout`, `fakecall`, `realcall`, `panic`, `color`, `poll`, `pollend`, `image`, `video`, `clip`, `caption`, `morse`, `house` are relayed by the hub; `dmx` and `midi` are executed only on the control phone and never travel. Non‑control senders are ignored for `cue`. Messages added in later versions (`sync`, `poll`/`vote`, `media`, `rules`, `zone`, `setfx`, `meter`, `chain`, `secret`/`guess`, `tape`, `report` and their answers) are specified in the version sections below.
 
 ## Hub → client messages
 
@@ -71,7 +71,7 @@ Plain TCP on a trusted local network. The room code and PIN are access gates, no
 
 **Frame types.** `1` JSON, `2` PCM16 audio, `3` μ‑law audio (160 bytes = 20 ms). Audio payload: `[src][data]`. Bit `0x80` on the type byte (`FLAG_ENC`) marks an encrypted frame.
 
-**Encryption.** Key = PBKDF2WithHmacSHA1(passphrase, salt `CUPLAJ-v1`, 10 000 iterations, 128 bit). Frame body = `nonce(12) | AES‑GCM(ciphertext+tag)`; nonce = 4‑byte prefix (first byte 1 = hub, 2 = client) + 8‑byte big‑endian counter. Receivers reject a wrong direction byte and non‑increasing counters. The hub may answer `denied bad_key` in clear.
+**Encryption.** Key = PBKDF2WithHmacSHA1(passphrase, salt `CUPLAJ-v1`, 100 000 iterations, 128 bit). Frame body = `nonce(12) | AES‑GCM(ciphertext+tag)`; nonce = 4‑byte prefix (first byte 1 = hub, 2 = client) + 8‑byte big‑endian counter. Receivers reject a wrong direction byte and non‑increasing counters. The hub may answer `denied bad_key` in clear.
 
 **Keepalive.** Client sends `{"t":"ping"}` every 15 s, hub answers `{"t":"pong"}`; hub closes connections idle for 60 s.
 

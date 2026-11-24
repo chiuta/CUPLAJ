@@ -2,7 +2,7 @@
 
 Written 2026‑11‑24 from the public store listings and articles named below. These products solve neighbouring problems, so the table shows what each one is for, not a ranking. Competitor facts come only from those pages and may have changed since; cells marked *Not checked* or *Not stated* were not verified.
 
-| | CUPLAJ 1.5 | Unity Intercom | Zello | Augmented Theatre | QLab Remote / SOLOstudio / MiX16 | Livecube |
+| | CUPLAJ 1.8 | Unity Intercom | Zello | Augmented Theatre | QLab Remote / SOLOstudio / MiX16 | Livecube |
 |---|---|---|---|---|---|---|
 | Main purpose | Immersive theatre: party‑line phones + cues, on the audience's own phones | Production intercom over IP | Push‑to‑talk | Audience phones as stage design | Show‑control cue lists | Audience participation |
 | Needs a server / dashboard | Control phone is the hub (Android) | Unity Intercom Server | Not checked | Dashboard for Mac / iPad | QLab on a Mac / the app itself | Local Wi‑Fi and a web address |
@@ -21,17 +21,18 @@ Written 2026‑11‑24 from the public store listings and articles named below. 
 | Delivery confirmation (sent to N of M) | Yes (1.5) | n/a | Not checked | Not stated | n/a | Not stated |
 | External PTT button | Headset button / volume key (1.5) | Bluetooth PTT button | Bluetooth devices | n/a | n/a | n/a |
 | Phone calls / SMS / SIP bridge | SIP gateway, SMS gateway | External com system bridge | No | No | No | No |
+| Audience games: whispering game, split secret, ghost tape, post‑show report (1.8) | Yes (not tested on phones) | Not stated | No | Not stated | No | Not stated |
 | Platforms | Android | iOS (and server) | Android, iOS, PC, Mac | iOS | iOS, Mac | Web |
 | Licence | MIT, free | Free app, paid server tiers | Not checked | Free app | Free + in‑app purchases | Not checked |
 
 ## What CUPLAJ does that the others do not
 
-Fake party‑line telephony as theatre (coupled lines, distinct ringing, eavesdropping and intervening by the control phone), and cues that still work with no network (AIR: LUMEN, SONUS, TACTUS).
+Fake party‑line telephony as theatre (coupled lines, distinct ringing, eavesdropping and intervening by the control phone), and cues that still work with no network (AIR: LUMEN, SONUS, TACTUS). Judged only by the pages listed below, none of the others offers zones that follow the audience by sound, a message that is deformed from phone to phone, or a secret split over phones — but this is absence from their public descriptions, not proof.
 
 ## What others do that CUPLAJ does not (yet)
 
 * **iOS.** CUPLAJ is Android only.
-* **MIDI** and Art‑Net / DMX output (MiX16, SOLOstudio Pro, QLab): added in 1.8 (untested with real hardware).
+* **Proven lighting and MIDI integration** (MiX16, SOLOstudio Pro, QLab): CUPLAJ sends Art‑Net / DMX and MIDI since 1.8, but only the packet formats are tested, not real desks or MIDI devices.
 * **Program feed, many channels, tally from video switchers** (Unity Intercom: up to 128 channels, 63 users by default); CUPLAJ has groups, not independent channels.
 * **Media that reaches phones joining late, and synchronised video playback** (Augmented Theatre); in CUPLAJ a file goes only to phones online when it is sent, and video starts when the cue arrives (use `@seconds;` for a shared start).
 * **General push‑to‑talk messaging across PC, Mac and phones** (Zello, which its reviewer describes as walkie‑talkie style audio and text messages rather than a true intercom). CUPLAJ is not a general messenger.

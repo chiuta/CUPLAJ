@@ -145,6 +145,14 @@ _Versão: 1.8.0 · Última atualização: 2026-11-24_
 - **`house`** — Luzes de sala (segurança: parar + ecrã branco): (opcional) mensagem mostrada no ecrã branco
 - **Gatilhos e ações de regras** — Uma regra por linha: ‹quando› > ‹quem› | ‹tipo de sinal› | ‹texto›. Quando: `zone 3 [once]`, `pollwin 0` (opção vencedora, desde 0), `meter noise|motion 70` (média ≥ 70). Quem: all, staff, spectators, actors, self (quem ativou), num:/id:/grp:. O tipo `goto` salta para um passo do guião por nome ou número. O texto pode usar {name}. Também `solved` (um segredo fragmentado foi adivinhado).
 
+## 17. Ecrãs e botões (exatamente como na app)
+
+- **Voz** — `ANÚNCIO a todos os telefones` · `SÓ PARA A EQUIPA`
+- **Régie** — `Número` · `Grupo` · `Acoplar 2` · `Desacoplar` · `Pares auto` · `Escutar` · `Silenciar` · `Esquecer` · `Registo` · `Chamar` · `Época …` · `Vizinho escuta: …` · `Clique ao levantar: …` · `Mensagens entre telefones: …` · `Chamadas diretas (P2P): …` · `Enviar o sinal` · `Medir o ruído (5 s)` · `Medir o movimento (5 s)` · `Efeito de voz para os telemóveis escolhidos…` · `Enviar um ficheiro (imagem, vídeo, áudio) aos telemóveis escolhidos…` · `Ferramentas: cadeia, segredo, gravador, relatório`
+- **Guião** — `Adicionar passo` · `GO ▶` · `⏮ Início` · `Apagar` · `Exportar` · `Importar`
+- **Definições (menu Aa)** — `TAMANHO DO TEXTO` · `Manter a app ativa (otimização da bateria)` · `🔍 Encontrar e juntar‑me automaticamente` · `Procurar por Bluetooth` · `Procurar Wi‑Fi Direct` · `Tornar visível por Bluetooth (5 min)` · `Partilhar convite para espectadores` · `Partilhar convite para atores` · `Linha VoIP / SIP…` · `Ligações pelo ar: luz, som, vibração` · `Baliza de zona (este telemóvel, altifalante): …` · `OSC: mesas de luz / som, QLab…` · `Saída Art‑Net / DMX (luzes)` · `Regras: zona, sondagem, público → sinal` · `Prioridade PA: os outros sons baixam quando a Regia fala` · `Tecla PTT física: ativada (botão do auricular, volume +)` · `Dizer a frase secreta` · `Repor a memória do hub (números, acoplamentos)` · `Sobre o CUPLAJ` · `Sair`
+- As definições e opções da Regia mostram também o estado (ligado/desligado).
+
 ---
 
 [← README](../README.pt.md)

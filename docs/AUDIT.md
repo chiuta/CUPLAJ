@@ -1,4 +1,4 @@
-# Adversarial audit — CUPLAJ 1.0.0
+# Adversarial audit — CUPLAJ 1.0.0 to 1.8.0
 
 Documentation language: English only. Date: 2026‑11‑24. Scope: the design and code were attacked from the viewpoint of a hostile participant, a faulty device and a sloppy operator; every item below led to a change in 1.0.0 unless marked open. Items marked **open** are known limits that were *not* fixed.
 
@@ -51,7 +51,7 @@ Method: code review of all sources, then JVM integration tests of the hub with s
 
 ## E. Open items (honest list)
 
-1. **Encryption is optional (since 1.1).** Without a network key traffic is plain; with it, every frame is AES‑128‑GCM with direction‑bound nonces and replay rejection. The key is derived from a passphrase with PBKDF2 (10 000 iterations); a weak or shared key is only as strong as its secrecy.
+1. **Encryption is optional (since 1.1).** Without a network key traffic is plain; with it, every frame is AES‑128‑GCM with direction‑bound nonces and replay rejection. The key is derived from a passphrase with PBKDF2 (100 000 iterations); a weak or shared key is only as strong as its secrecy.
 2. **Single point of failure:** if the control phone dies, all calls stop (state is restored on restart, calls are not).
 3. **No device testing yet.** Audio mixing, echo cancellation on speakerphone, and latency on real hardware are unmeasured; a handful of phones should be rehearsed before a show.
 4. **No load testing beyond simulation.** The 400‑device cap is a safety limit, not a claim of tested capacity.

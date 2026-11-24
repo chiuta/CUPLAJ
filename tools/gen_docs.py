@@ -26,6 +26,32 @@ for _l in LANGS:
     _m = {r[0]: re.sub(r"<([^<>]*)>", r"‹\1›", r[_c]) for r in _rows[1:] if len(r) > _c}
     _items = [_T[_l][1]] + ["**`%s`** — %s: %s" % (k, _m["cue_" + k], _m["hint_" + k]) for k in _kinds] + [_T[_l][2] + _m["rules_hint"]]
     D[_l]["g"] = D[_l]["g"] + [(_T[_l][0], _items)]
+
+# ---- generated: every screen and button, with the app's own labels
+_UI_T = {"en": ("Screens and buttons (exactly as in the app)", "Settings (Aa menu)", "Settings and Control options also show their state (on/off)."),
+ "ro": ("Ecrane și butoane (exact ca în aplicație)", "Setări (meniul Aa)", "Setările și opțiunile Regiei arată și starea (pornit/oprit)."),
+ "fr": ("Écrans et boutons (exactement comme dans l'application)", "Réglages (menu Aa)", "Les réglages et options de la régie indiquent aussi leur état (activé/désactivé)."),
+ "it": ("Schermate e pulsanti (esattamente come nell'app)", "Impostazioni (menu Aa)", "Impostazioni e opzioni della regia mostrano anche lo stato (attivo/spento)."),
+ "es": ("Pantallas y botones (exactamente como en la app)", "Ajustes (menú Aa)", "Los ajustes y opciones de regiduría muestran también su estado (activado/desactivado)."),
+ "pt": ("Ecrãs e botões (exatamente como na app)", "Definições (menu Aa)", "As definições e opções da Regia mostram também o estado (ligado/desligado)."),
+ "de": ("Bildschirme und Schaltflächen (genau wie in der App)", "Einstellungen (Menü Aa)", "Einstellungen und Regie‑Optionen zeigen auch ihren Zustand (an/aus)."),
+ "hu": ("Képernyők és gombok (pontosan, ahogy az appban)", "Beállítások (Aa menü)", "A beállítások és a rendezői opciók az állapotukat (be/ki) is mutatják.")}
+_UI = [("tab_voice", ["voice_pa_btn", "voice_back_btn"]),
+ ("tab_regie", ["btn_number", "btn_group", "btn_couple", "btn_uncouple", "btn_auto", "btn_listen", "btn_mute", "btn_forget", "btn_journal", "btn_call_sel", "btn_era", "opt_listen", "opt_click", "opt_peermsg", "opt_p2p", "btn_send_cue", "meter_noise_btn", "meter_motion_btn", "fx_btn", "media_send", "tools18"]),
+ ("tab_script", ["btn_add_step", "btn_go", "btn_rewind", "btn_del", "btn_export", "btn_import"]),
+ (None, ["set_scale", "set_battery", "btn_auto_join", "btn_scan_bt", "btn_scan_wfd", "bt_visible", "btn_invite_sp", "btn_invite_ac", "btn_sip", "set_air", "beacon_btn", "set_osc", "set_dmx", "set_rules", "duck_on", "hw_ptt_on", "guess_btn", "set_reset_hub", "set_about", "btn_exit"])]
+for _l in LANGS:
+    _c = _hdr.index(_l)
+    _m = {r[0]: r[_c] for r in _rows[1:] if len(r) > _c}
+    def _lab(k):
+        v = _m[k].replace("\\n", " ").replace("%1$s", "…").replace("%s", "…").replace("%d", "…")
+        return "`" + v.strip() + "`"
+    _items = []
+    for _tab, _keys in _UI:
+        _h = _m[_tab] if _tab else _UI_T[_l][1]
+        _items.append("**%s** — %s" % (_h, " · ".join(_lab(k) for k in _keys)))
+    _items.append(_UI_T[_l][2])
+    D[_l]["g"] = D[_l]["g"] + [(_UI_T[_l][0], _items)]
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
 
 def bar(prefix, cur, ext_en):

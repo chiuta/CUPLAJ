@@ -145,6 +145,14 @@ _Versiune: 1.8.0 · Ultima actualizare: 2026-11-24_
 - **`house`** — Lumini de sală (siguranță: oprire + ecran alb): (opțional) mesajul afișat pe ecranul alb
 - **Declanșatoare și acțiuni de reguli** — O regulă pe linie: ‹când› > ‹cine› | ‹tip replică› | ‹text›. Când: `zone 3 [once]`, `pollwin 0` (opțiunea câștigătoare, de la 0), `meter noise|motion 70` (media ≥ 70). Cine: all, staff, spectators, actors, self (cel care a declanșat), num:/id:/grp:. Tipul `goto` sare la un pas din scenariu după nume sau număr. Textul poate folosi {name}. Și `solved` (un secret fragmentat a fost ghicit).
 
+## 17. Ecrane și butoane (exact ca în aplicație)
+
+- **Voce** — `ANUNȚ la toate telefoanele` · `DOAR CU ECHIPA`
+- **Regie** — `Număr` · `Grup` · `Cuplează 2` · `Decuplează` · `Perechi automate` · `Ascultă` · `Mut` · `Uită` · `Jurnal` · `Sună` · `Epoca …` · `Vecin ascultă: …` · `Clic la ridicare: …` · `Mesaje între telefoane: …` · `Apeluri directe (P2P): …` · `Trimite indiciul` · `Măsoară zgomotul (5 s)` · `Măsoară mișcarea (5 s)` · `Efect de voce pentru telefoanele alese…` · `Trimite un fișier (imagine, video, audio) telefoanelor alese…` · `Instrumente: lanț, secret, casetofon, raport`
+- **Scenariu** — `Adaugă pasul` · `GO ▶` · `⏮ Început` · `Șterge` · `Exportă` · `Importă`
+- **Setări (meniul Aa)** — `MĂRIMEA TEXTULUI` · `Păstrează aplicația activă (optimizare baterie)` · `🔍 Găsește și alătură‑mă automat` · `Caută prin Bluetooth` · `Caută Wi‑Fi Direct` · `Fă telefonul vizibil prin Bluetooth (5 min)` · `Trimite invitație pentru spectatori` · `Trimite invitație pentru actori` · `Linie VoIP / SIP…` · `Legături prin aer: lumină, sunet, vibrații` · `Semnal de zonă (acest telefon, difuzor): …` · `OSC: pupitre de lumini / sunet, QLab…` · `Ieșire Art‑Net / DMX (lumini)` · `Reguli: zonă, sondaj, public → replică` · `Prioritate PA: restul sunetelor coboară cât vorbește Regia` · `Buton PTT hardware: pornit (buton căști, volum +)` · `Spune fraza secretă` · `Resetează memoria hubului (numere, cuplaje)` · `Despre CUPLAJ` · `Ieși`
+- Setările și opțiunile Regiei arată și starea (pornit/oprit).
+
 ---
 
 [← README](../README.ro.md)

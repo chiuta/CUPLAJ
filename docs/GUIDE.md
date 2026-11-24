@@ -145,6 +145,14 @@ _Version: 1.8.0 · Last update: 2026-11-24_
 - **`house`** — House lights (safety: stop + white screen): (optional) message shown on the white screen
 - **Rule triggers and actions** — One rule per line: ‹when› > ‹who› | ‹cue kind› | ‹text›. When: `zone 3 [once]`, `pollwin 0` (winning option, from 0), `meter noise|motion 70` (average ≥ 70). Who: all, staff, spectators, actors, self (the one who triggered), num:/id:/grp:. Cue kind `goto` jumps to a script step by name or number. Text may use {name}. Also `solved` (a split secret was guessed).
 
+## 17. Screens and buttons (exactly as in the app)
+
+- **Voice** — `ANNOUNCEMENT to all the phones` · `TALK TO THE CREW ONLY`
+- **Control** — `Number` · `Group` · `Couple 2` · `Uncouple` · `Auto pairs` · `Listen in` · `Mute` · `Forget` · `Log` · `Call` · `Era …` · `Neighbour listening: …` · `Click on lift: …` · `Messages between phones: …` · `Direct calls (P2P): …` · `Send cue` · `Measure noise (5 s)` · `Measure movement (5 s)` · `Voice effect for selected phones…` · `Send a file (image, video, audio) to the selected phones…` · `Show tools: chain, secret, tape, report`
+- **Script** — `Add step` · `GO ▶` · `⏮ Start` · `Delete` · `Export` · `Import`
+- **Settings (Aa menu)** — `TEXT SIZE` · `Keep the app alive (battery optimisation)` · `🔍 Find and join automatically` · `Find via Bluetooth` · `Find Wi‑Fi Direct` · `Make visible by Bluetooth (5 min)` · `Share invitation for spectators` · `Share invitation for actors` · `VoIP / SIP line…` · `Air links: light, sound, vibration` · `Zone beacon (this phone, speaker): …` · `OSC: lighting / sound desks, QLab…` · `Art‑Net / DMX output (lights)` · `Rules: zone, poll, crowd → cue` · `PA priority: other sounds duck while the control phone speaks` · `Hardware PTT key: on (headset button, volume up)` · `Say the secret phrase` · `Reset the hub's memory (numbers, couplings)` · `About CUPLAJ` · `Exit`
+- Settings and Control options also show their state (on/off).
+
 ---
 
 [← README](../README.md)
