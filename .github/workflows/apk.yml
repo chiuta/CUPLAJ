@@ -15,7 +15,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Hub integration tests (JVM)
         run: ./gradlew testDebugUnitTest --no-daemon
 
@@ -45,12 +45,12 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Build APK
         run: ./gradlew assembleRelease --no-daemon
       - name: Rename
         run: cp app/build/outputs/apk/release/app-release.apk CUPLAJ.apk
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: CUPLAJ-apk
           path: CUPLAJ.apk
