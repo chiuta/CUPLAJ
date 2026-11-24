@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · **Português** · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versão: 1.7.0 · Última atualização: 2026-11-24_
+_Versão: 1.8.0 · Última atualização: 2026-11-24_
 
 ## 1. Antes do espetáculo
 
@@ -104,6 +104,16 @@ _Versão: 1.7.0 · Última atualização: 2026-11-24_
 - **Contador de público** — separador Sinais: *Medir o ruído* ou *o movimento* durante 5 s nos telemóveis escolhidos. Cada um envia só um número 0–100, nunca som. Vê média, pico e quantos responderam; as regras podem reagir.
 - **Efeitos de voz** — escolha telemóveis na lista da Regia, *Efeito de voz…*: robô, rádio antigo, eco, grave, aguda, lo‑fi. O efeito aplica‑se nesse telemóvel antes de enviar: todos ouvem a mesma voz.
 - **Legendas e línguas** — o sinal *Legenda* mostra legendas grandes; qualquer sinal de texto pode levar `en=Hello|ro=Salut|fr=Bonjour` e cada telemóvel usa a sua língua (depois inglês, depois a primeira). `{name}` e `{number}` passam a ser o nome e número do telemóvel que recebe.
+
+## 15. Ferramentas de cena (1.8)
+
+- **Luzes e música** — os sinais *dmx* (`0;1=255,2-4=128;2000`) e *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) correm no telemóvel da regia: Definições → *Saída Art‑Net / DMX* envia Art‑Net (UDP 6454) para um nó ou mesa na mesma Wi‑Fi; o MIDI vai para o primeiro dispositivo MIDI USB/Bluetooth encontrado.
+- **Onda** — comece o texto de um sinal com `~150;`: o hub envia‑o aos telemóveis um a um, por ordem de número, com 150 ms.
+- **Telefone estragado** — *Ferramentas → Telefone estragado*: mensagem e números por ordem; cada um vê o que o anterior passou, pode mudá‑lo e passa‑o. A regia recebe o original e todas as deformações.
+- **Segredo fragmentado** — uma frase é repartida palavra a palavra; quem disser primeiro a frase inteira (Definições → *Dizer a frase secreta*) resolve; o gatilho `solved` pode disparar um sinal.
+- **Gravador fantasma** — grava até 60 s do microfone de um telemóvel no hub e reproduz depois a um grupo, como uma voz de lado nenhum (fonte reservada 253).
+- **Luzes de sala** — sinal *house*: pára tudo (como PÂNICO), vibra, ecrã branco e mensagem calma. **Morse** — sinal *morse*: vibra um texto em Morse.
+- **Relatório** — *Ferramentas → Relatório*: ficheiro Markdown com totais, chamadas/mensagens/entradas em zona/bateria por telemóvel e cronologia completa.
 
 ---
 

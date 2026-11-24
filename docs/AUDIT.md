@@ -106,6 +106,15 @@ Open items: SIP/RTP are unencrypted; key strength depends on the passphrase; Blu
 7. **Voice effects** run on the speaker's phone; they do not hide identity from someone who sees the phone.
 8. Not tested on real phones: see the status line in each guide.
 
+## L. Version 1.8 risks
+
+* **Chain/secret/guess are spectator‑reachable**: only the current holder may forward (checked by id and hop), text capped at 200/120 characters, 20 guesses per phone, secret works once; a spectator cannot start any of them (control only).
+* **Wave** is capped at 3 s per step; a spectator's `wave` is ignored because `cue` is control only.
+* **Ghost tape** is bounded (90 s, 6 MB) and records only the phone chosen by the control phone; there is no consent mechanism in the protocol, so tell the audience that the show may record voices (this is a legal matter in some countries).
+* **DMX/MIDI** commands are parsed strictly (channels 1–512, values clamped, fade ≤ 10 min) and never come from the network: they are executed only from the control phone's own cue form or script. Art‑Net itself is unauthenticated; use a separate lighting Wi‑Fi.
+* **House cue** flashes nothing (steady white), so it does not interact with the photosensitivity limit of the colour cue.
+* Not verified: ghost tape audio quality, MIDI on real devices, Art‑Net with real hardware.
+
 ## H. Version 1.3 risks and mitigations
 
 1. **Invitation links carry the network key and PIN.** Anyone who gets the link can join as spectator (or actor if it is the actor link). Links are parsed strictly: scheme and host fixed, length capped, fields sanitised, roles limited to spectator/actor so a link can never create a control phone.

@@ -129,6 +129,15 @@ Idle limits apply per channel: 10 s to send `hello`, 60 s of silence afterwards 
 * PA audio (mode 1) is forwarded with source byte 254; receivers scale all other sources by 0.3 (fast attack, 160 ms hold, slow release).
 * OSC 1.0 over UDP (string, int, float): out `/cuplaj/cue to kind text`; in `/cuplaj/<hub PIN>/go`, `/panic`, `/stop`, `/cue to kind text`; the PIN is compared in constant time, bundles are ignored, packets over 2 KB are dropped.
 
+## v1.8: stage tools
+
+* `cue` may carry `wave` (ms, 0–3000); the hub sends it to the recipients in number order with that spacing and removes the field. Client side: text prefix `~ms;` after `@sec;`.
+* `chain` (control only): `{text≤200, nums:[≤20 numbers]}` → first phone gets `chainmsg {id,text,hop,of}`, answers `chainfwd {id,text}`; only the phone whose turn it is is accepted; offline phones are skipped; at the end control phones get `chainres {id,orig,hops[]}`.
+* `secret` (control only): `{phrase≤120 (≥2 words), to}` → each recipient gets one word as a `text` cue (`from:"secret"`); `guess {text}` from a recipient → `guessres {ok}`; first correct (normalised: lower case, ASCII letters and digits only) → `secretres {by,phrase}` to staff, rule trigger `solved`; 20 guesses per phone.
+* `tape` (control only): `{a:"rec",id,secs 1..90}`, `{a:"stop"}`, `{a:"play",to}`; recorded audio frames are replayed 20 ms apart with source byte 253.
+* `report` (control only) → `reportres {md}`.
+* Local cue kinds (never sent to the hub): `dmx`, `midi`. Relayed kinds added: `morse`, `house`. Art‑Net: `Art-Net\0`, OpDmx 0x5000, protocol 14, sequence, universe (15 bits), length (even).
+
 ## v1.7: zones, rules, meter, voice effects, languages
 
 * AIR type 3 (`T_ZONE`): data = 1 byte zone id (1–99), 4‑byte tag with the network key; emitted every 7 s over SONUS by a beacon phone. Receivers send `{"t":"zone","z":n}` when the zone changes (hub accepts one change per 2 s per phone, 0..99) and `z:0` after 30 s of silence. The hub zeroes a phone's zone when it disconnects.

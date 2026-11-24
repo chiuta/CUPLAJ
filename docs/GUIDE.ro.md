@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.7.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.8.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -104,6 +104,16 @@ _Versiune: 1.7.0 · Ultima actualizare: 2026-11-24_
 - **Contor de public** — în fila Replici: *Măsoară zgomotul* sau *mișcarea* 5 s pe telefoanele alese. Fiecare telefon trimite doar un număr 0–100, niciodată sunet. Vezi media, vârful și câte au răspuns, iar regulile pot reacționa.
 - **Efecte de voce** — alege telefoane în lista Regiei, *Efect de voce…*: robot, radio vechi, ecou, grav, ascuțit, lo‑fi. Efectul se aplică pe telefonul respectiv înainte de trimitere, deci toți cei care îl aud primesc aceeași voce.
 - **Subtitrări și limbi** — tipul *Subtitrare* arată subtitrări mari; orice replică text poate purta `en=Hello|ro=Salut|fr=Bonjour` și fiecare telefon o folosește pe a lui (apoi engleza, apoi prima). `{name}` și `{number}` devin numele și numărul telefonului care primește.
+
+## 15. Instrumente de scenă (1.8)
+
+- **Lumini și muzică** — cue‑urile *dmx* (`0;1=255,2-4=128;2000` = universul 0, canalul 1 la maxim, canalele 2–4 la jumătate, tranziție de 2 s) și *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) rulează pe telefonul Regiei: Setări → *Ieșire Art‑Net / DMX* trimite Art‑Net (UDP 6454) către un nod sau pupitru din aceeași rețea Wi‑Fi; MIDI merge la primul dispozitiv MIDI USB/Bluetooth găsit.
+- **Val** — începe textul unui cue cu `~150;` (după un eventual `@3;`) și hubul îl trimite telefoanelor pe rând, în ordinea numerelor, la 150 ms: un val prin sală.
+- **Telefonul fără fir** — *Instrumente → Telefonul fără fir*: scrii un mesaj și numerele telefoanelor în ordine; fiecare vede ce a transmis cel dinainte, îl poate schimba și îl transmite mai departe. Regia primește originalul și toate deformările.
+- **Secret fragmentat** — o frază e împărțită cuvânt cu cuvânt pe telefoane; cine spune primul fraza întreagă (Setări → *Spune fraza secretă*) o rezolvă; Regia află cine, iar declanșatorul de regulă `solved` poate porni un cue (de ex. se deschide o ușă).
+- **Casetofon‑fantomă** — înregistrezi până la 60 s din microfonul unui telefon pe hub și le redai mai târziu oricărui grup, ca o voce de nicăieri (sursa rezervată 253).
+- **Lumini de sală** — cue *house*: oprește tot (ca PANICA), vibrează, arată un ecran alb și un mesaj calm. **Morse** — cue *morse* vibrează un text în cod Morse.
+- **Raport** — *Instrumente → Raport*: un fișier Markdown cu totaluri, apeluri/mesaje/intrări în zone/baterie pe telefon și cronologia completă, partajat cu orice aplicație.
 
 ---
 

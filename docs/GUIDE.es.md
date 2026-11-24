@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.7.0 · Última actualización: 2026-11-24_
+_Versión: 1.8.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -104,6 +104,16 @@ _Versión: 1.7.0 · Última actualización: 2026-11-24_
 - **Contador de público** — pestaña Señales: *Medir el ruido* o *el movimiento* durante 5 s en los teléfonos elegidos. Cada uno envía solo un número 0–100, nunca sonido. Ves media, pico y cuántos respondieron; las reglas pueden reaccionar.
 - **Efectos de voz** — elige teléfonos en la lista de regiduría, *Efecto de voz…*: robot, radio antigua, eco, grave, aguda, lo‑fi. El efecto se aplica en ese teléfono antes de enviar: todos oyen la misma voz.
 - **Subtítulos e idiomas** — la señal *Subtítulo* muestra subtítulos grandes; cualquier señal de texto puede llevar `en=Hello|ro=Salut|fr=Bonjour` y cada teléfono usa su idioma (luego inglés, luego el primero). `{name}` y `{number}` pasan a ser el nombre y número del teléfono receptor.
+
+## 15. Herramientas de escena (1.8)
+
+- **Luces y música** — las señales *dmx* (`0;1=255,2-4=128;2000`) y *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) se ejecutan en el teléfono de regiduría: Ajustes → *Salida Art‑Net / DMX* envía Art‑Net (UDP 6454) a un nodo o mesa en la misma Wi‑Fi; el MIDI va al primer dispositivo MIDI USB/Bluetooth encontrado.
+- **Ola** — empieza el texto de una señal con `~150;`: el hub la envía a los teléfonos uno tras otro, por orden de número, a 150 ms.
+- **Teléfono descompuesto** — *Herramientas → Teléfono descompuesto*: mensaje y números en orden; cada uno ve lo que pasó el anterior, puede cambiarlo y lo pasa. La regiduría recibe el original y todas las deformaciones.
+- **Secreto fragmentado** — una frase se reparte palabra a palabra; quien diga primero la frase entera (Ajustes → *Decir la frase secreta*) la resuelve; el disparador `solved` puede lanzar una señal.
+- **Grabadora fantasma** — graba hasta 60 s del micrófono de un teléfono en el hub y los reproduce luego a un grupo, como una voz de la nada (fuente reservada 253).
+- **Luces de sala** — señal *house*: detiene todo (como PÁNICO), vibra, pantalla blanca y mensaje tranquilo. **Morse** — señal *morse*: vibra un texto en Morse.
+- **Informe** — *Herramientas → Informe*: archivo Markdown con totales, llamadas/mensajes/entradas de zona/batería por teléfono y cronología completa.
 
 ---
 

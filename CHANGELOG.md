@@ -2,6 +2,17 @@
 
 Documentation language: English only.
 
+## 1.8.0 — 2026‑11‑24
+
+* **Art‑Net / DMX out** (cue kind *dmx*, `universe;1=255,2-4=128;fadeMs`, linear fades, 25 Hz while fading, 1 Hz otherwise) and **MIDI out** (cue kind *midi*: note, off, cc, pc, MMC; Android MidiManager, first USB/Bluetooth device). Both run on the control phone only and do not pass through the hub.
+* **Cue wave**: text starting `~150;` makes the hub send the cue to phones one after another in number order.
+* **Whispering game** (`chain`): a message passes through chosen phones, each may alter it; the control phone receives the original and every version.
+* **Split secret** (`secret`/`guess`): a phrase is split word by word over the phones; the first correct guess (case, accents and punctuation ignored, 20 tries per phone) is reported and fires rule trigger `solved`.
+* **Ghost tape** (`tape`): the hub records up to 60 s of one phone's audio (6 MB cap) and replays it to a group on reserved source 253.
+* **House‑lights cue** (*house*: PANIC + white screen + message + vibration) and **Morse cue** (*morse*, text → vibration pattern, 60 characters).
+* **Post‑show report** (`report`): Markdown with totals, per‑phone calls, messages, zone entries, battery, and the timeline; shared through the system share sheet.
+* Not tested: ghost tape, real lighting desks, MIDI devices, everything on real phones. Not done: iOS, field test on real phones, program feed.
+
 ## 1.7.0 — 2026‑11‑24
 
 * **Show zones**: a phone left in a room plays an authenticated near‑ultrasonic beacon (AIR type 3); audience phones that hear it report the zone to the hub; the control phone sees 📍zone next to each name. No GPS, Bluetooth or Wi‑Fi scan needed.

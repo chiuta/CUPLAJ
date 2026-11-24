@@ -214,6 +214,9 @@ class MainActivity : Activity() {
             k == "caption" -> showCaption()
             k == "meterfinal" -> bigText(App.meterSummary)
             k == "poll" -> showPoll()
+            k == "chain" -> chainDialog()
+            k == "chainfinal" -> bigText(App.chainSummary)
+            k == "report" -> shareText(App.reportMd)
             k == "pollfinal" -> bigText(App.pollSummary)
             k == "log" -> logView?.let { v -> v.text = App.log.joinToString("\n") }
             screen == "main" -> {
@@ -410,6 +413,66 @@ class MainActivity : Activity() {
             App.oscInOn = inOn
             App.saveOsc()
             toast(L.t("restart_hub"))
+        }.show()
+    }
+
+    /** „Telefonul fără fir”: spectatorul vede mesajul și îl transmite mai departe, cum l-a înțeles. */
+    private fun chainDialog() {
+        val m = App.chainCur ?: return
+        val e = edit(L.t("chain_text"), m.optString("text"))
+        AlertDialog.Builder(this).setTitle(L.t("chain_title", m.optInt("hop"), m.optInt("of"))).setView(e)
+            .setCancelable(false)
+            .setPositiveButton(L.t("chain_send")) { _, _ -> App.chainForward(e.text.toString()) }.show()
+    }
+
+    private fun guessDialog() {
+        val e = edit(L.t("guess_hint"), "")
+        AlertDialog.Builder(this).setTitle(L.t("guess_btn")).setView(e)
+            .setPositiveButton(L.t("ok")) { _, _ -> App.guess(e.text.toString()) }
+            .setNegativeButton(L.t("cancel"), null).show()
+    }
+
+    private fun dmxDialog() {
+        val col = LinearLayout(this)
+        col.orientation = LinearLayout.VERTICAL
+        col.setPadding(dp(16), dp(12), dp(16), dp(12))
+        col.addView(tv(L.t("dmx_hint"), 12f, DIM))
+        val h = edit(L.t("dmx_host"), App.dmxHost)
+        var on = App.dmxOn
+        val tb = btn(L.t(if (on) "dmx_on" else "dmx_off"), if (on) GREEN else BTN) {}
+        tb.setOnClickListener { on = !on; tb.text = L.t(if (on) "dmx_on" else "dmx_off") }
+        col.addView(h); col.addView(tb)
+        AlertDialog.Builder(this).setView(col).setPositiveButton(L.t("ok")) { _, _ ->
+            App.dmxHost = h.text.toString().trim()
+            App.dmxOn = on
+            App.saveDmx()
+        }.show()
+    }
+
+    /** Instrumente Regie v1.8: lanț, secret, casetofon‑fantomă, raport. */
+    fun toolsDialog(to: List<String>, sel: List<String>) {
+        val items = arrayOf(L.t("tool_chain"), L.t("tool_secret"), L.t("tape_rec"), L.t("tape_stop"), L.t("tape_play"), L.t("report_btn"))
+        AlertDialog.Builder(this).setTitle(L.t("tools18")).setItems(items) { _, i ->
+            when (i) {
+                0 -> {
+                    val col = LinearLayout(this); col.orientation = LinearLayout.VERTICAL; col.setPadding(dp(16), dp(12), dp(16), dp(12))
+                    val t = edit(L.t("chain_text"), ""); val n = edit(L.t("chain_nums"), "")
+                    col.addView(t); col.addView(n)
+                    AlertDialog.Builder(this).setTitle(L.t("tool_chain")).setView(col).setPositiveButton(L.t("ok")) { _, _ ->
+                        App.startChain(t.text.toString(), n.text.toString().split(Regex("[^0-9]+")).filter { it.isNotEmpty() })
+                    }.show()
+                }
+                1 -> {
+                    val e = edit(L.t("secret_phrase"), "")
+                    AlertDialog.Builder(this).setTitle(L.t("tool_secret")).setMessage(L.t("secret_hint")).setView(e).setPositiveButton(L.t("ok")) { _, _ ->
+                        App.startSecret(e.text.toString(), to.firstOrNull() ?: "spectators")
+                    }.show()
+                }
+                2 -> if (sel.isEmpty()) toast(L.t("sel_one")) else App.tape("rec", sel[0])
+                3 -> App.tape("stop")
+                4 -> App.tape("play", to = to.firstOrNull() ?: "all")
+                5 -> App.requestReport()
+            }
         }.show()
     }
 
@@ -699,6 +762,8 @@ class MainActivity : Activity() {
         }
         col.addView(btn(L.t("set_air")) { dlg?.dismiss(); airDialog() })
         if (App.role == "regie") col.addView(btn(L.t("set_osc")) { dlg?.dismiss(); oscDialog() })
+        if (App.role == "regie") col.addView(btn(L.t("set_dmx")) { dlg?.dismiss(); dmxDialog() })
+        if (App.role != "regie") col.addView(btn(L.t("guess_btn")) { dlg?.dismiss(); guessDialog() })
         if (App.role == "regie") col.addView(btn(L.t("set_rules")) { dlg?.dismiss(); rulesDialog() })
         col.addView(btn(L.t(if (App.playout.duckOn) "duck_on" else "duck_off"), if (App.playout.duckOn) GREEN else BTN) {
             App.playout.duckOn = !App.playout.duckOn

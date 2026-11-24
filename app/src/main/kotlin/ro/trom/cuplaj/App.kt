@@ -461,6 +461,7 @@ object App {
             hubObj = hb
             hb.start()
             startOsc()
+            loadDmx()
             openLinks()
             try {
                 nsd.advertise(name, PORT)
@@ -686,6 +687,30 @@ object App {
                 notify("meterfinal")
             }
             "rulesok" -> notify("toast:" + L.t("rules_saved", m.optInt("n")))
+            "chainmsg" -> {
+                chainCur = m
+                playout.effect(Fx.beep(700, 120))
+                vibrate(300)
+                notify("chain")
+            }
+            "chainres" -> {
+                val h = m.optJSONArray("hops")
+                val sb = StringBuilder(L.t("chain_result_h")).append("\n").append(m.optString("orig"))
+                if (h != null) for (i in 0 until h.length()) sb.append("\n→ ").append(h.optString(i))
+                chainSummary = sb.toString()
+                log.add(chainSummary.replace("\n", " "))
+                notify("chainfinal")
+            }
+            "guessres" -> notify("toast:" + L.t(if (m.optBoolean("ok")) "guess_ok" else "guess_no"))
+            "secretres" -> {
+                chainSummary = L.t("secret_solved", m.optString("by"), m.optString("phrase"))
+                log.add(chainSummary)
+                notify("chainfinal")
+            }
+            "reportres" -> {
+                reportMd = m.optString("md")
+                notify("report")
+            }
             "p2p" -> {
                 val l = p2pLink
                 val k = m.optString("key")
@@ -908,6 +933,39 @@ object App {
         oscIn?.stop(); oscIn = null
     }
 
+    // ---- v1.8: lanț („telefonul fără fir”), secret, raport, DMX/MIDI
+    var chainCur: JSONObject? = null
+    var chainSummary = ""
+    var reportMd = ""
+    var dmxHost = ""
+    var dmxOn = false
+    private var dmx: DmxOut? = null
+    private var midi: MidiOut? = null
+
+    fun saveDmx() {
+        prefs().edit().putString("dmxh", dmxHost).putBoolean("dmxon", dmxOn).apply()
+        dmx?.close(); dmx = null
+        if (dmxOn) dmx = DmxOut(dmxHost)
+    }
+
+    fun loadDmx() {
+        dmxHost = prefs().getString("dmxh", "") ?: ""
+        dmxOn = prefs().getBoolean("dmxon", false)
+        if (dmxOn && dmx == null) dmx = DmxOut(dmxHost)
+    }
+
+    fun chainForward(text: String) {
+        val id = chainCur?.optString("id") ?: return
+        send(jo("t" to "chainfwd", "id" to id, "text" to text.take(200)))
+        chainCur = null
+    }
+
+    fun startChain(text: String, nums: List<String>) = send(jo("t" to "chain", "text" to text, "nums" to org.json.JSONArray(nums)))
+    fun startSecret(phrase: String, to: String) = send(jo("t" to "secret", "phrase" to phrase, "to" to to))
+    fun guess(text: String) = send(jo("t" to "guess", "text" to text.take(120)))
+    fun requestReport() = send(jo("t" to "report"))
+    fun tape(a: String, id: String = "", to: String = "all", secs: Int = 60) = send(jo("t" to "tape", "a" to a, "id" to id, "to" to to, "secs" to secs))
+
     private fun validTarget(t: String) = t in setOf("all", "staff", "spectators", "actors") || Regex("(num|id|grp):[A-Za-z0-9 _.-]{1,40}").matches(t)
 
     private fun oscCmd(c: Osc.Cmd) {
@@ -964,6 +1022,16 @@ object App {
                 ui.postDelayed({ if (captionText === t) { captionText = ""; notify("caption") } }, (3000L + t.length * 70L).coerceAtMost(20000L))
             }
             "image", "video", "clip" -> mediaPlay(m.optString("kind"), text)
+            "morse" -> vibratePattern(Morse.pattern(text), -1)
+            "house" -> {
+                panic()
+                vibratePattern(longArrayOf(0, 600, 200, 600, 200, 600), -1)
+                val cp = colorPlan("#ffffff;" + 300)
+                colorPlanNow = cp
+                notify("color")
+                captionText = text.ifBlank { L.t("house_default") }
+                notify("caption")
+            }
             "panic" -> panic()
             "color" -> {
                 val cp = colorPlan(text)
@@ -1206,11 +1274,22 @@ object App {
             return
         }
         if (kind == "pollend") { send(jo("t" to "pollend")); return }
-        val (delay, body0) = parseAt(text)
+        val (delay, body1) = parseAt(text)
+        val wm = Regex("^~(\\d{1,4});").find(body1)
+        val wave = wm?.groupValues?.get(1)?.toInt() ?: 0
+        val body0 = if (wm != null) body1.substring(wm.value.length) else body1
+        if (kind == "dmx" || kind == "midi") {
+            // ieșiri locale ale Regiei, nu trec prin hub
+            val ok = if (kind == "dmx") DmxCmd.parse(body0)?.let { c -> dmx?.go(c); dmx != null } ?: false
+            else Midi.encode(body0)?.let { b -> (midi ?: MidiOut(ctx).also { midi = it }).send(b) } ?: false
+            notify("toast:" + L.t(if (ok) "out_ok" else "out_fail"))
+            return
+        }
         val body = if (kind in Media.KINDS && body0.isBlank()) lastMediaId else body0
         oscOut?.send(Osc.encode("/cuplaj/cue", to, kind, body))
         val o = jo("t" to "cue", "to" to to, "kind" to kind, "text" to body, "id" to Integer.toHexString((System.nanoTime() and 0xFFFFFF).toInt()))
         if (delay > 0) o.put("at", clock.hubNow(System.currentTimeMillis()) + delay)
+        if (wave > 0) o.put("wave", wave)
         send(o)
         if (kind == "panic") panic()
     }

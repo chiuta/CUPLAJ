@@ -565,6 +565,11 @@ class HubTest {
     }
 
     @Test
+    fun v18() {
+        assertEquals(0L, runV18().toLong())
+    }
+
+    @Test
     fun v17() {
         assertEquals(0L, runV17().toLong())
     }
@@ -1239,5 +1244,98 @@ fun runV17(): Int {
     check("efect de voce necunoscut respins", s2.next("fx", 400) == null)
     hub.stop(); Thread.sleep(200)
     println(if (fails == 0) "V17 OK" else "$fails ESECURI V17")
+    return fails
+}
+
+// ====================================================================== v1.8
+fun runV18(): Int {
+    fails = 0
+    // ---- Art‑Net / DMX
+    val pk = ArtNet.packet(3, 7, byteArrayOf(10, 20, 30))
+    check("Art‑Net: antet „Art-Net\\0”, OpDmx 0x5000, lungime pară, univers, date", String(pk, 0, 7) == "Art-Net" && pk[7].toInt() == 0 && pk[8].toInt() == 0 && pk[9].toInt() == 0x50 && pk[11].toInt() == 14 && pk[12].toInt() == 7 && pk[14].toInt() == 3 && pk[17].toInt() == 4 && pk.size == 22 && pk[18].toInt() == 10 && pk[20].toInt() == 30)
+    val big = ArtNet.packet(0x1234, 0, ByteArray(512))
+    check("Art‑Net: 512 canale = 530 octeți; universul se maschează la 15 biți", big.size == 530 && big[14].toInt() == 0x34 && big[15].toInt() == 0x12 && ArtNet.packet(0xFFFF, 0, ByteArray(2))[15].toInt() == 0x7F)
+    val d = DmxCmd.parse("2;1=255,10-12=128;2000")!!
+    check("DMX: parsare univers, canale, interval, fade", d.universe == 2 && d.target[1] == 255 && d.target[11] == 128 && d.target.size == 4 && d.fadeMs == 2000L)
+    check("DMX: intrări ostile respinse", listOf("x;1=2", "0;0=5", "0;513=5", "0;5-3=1", "0;1=a", "0;", "99999;1=1", "0;1-2-3=4").all { DmxCmd.parse(it) == null } && DmxCmd.parse("0;1=900")!!.target[1] == 255 && DmxCmd.parse("0;1=5;99999999")!!.fadeMs == 600_000L)
+    val f = DmxFader()
+    f.go(DmxCmd.parse("0;1=200;1000")!!, 0)
+    val mid = f.frame(500)[0].toInt() and 0xFF
+    check("DMX: fade liniar (la jumătate ≈100, la final 200, apoi stabil)", mid in 99..101 && (f.frame(1000)[0].toInt() and 0xFF) == 200 && (f.frame(5000)[0].toInt() and 0xFF) == 200 && f.fading(500) && !f.fading(1500))
+    f.go(DmxCmd.parse("0;1=0;0")!!, 6000)
+    check("DMX: fade 0 = salt imediat; alte canale neatinse", (f.frame(6000)[0].toInt() and 0xFF) == 0 && f.frame(6000).size == 512)
+    // ---- MIDI
+    check("MIDI: note, off, cc, pc cu canal", Midi.encode("note 60 127")!!.toList() == listOf<Byte>(0x90.toByte(), 60, 127) && Midi.encode("note 60 100 3")!![0] == 0x92.toByte() && Midi.encode("off 60 16")!!.toList() == listOf<Byte>(0x8F.toByte(), 60, 0) && Midi.encode("cc 7 100")!!.toList() == listOf<Byte>(0xB0.toByte(), 7, 100) && Midi.encode("pc 5 2")!!.toList() == listOf<Byte>(0xC1.toByte(), 5))
+    check("MIDI: MMC play/stop și intrări ostile", Midi.encode("mmc play")!!.size == 6 && Midi.encode("mmc play")!![4].toInt() == 2 && listOf("note 200 1", "note 1", "zzz", "mmc eject", "cc -1 5", "").all { Midi.encode(it) == null })
+    // ---- Morse
+    val sos = Morse.pattern("SOS", 100).toList()
+    check("Morse: SOS = 9 vibrații (3 scurte, 3 lungi, 3 scurte), pauză inițială 0", sos[0] == 0L && sos.size == 18 && sos.filterIndexed { i, _ -> i % 2 == 1 } == listOf(100L, 100, 100, 300, 300, 300, 100, 100, 100))
+    val ab = Morse.pattern("E E", 100).toList()
+    check("Morse: pauza dintre cuvinte = 7 unități", ab == listOf(0L, 100, 700, 100))
+    check("Morse: caractere necunoscute sărite, text gol → doar pauza 0", Morse.pattern("é!?", 100).toList() == listOf(0L) && Morse.pattern("ab", 100).toList().let { it[3] == 300L })
+    // ---- raport
+    val md = Report.markdown("Hub|1", 0, 3_600_000, listOf(RPeer("Ana|x", "spectator", "211", true, 12, 3, 2, 5, 4), RPeer("Bob", "actor", "212", false, -1, 0, 0, 0, 0)), listOf("12:00  start", "12:01 evt|x"), linkedMapOf("cues sent" to 9))
+    check("raport: titlu, totaluri, tabel, cronologie; bară verticală neutralizată", md.startsWith("# Hub/1") && md.contains("cues sent: 9") && md.contains("| Ana/x | spectator | 211 | 2 | 5 | 4 | 12 % |") && md.contains("low battery") && md.contains("* 12:01 evt/x") && md.contains("online now: 1"))
+    // ---- hub
+    val port = 18597
+    val hub = Hub("Z8", "1234", "", port, null, false)
+    hub.start(); Thread.sleep(400)
+    val r = C("r", "Regia", "regie", pin = "1234", room = "", port = port)
+    val s1 = C("s1", "Ana", "spectator", room = "", port = port)
+    val s2 = C("s2", "Bob", "spectator", room = "", port = port)
+    val s3 = C("s3", "Cip", "spectator", room = "", port = port)
+    for (x in listOf(r, s1, s2, s3)) x.drain()
+    r.send("t" to "peers")
+    val pj = r.next("peers")!!
+    val num = HashMap<String, String>()
+    for (i in 0 until pj.getJSONArray("list").length()) pj.getJSONArray("list").getJSONObject(i).let { num[it.getString("id")] = it.getString("number") }
+    // val
+    for (x in listOf(r, s1, s2, s3)) x.drain()
+    val t0 = System.currentTimeMillis()
+    r.send("t" to "cue", "kind" to "text", "text" to "val", "to" to "spectators", "wave" to 300)
+    val w = listOf(s1, s2, s3).map { it.next("cue", 3000); System.currentTimeMillis() - t0 }
+    check("val: cue‑urile ajung eșalonat (≥ 500 ms între primul și ultimul)", w.max() - w.min() >= 500 || w.max() >= 550)
+    s1.send("t" to "cue", "kind" to "text", "text" to "x", "to" to "all", "wave" to 300)
+    check("val: spectatorul nu poate trimite cue", s2.next("cue", 500) == null)
+    // telefon fără fir
+    for (x in listOf(r, s1, s2, s3)) x.drain()
+    r.send("t" to "chain", "text" to "Vine ploaia", "nums" to org.json.JSONArray(listOf(num["s1"], num["s2"], num["s3"], "99999")))
+    val c1 = s1.next("chainmsg")
+    check("lanț: primul primește textul original (1/3)", c1 != null && c1.optString("text") == "Vine ploaia" && c1.optInt("hop") == 1 && c1.optInt("of") == 3)
+    s2.send("t" to "chainfwd", "id" to c1!!.getString("id"), "text" to "intrus")
+    check("lanț: cine nu e la rând nu poate trimite", s2.next("chainmsg", 400) == null)
+    s1.send("t" to "chainfwd", "id" to c1.getString("id"), "text" to "Vine o ploaie")
+    val c2 = s2.next("chainmsg")
+    check("lanț: al doilea primește varianta deformată", c2 != null && c2.optString("text") == "Vine o ploaie" && c2.optInt("hop") == 2)
+    s2.send("t" to "chainfwd", "id" to c2!!.getString("id"), "text" to "Vine o pasăre")
+    val c3 = s3.next("chainmsg")
+    s3.send("t" to "chainfwd", "id" to c3!!.getString("id"), "text" to "Zboară o pasăre")
+    val res = r.next("chainres")
+    check("lanț: Regia vede originalul și toate deformările", res != null && res.optString("orig") == "Vine ploaia" && res.getJSONArray("hops").length() == 3 && res.getJSONArray("hops").getString(2) == "Zboară o pasăre")
+    s3.send("t" to "chainfwd", "id" to c3.getString("id"), "text" to "dublu")
+    check("lanț: după final nu mai primește nimic", r.next("chainres", 400) == null)
+    // secret
+    for (x in listOf(r, s1, s2, s3)) x.drain()
+    r.send("t" to "rules", "list" to Rules.toJson(Rules.parse("solved > all | text | Ușa se deschide")))
+    r.next("rulesok")
+    r.send("t" to "secret", "phrase" to "Luna cade mâine", "to" to "spectators")
+    val fr = listOf(s1, s2, s3).map { it.next("cue")?.optString("text") ?: "" }
+    check("secret: fiecare primește un cuvânt diferit, în ordinea numerelor", fr[0].startsWith("Fragment 1/3: Luna") && fr[1].startsWith("Fragment 2/3: cade") && fr[2].startsWith("Fragment 3/3: mâine"))
+    s1.send("t" to "guess", "text" to "luna cade")
+    check("secret: ghicire greșită respinsă", s1.next("guessres")?.optBoolean("ok") == false)
+    s2.send("t" to "guess", "text" to "  LUNA, cade maine! ")
+    check("secret: ghicire corectă (fără diacritice/majuscule) acceptată", s2.next("guessres")?.optBoolean("ok") == true)
+    val sr = r.next("secretres")
+    check("secret: Regia află cine a rezolvat și regula „solved” declanșează", sr != null && sr.optString("phrase") == "Luna cade mâine" && s1.next("cue", 1500)?.optString("text") == "Ușa se deschide")
+    s3.send("t" to "guess", "text" to "Luna cade mâine")
+    check("secret: după rezolvare nu se mai acceptă", s3.next("guessres", 400) == null)
+    // raport
+    r.send("t" to "report")
+    val rp = r.next("reportres")
+    check("raport: Regia primește Markdown cu cronologia; spectatorul nu", rp != null && rp.getString("md").contains("telefon fără fir") && rp.getString("md").contains("secret rezolvat") && rp.getString("md").contains("cues sent"))
+    s1.send("t" to "report")
+    check("raport: refuzat spectatorilor", s1.next("reportres", 400) == null)
+    hub.stop(); Thread.sleep(200)
+    println(if (fails == 0) "V18 OK" else "$fails ESECURI V18")
     return fails
 }

@@ -11,8 +11,8 @@ android {
         applicationId = "ro.trom.cuplaj"
         minSdk = 24
         targetSdk = 34
-        versionCode = 170
-        versionName = "1.7.0"
+        versionCode = 180
+        versionName = "1.8.0"
     }
 
     buildTypes {

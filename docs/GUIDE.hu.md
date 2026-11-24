@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.7.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.8.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -104,6 +104,16 @@ _Verzió: 1.7.0 · Utolsó frissítés: 2026-11-24_
 - **Közönségmérő** — Jelzések fül: *Zaj* vagy *mozgás mérése* 5 mp-ig a kijelölt telefonokon. Mindegyik csak egy 0–100 számot küld, hangot soha. Látod az átlagot, a csúcsot és hányan válaszoltak; a szabályok reagálhatnak.
 - **Hangeffektek** — jelölj ki telefonokat a rendezői listában, *Hangeffekt…*: robot, régi rádió, visszhang, mély, magas, lo‑fi. Az effekt azon a telefonon, küldés előtt érvényesül: mindenki ugyanazt a hangot hallja.
 - **Feliratok és nyelvek** — a *Felirat* jelzés nagy feliratot mutat; bármely szöveges jelzés hordozhat `en=Hello|ro=Salut|fr=Bonjour` formát, és minden telefon a saját nyelvét használja (aztán angol, aztán az első). A `{name}` és `{number}` a fogadó telefon nevévé és számává válik.
+
+## 15. Színpadi eszközök (1.8)
+
+- **Fény és zene** — a *dmx* (`0;1=255,2-4=128;2000`) és *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) jelzések a rendező telefonján futnak: Beállítások → *Art‑Net / DMX kimenet* Art‑Netet (UDP 6454) küld egy node‑nak vagy pultnak ugyanazon a Wi‑Fi‑n; a MIDI az első talált USB/Bluetooth MIDI‑eszközre megy.
+- **Hullám** — kezdd a jelzés szövegét `~150;`-nel: a hub egymás után küldi a telefonoknak, szám szerinti sorrendben, 150 ms különbséggel.
+- **Süket telefon** — *Eszközök → Süket telefon*: üzenet és telefonszámok sorrendben; mindenki látja, mit adott át az előző, megváltoztathatja és továbbadja. A rendező megkapja az eredetit és minden torzulást.
+- **Szétosztott titok** — egy mondatot szavanként szétosztunk; aki elsőként mondja a teljes mondatot (Beállítások → *Mondd a titkos mondatot*), megfejti; a `solved` szabály‑kioldó jelzést indíthat.
+- **Szellemmagnó** — egy telefon mikrofonjából legfeljebb 60 mp-et rögzít a hubon, és később lejátssza egy csoportnak, mint a semmiből jövő hangot (fenntartott forrás: 253).
+- **Nézőtéri fények** — *house* jelzés: mindent leállít (mint a PÁNIK), rezeg, fehér képernyő és nyugodt üzenet. **Morze** — a *morse* jelzés egy szöveget Morze‑kóddal rezeg.
+- **Jelentés** — *Eszközök → Jelentés*: Markdown fájl összesítéssel, telefononkénti hívás/üzenet/zónabelépés/akku adatokkal és teljes idővonallal.
 
 ---
 

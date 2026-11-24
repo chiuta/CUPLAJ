@@ -393,7 +393,7 @@ class VoiceTab(a: MainActivity) : Tab(a) {
 
 // ====================================================================== REGIE
 
-val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip", "caption")
+val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip", "caption", "dmx", "midi", "morse", "house")
 
 /** Țintele pentru indicii: poziție în spinner → șir de țintă. */
 fun targetOptions(): List<String> = listOf(L.t("tgt_all"), L.t("tgt_spectators"), L.t("tgt_actors"), L.t("tgt_selected"), L.t("tgt_group"), L.t("tgt_number"))
@@ -484,6 +484,7 @@ class RegieTab(a: MainActivity) : Tab(a) {
             a.btn(L.t("meter_noise_btn"), BTN) { val ts = targetsNow(); if (ts.isEmpty()) a.toast(L.t("sel_one")) else ts.forEach { App.sendMeter("noise", it) } },
             a.btn(L.t("meter_motion_btn"), BTN) { val ts = targetsNow(); if (ts.isEmpty()) a.toast(L.t("sel_one")) else ts.forEach { App.sendMeter("motion", it) } }
         ))
+        col.addView(a.btn(L.t("tools18"), BTN) { a.toolsDialog(targetsNow(), sel.toList()) })
         col.addView(a.btn(L.t("fx_btn"), BTN) {
             if (sel.isEmpty()) { a.toast(L.t("sel_one")); return@btn }
             val names = (listOf("") + VoiceFx.KINDS)

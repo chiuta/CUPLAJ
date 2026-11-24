@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.7.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.8.0 · Ultimo aggiornamento: 2026-11-24_
 
 ## 1. Prima dello spettacolo
 
@@ -104,6 +104,16 @@ _Versione: 1.7.0 · Ultimo aggiornamento: 2026-11-24_
 - **Contatore del pubblico** — scheda Cue: *Misura il rumore* o *il movimento* per 5 s sui telefoni scelti. Ognuno invia solo un numero 0–100, mai audio. Vedi media, picco e quanti hanno risposto; le regole possono reagire.
 - **Effetti voce** — scegli telefoni nell'elenco della regia, *Effetto voce…*: robot, vecchia radio, eco, profonda, acuta, lo‑fi. L'effetto si applica su quel telefono prima dell'invio: tutti sentono la stessa voce.
 - **Sottotitoli e lingue** — il cue *Sottotitolo* mostra grandi sottotitoli; ogni cue testo può portare `en=Hello|ro=Salut|fr=Bonjour` e ogni telefono usa la sua lingua (poi inglese, poi la prima). `{name}` e `{number}` diventano nome e numero del telefono che riceve.
+
+## 15. Strumenti di scena (1.8)
+
+- **Luci e musica** — i cue *dmx* (`0;1=255,2-4=128;2000`) e *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) girano sul telefono della regia: Impostazioni → *Uscita Art‑Net / DMX* invia Art‑Net (UDP 6454) a un nodo o mixer sulla stessa Wi‑Fi; il MIDI va al primo dispositivo MIDI USB/Bluetooth trovato.
+- **Onda** — inizia il testo di un cue con `~150;`: l'hub lo invia ai telefoni uno dopo l'altro, in ordine di numero, a 150 ms.
+- **Telefono senza fili** — *Strumenti → Telefono senza fili*: messaggio e numeri in ordine; ognuno vede ciò che ha passato il precedente, può cambiarlo e lo passa. La regia riceve l'originale e tutte le deformazioni.
+- **Segreto frammentato** — una frase è divisa parola per parola; chi dice per primo la frase intera (Impostazioni → *Di' la frase segreta*) la risolve; il trigger `solved` può far partire un cue.
+- **Registratore fantasma** — registra fino a 60 s dal microfono di un telefono sull'hub e lo riproduce poi a un gruppo, come una voce dal nulla (sorgente riservata 253).
+- **Luci di sala** — cue *house*: ferma tutto (come PANICO), vibra, schermo bianco e messaggio calmo. **Morse** — cue *morse*: vibra un testo in Morse.
+- **Rapporto** — *Strumenti → Rapporto*: file Markdown con totali, chiamate/messaggi/ingressi in zona/batteria per telefono e cronologia completa.
 
 ---
 

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.7.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.8.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -104,6 +104,16 @@ _Version : 1.7.0 · Dernière mise à jour : 2026-11-24_
 - **Compteur de public** — onglet Indices : *Mesurer le bruit* ou *le mouvement* 5 s sur les téléphones choisis. Chacun n'envoie qu'un nombre 0–100, jamais de son. Vous voyez moyenne, pic et nombre de réponses ; les règles peuvent réagir.
 - **Effets de voix** — choisissez des téléphones dans la liste de la régie, *Effet de voix…* : robot, vieille radio, écho, grave, aigu, lo‑fi. L'effet est appliqué sur ce téléphone avant l'envoi : tous les auditeurs entendent la même voix.
 - **Sous‑titres et langues** — l'indice *Sous‑titre* affiche de grands sous‑titres ; tout indice texte peut porter `en=Hello|ro=Salut|fr=Bonjour` et chaque téléphone prend sa langue (puis l'anglais, puis le premier). `{name}` et `{number}` deviennent le nom et le numéro du téléphone récepteur.
+
+## 15. Outils de scène (1.8)
+
+- **Lumières et musique** — les signaux *dmx* (`0;1=255,2-4=128;2000`) et *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) s'exécutent sur le téléphone de la régie : Réglages → *Sortie Art‑Net / DMX* envoie de l'Art‑Net (UDP 6454) vers un nœud ou une console sur le même Wi‑Fi ; le MIDI va au premier appareil MIDI USB/Bluetooth trouvé.
+- **Vague** — commencez le texte d'un signal par `~150;` : le hub l'envoie aux téléphones l'un après l'autre, dans l'ordre des numéros, à 150 ms d'intervalle.
+- **Téléphone arabe** — *Outils → Téléphone arabe* : message et numéros dans l'ordre ; chacun voit ce que le précédent a transmis, peut le changer et le passe. La régie reçoit l'original et toutes les déformations.
+- **Secret fragmenté** — une phrase est répartie mot par mot ; qui dit la phrase entière en premier (Réglages → *Dire la phrase secrète*) la résout ; le déclencheur de règle `solved` peut lancer un signal.
+- **Magnétophone fantôme** — enregistre jusqu'à 60 s du micro d'un téléphone sur le hub et le rejoue plus tard à un groupe, comme une voix venue de nulle part (source réservée 253).
+- **Lumière de salle** — signal *house* : arrête tout (comme PANIQUE), vibre, écran blanc et message calme. **Morse** — signal *morse* : vibre un texte en Morse.
+- **Rapport** — *Outils → Rapport* : fichier Markdown avec totaux, appels/messages/entrées de zone/batterie par téléphone et chronologie complète.
 
 ---
 

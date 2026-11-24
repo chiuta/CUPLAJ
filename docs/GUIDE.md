@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.7.0 · Last update: 2026-11-24_
+_Version: 1.8.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -104,6 +104,16 @@ _Version: 1.7.0 · Last update: 2026-11-24_
 - **Crowd meter** — in the cue tab: *Measure noise* or *movement* for 5 s on the selected phones. Each phone sends only a number 0–100, never sound. You see average, peak and how many answered, and rules can react.
 - **Voice effects** — select phones in the control list, *Voice effect…*: robot, old radio, echo, deep, high, lo‑fi. The effect is applied on that phone before sending, so everyone who hears it gets the same voice.
 - **Captions and languages** — cue kind *Caption* shows large subtitles; any text cue can carry `en=Hello|ro=Salut|fr=Bonjour` and each phone uses its own language (then English, then the first). `{name}` and `{number}` become the receiving phone's own name and number.
+
+## 15. Stage tools (1.8)
+
+- **Lights and music** — cue kinds *dmx* (`0;1=255,2-4=128;2000` = universe 0, channel 1 at full, channels 2–4 at half, 2 s fade) and *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) run on the control phone: Settings → *Art‑Net / DMX output* sends Art‑Net (UDP 6454) to a node or desk on the same Wi‑Fi; MIDI goes to the first USB/Bluetooth MIDI device found.
+- **Wave** — start a cue text with `~150;` (after any `@3;`) and the hub sends it to the phones one after another in number order, 150 ms apart: a ripple through the room.
+- **Whispering game** — *Show tools → Whispering game*: type a message and the phone numbers in order; each person sees what the one before passed on, may change it, and passes it on. The control phone gets the original and every distortion.
+- **Split secret** — a phrase is split word by word over the phones; whoever says the whole phrase first (Settings → *Say the secret phrase*) solves it; the control phone is told who, and the rule trigger `solved` can fire a cue (e.g. a door opens).
+- **Ghost tape** — record up to 60 s of one phone's microphone on the hub and play it back later to any group, as a voice from nowhere (reserved source 253).
+- **House lights** — cue kind *house*: stops everything (like PANIC), vibrates, shows a white screen and a calm message. **Morse** — cue kind *morse* vibrates a text in Morse code.
+- **Report** — *Show tools → Report*: a Markdown file with totals, per‑phone calls/messages/zone entries/battery and the full timeline, shared with any app.
 
 ---
 

@@ -108,7 +108,7 @@ object Osc {
         }
     }
 
-    val CUE_KIND_NAMES = setOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip", "caption")
+    val CUE_KIND_NAMES = setOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip", "caption", "dmx", "midi", "morse", "house")
 }
 
 /** Ieșire OSC: fiecare cue trimis de Regie e repetat ca `/cuplaj/cue to kind text`. */
@@ -365,6 +365,7 @@ object Rules {
             val once = left.remove("once")
             val on = left.getOrNull(0) ?: continue
             val (arg, mk) = when (on) {
+                "solved" -> Pair(0, "")
                 "zone", "pollwin" -> Pair(left.getOrNull(1)?.toIntOrNull() ?: continue, "")
                 "meter" -> {
                     val k = left.getOrNull(1) ?: continue
@@ -397,10 +398,162 @@ object Rules {
             val kind = o.optString("kind")
             val on = o.optString("on")
             val to = o.optString("to")
-            if (kind !in ALLOWED || on !in setOf("zone", "pollwin", "meter")) continue
+            if (kind !in ALLOWED || on !in setOf("zone", "pollwin", "meter", "solved")) continue
             if (!(to in setOf("all", "staff", "spectators", "actors", "self") || Regex("(num|id|grp):[A-Za-z0-9 _.-]{1,40}").matches(to))) continue
             out.add(Rule(o.optString("id").filter { it.isLetterOrDigit() }.take(8).ifEmpty { "r$i" }, on, o.optInt("arg"), o.optString("mk"), to, kind, o.optString("text").filter { it >= ' ' }.take(200), o.optBoolean("once")))
         }
         return out
     }
+}
+
+// ====================================================================== v1.8: Art‑Net/DMX, MIDI, Morse, valuri, raport
+
+/** Art‑Net ArtDMX (UDP 6454). */
+object ArtNet {
+    const val PORT = 6454
+
+    fun packet(universe: Int, seq: Int, data: ByteArray): ByteArray {
+        val len = (data.size + 1) and 1.inv()
+        val b = ByteArray(18 + len)
+        "Art-Net".toByteArray().copyInto(b)
+        b[8] = 0x00; b[9] = 0x50                 // OpDmx, little‑endian
+        b[10] = 0; b[11] = 14                    // versiunea protocolului
+        b[12] = (seq and 0xFF).toByte(); b[13] = 0
+        b[14] = (universe and 0xFF).toByte(); b[15] = ((universe shr 8) and 0x7F).toByte()
+        b[16] = ((len shr 8) and 0xFF).toByte(); b[17] = (len and 0xFF).toByte()
+        data.copyInto(b, 18)
+        return b
+    }
+}
+
+/** „0;1=255,2-4=128;2000” = univers 0 (de la 0), canalul 1 la 255, canalele 2–4 la 128, tranziție de 2 s. */
+class DmxCmd(val universe: Int, val target: Map<Int, Int>, val fadeMs: Long) {
+    companion object {
+        fun parse(text: String): DmxCmd? {
+            val p = text.split(";").map { it.trim() }
+            val u = p.getOrNull(0)?.toIntOrNull() ?: return null
+            if (u !in 0..32767) return null
+            val t = HashMap<Int, Int>()
+            for (item in (p.getOrNull(1) ?: return null).split(",")) {
+                val kv = item.split("=")
+                if (kv.size != 2) return null
+                val v = kv[1].trim().toIntOrNull()?.coerceIn(0, 255) ?: return null
+                val r = kv[0].trim().split("-")
+                val a = r.getOrNull(0)?.toIntOrNull() ?: return null
+                val b = if (r.size == 2) (r[1].toIntOrNull() ?: return null) else a
+                if (r.size > 2 || a < 1 || b > 512 || b < a) return null
+                for (c in a..b) t[c] = v
+            }
+            if (t.isEmpty()) return null
+            return DmxCmd(u, t, (p.getOrNull(2)?.toLongOrNull() ?: 0L).coerceIn(0L, 600_000L))
+        }
+    }
+}
+
+/** 512 de canale cu tranziții liniare. */
+class DmxFader {
+    private val cur = DoubleArray(512)
+    private var from = DoubleArray(512)
+    private var to = DoubleArray(512)
+    private var t0 = 0L
+    private var dur = 0L
+
+    @Synchronized
+    fun go(c: DmxCmd, now: Long) {
+        val f = frameD(now)
+        from = f
+        to = f.copyOf()
+        for ((ch, v) in c.target) to[ch - 1] = v.toDouble()
+        t0 = now
+        dur = c.fadeMs
+    }
+
+    private fun frameD(now: Long): DoubleArray {
+        val k = if (dur <= 0) 1.0 else ((now - t0).toDouble() / dur).coerceIn(0.0, 1.0)
+        return DoubleArray(512) { from[it] + (to[it] - from[it]) * k }
+    }
+
+    @Synchronized
+    fun frame(now: Long): ByteArray {
+        val d = frameD(now)
+        return ByteArray(512) { Math.round(d[it]).toInt().coerceIn(0, 255).toByte() }
+    }
+
+    @Synchronized
+    fun fading(now: Long) = dur > 0 && now - t0 < dur
+}
+
+/** MIDI din text: `note 60 127 [canal]`, `off 60 [canal]`, `cc 7 100 [canal]`, `pc 5 [canal]`, `mmc play|stop|record`. */
+object Midi {
+    fun encode(text: String): ByteArray? {
+        val p = text.trim().lowercase().split(Regex("\\s+"))
+        fun n(i: Int, lo: Int, hi: Int): Int? = p.getOrNull(i)?.toIntOrNull()?.takeIf { it in lo..hi }
+        fun ch(i: Int): Int = (p.getOrNull(i)?.toIntOrNull()?.takeIf { it in 1..16 } ?: 1) - 1
+        return when (p[0]) {
+            "note" -> { val a = n(1, 0, 127) ?: return null; val v = n(2, 0, 127) ?: return null; byteArrayOf((0x90 or ch(3)).toByte(), a.toByte(), v.toByte()) }
+            "off" -> { val a = n(1, 0, 127) ?: return null; byteArrayOf((0x80 or ch(2)).toByte(), a.toByte(), 0) }
+            "cc" -> { val a = n(1, 0, 127) ?: return null; val v = n(2, 0, 127) ?: return null; byteArrayOf((0xB0 or ch(3)).toByte(), a.toByte(), v.toByte()) }
+            "pc" -> { val a = n(1, 0, 127) ?: return null; byteArrayOf((0xC0 or ch(2)).toByte(), a.toByte()) }
+            "mmc" -> {
+                val c = when (p.getOrNull(1)) { "stop" -> 1; "play" -> 2; "record" -> 6; else -> return null }
+                byteArrayOf(0xF0.toByte(), 0x7F, 0x7F, 0x06, c.toByte(), 0xF7.toByte())
+            }
+            else -> null
+        }
+    }
+}
+
+/** Cod Morse ca model de vibrații (ms: pauză, vibrație, pauză, …); începe cu pauză 0. */
+object Morse {
+    private val T = mapOf(
+        'A' to ".-", 'B' to "-...", 'C' to "-.-.", 'D' to "-..", 'E' to ".", 'F' to "..-.", 'G' to "--.", 'H' to "....", 'I' to "..",
+        'J' to ".---", 'K' to "-.-", 'L' to ".-..", 'M' to "--", 'N' to "-.", 'O' to "---", 'P' to ".--.", 'Q' to "--.-", 'R' to ".-.",
+        'S' to "...", 'T' to "-", 'U' to "..-", 'V' to "...-", 'W' to ".--", 'X' to "-..-", 'Y' to "-.--", 'Z' to "--..",
+        '0' to "-----", '1' to ".----", '2' to "..---", '3' to "...--", '4' to "....-", '5' to ".....", '6' to "-....", '7' to "--...", '8' to "---..", '9' to "----."
+    )
+
+    /** Model Android (pauză, vibrație, pauză, …), începe cu pauză 0. */
+    fun pattern(text: String, unit: Long = 120): LongArray {
+        val out = ArrayList<Long>()
+        for (w in text.uppercase().take(60).split(Regex("\\s+"))) {
+            var inWord = false
+            for (ch in w) {
+                val code = T[ch] ?: continue
+                for ((i, s) in code.withIndex()) {
+                    val pause = if (i > 0) unit else if (inWord) unit * 3 else if (out.isNotEmpty()) unit * 7 else 0L
+                    out.add(pause)
+                    out.add(if (s == '.') unit else unit * 3)
+                }
+                inWord = true
+            }
+        }
+        if (out.isEmpty()) out.add(0)
+        return out.toLongArray()
+    }
+}
+
+/** Raport după spectacol (Markdown). */
+class RPeer(val name: String, val role: String, val number: String, val online: Boolean, val bat: Int, val zone: Int, val calls: Int, val msgs: Int, val zones: Int)
+
+object Report {
+    fun markdown(hub: String, startMs: Long, nowMs: Long, peers: List<RPeer>, events: List<String>, counters: Map<String, Int>): String {
+        val sb = StringBuilder()
+        val mins = (nowMs - startMs) / 60000
+        sb.append("# ").append(clean(hub.ifEmpty { "CUPLAJ" })).append(" — show report\n\n")
+        sb.append("Generated: ").append(java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(java.util.Date(nowMs))).append(" · hub up ").append(mins).append(" min\n\n")
+        sb.append("## Totals\n\n")
+        for ((k, v) in counters) sb.append("* ").append(k).append(": ").append(v).append('\n')
+        val on = peers.count { it.online }
+        sb.append("* phones known: ").append(peers.size).append(" (online now: ").append(on).append(")\n")
+        val lowBat = peers.filter { it.bat in 0..19 }
+        if (lowBat.isNotEmpty()) sb.append("* low battery (<20 %): ").append(lowBat.joinToString(", ") { it.name }).append('\n')
+        sb.append("\n## Phones\n\n| Name | Role | Number | Calls | Messages | Zone entries | Battery |\n|---|---|---|---|---|---|---|\n")
+        for (p in peers.take(150)) sb.append("| ").append(clean(p.name)).append(" | ").append(p.role).append(" | ").append(p.number).append(" | ").append(p.calls).append(" | ").append(p.msgs).append(" | ").append(p.zones).append(" | ").append(if (p.bat >= 0) p.bat.toString() + " %" else "–").append(" |\n")
+        if (peers.size > 150) sb.append("\n(").append(peers.size - 150).append(" more not listed)\n")
+        sb.append("\n## Timeline\n\n")
+        for (e in events.takeLast(400)) sb.append("* ").append(clean(e)).append('\n')
+        return sb.toString()
+    }
+
+    private fun clean(s: String) = s.replace("|", "/").replace("\n", " ")
 }

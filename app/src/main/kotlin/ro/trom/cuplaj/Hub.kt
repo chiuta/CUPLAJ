@@ -38,6 +38,9 @@ class Peer(val id: String) {
     var bat = -1
     var zone = 0           // zona de spectacol auzită (0 = nicio zonă)
     var zoneAt = 0L
+    var nMsgs = 0
+    var nCalls = 0
+    var nZones = 0
     var fx = ""            // efect de voce atribuit de regie
     var p2p = false        // clientul știe P2P direct
     var local = false      // telefonul Regiei însuși (conexiune loopback)
@@ -562,6 +565,57 @@ class Hub(
     private var meter: Meter? = null
     private var meterSeq = 0
 
+    // ---- v1.8: val, lanț, secret, casetofon, raport
+    private val startedAt = System.currentTimeMillis()
+    private var cueCount = 0
+    private class Chain(val id: String, val orig: String, val order: List<String>) {
+        var hop = 0
+        val texts = ArrayList<String>()
+    }
+    @Volatile private var chain: Chain? = null
+    private class Secret(val phrase: String, val rec: Set<String>) {
+        var solved = false
+        val tries = HashMap<String, Int>()
+    }
+    @Volatile private var secret: Secret? = null
+    private val tapeFrames = ArrayList<ByteArray>()
+    private var tapeBytes = 0
+    @Volatile private var tapeSrc: String? = null
+    private var tapeUntil = 0L
+
+    private fun norm(s: String) = java.text.Normalizer.normalize(s.lowercase(), java.text.Normalizer.Form.NFD).filter { it.isLetterOrDigit() && it.code < 128 }
+
+    private fun chainStep(c: Chain, p: Peer?) {
+        if (c.hop >= c.order.size) {
+            val arr = JSONArray()
+            for (t in c.texts) arr.put(t)
+            val j = jo("t" to "chainres", "id" to c.id, "orig" to c.orig, "hops" to arr)
+            for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, j)
+            logEvent("telefon fără fir: \"" + c.orig + "\" → \"" + (c.texts.lastOrNull() ?: c.orig) + "\"")
+            chain = null
+            return
+        }
+        val q = peers[c.order[c.hop]]
+        val cur = if (c.texts.isEmpty()) c.orig else c.texts.last()
+        if (q == null || !q.online) { c.texts.add(cur); c.hop++; chainStep(c, p); return }
+        sendTo(q, jo("t" to "chainmsg", "id" to c.id, "text" to cur, "hop" to (c.hop + 1), "of" to c.order.size))
+    }
+
+    private fun reportMd(): String {
+        val ps = peers.values.map { RPeer(it.name, it.role, it.number, it.online, it.bat, it.zone, it.nCalls, it.nMsgs, it.nZones) }
+        return Report.markdown(hubName, startedAt, System.currentTimeMillis(), ps, log.toList(), linkedMapOf("cues sent" to cueCount, "calls placed" to ps.sumOf { it.calls }, "messages" to ps.sumOf { it.msgs }))
+    }
+
+    private fun waveSend(list: List<Peer>, m: JSONObject, stepMs: Int) {
+        val order = list.sortedBy { it.number.toLongOrNull() ?: Long.MAX_VALUE }
+        Thread {
+            for ((i, r) in order.withIndex()) {
+                if (i > 0) try { Thread.sleep(stepMs.toLong()) } catch (_: Exception) { return@Thread }
+                sendTo(r, m)
+            }
+        }.apply { isDaemon = true; start() }
+    }
+
     private fun fire(r: Rule, who: Peer?) {
         val key = r.id + ":" + (who?.id ?: "")
         val now = System.currentTimeMillis()
@@ -582,6 +636,7 @@ class Hub(
         for (r in rules) {
             if (r.on != on) continue
             val ok = when (on) {
+                "solved" -> true
                 "zone", "pollwin" -> r.arg == arg
                 "meter" -> r.meterKind == mk && v >= r.arg
                 else -> false
@@ -667,6 +722,7 @@ class Hub(
                     "t" to "msg", "from" to p.name, "num" to p.number, "role" to p.role,
                     "text" to m.optString("text").take(500), "to" to to
                 )
+                p.nMsgs++
                 var list = targets(to, p)
                 if (p.role == "spectator" && !peerMsg) list = list.filter { isStaff(it) }
                 for (r in list) sendTo(r, out)
@@ -674,7 +730,10 @@ class Hub(
             "cue" -> if (reg) {
                 m.put("from", p.number)
                 val list = targets(m.optString("to", "all"), p)
-                for (r in list) sendTo(r, m)
+                cueCount++
+                val wave = m.optInt("wave", 0).coerceIn(0, 3000)
+                m.remove("wave")
+                if (wave > 0 && list.size > 1) waveSend(list, m, wave) else for (r in list) sendTo(r, m)
                 logEvent("cue " + m.optString("kind") + " → " + m.optString("to"))
                 val cid = clean(m.optString("id"), 16)
                 if (cid.isNotEmpty()) sendTo(p, jo("t" to "cueack", "id" to cid, "sent" to list.size, "online" to peers.values.count { it.online && it !== p }))
@@ -699,6 +758,7 @@ class Hub(
                 if (z in 0..99 && z != p.zone && now - p.zoneAt > 2000) {
                     p.zone = z
                     p.zoneAt = now
+                    p.nZones++
                     logEvent(label(p) + " → zona " + z)
                     broadcastPeers()
                     if (z > 0) fireRules("zone", p, z)
@@ -736,6 +796,88 @@ class Hub(
                     mt.vals[p.id] = v
                     val j = meterJson(mt, true)
                     for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, j)
+                }
+            }
+            "report" -> if (reg) sendTo(p, jo("t" to "reportres", "md" to reportMd()))
+            "chain" -> if (reg) {
+                val text = clean(m.optString("text"), 200)
+                val na = m.optJSONArray("nums")
+                val order = ArrayList<String>()
+                if (na != null) for (i in 0 until minOf(na.length(), 20)) {
+                    val q = peers.values.firstOrNull { it.number == na.optString(i) && it.role != "regie" }
+                    if (q != null && q.id !in order) order.add(q.id)
+                }
+                if (text.isNotEmpty() && order.size >= 2) {
+                    val c = Chain("c" + System.currentTimeMillis() % 100000, text, order)
+                    chain = c
+                    chainStep(c, null)
+                    logEvent("telefon fără fir pornit: " + order.size + " persoane")
+                }
+            }
+            "chainfwd" -> {
+                val c = chain
+                if (c != null && c.hop < c.order.size && c.order[c.hop] == p.id && m.optString("id") == c.id) {
+                    c.texts.add(clean(m.optString("text"), 200))
+                    c.hop++
+                    chainStep(c, p)
+                }
+            }
+            "secret" -> if (reg) {
+                val phrase = clean(m.optString("phrase"), 120)
+                val words = phrase.split(Regex("\\s+")).filter { it.isNotEmpty() }
+                val rec = targets(m.optString("to", "spectators"), p).filter { it.role != "regie" }
+                if (words.size >= 2 && rec.isNotEmpty()) {
+                    secret = Secret(phrase, rec.map { it.id }.toSet())
+                    val sh = rec.sortedBy { it.number.toLongOrNull() ?: Long.MAX_VALUE }
+                    for ((i, r) in sh.withIndex()) {
+                        val k = i % words.size
+                        sendTo(r, jo("t" to "cue", "kind" to "text", "text" to "Fragment " + (k + 1) + "/" + words.size + ": " + words[k] + "  (găsiți restul și spuneți fraza întreagă)", "from" to "secret"))
+                    }
+                    logEvent("secret fragmentat: " + words.size + " cuvinte la " + rec.size + " telefoane")
+                }
+            }
+            "guess" -> {
+                val s = secret
+                if (s != null && !s.solved && !reg && p.id in s.rec) {
+                    val n = (s.tries[p.id] ?: 0) + 1
+                    s.tries[p.id] = n
+                    if (n <= 20 && norm(m.optString("text")) == norm(s.phrase) && norm(s.phrase).isNotEmpty()) {
+                        s.solved = true
+                        sendTo(p, jo("t" to "guessres", "ok" to true))
+                        for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, jo("t" to "secretres", "by" to label(p), "phrase" to s.phrase))
+                        logEvent("secret rezolvat de " + label(p))
+                        fireRules("solved", p, 0)
+                    } else sendTo(p, jo("t" to "guessres", "ok" to false))
+                }
+            }
+            "tape" -> if (reg) {
+                val act = m.optString("a")
+                when (act) {
+                    "rec" -> {
+                        val q = peers[m.optString("id")]
+                        if (q != null && q.role != "regie") {
+                            synchronized(tapeFrames) { tapeFrames.clear(); tapeBytes = 0 }
+                            tapeSrc = q.id
+                            tapeUntil = System.currentTimeMillis() + m.optInt("secs", 60).coerceIn(1, 90) * 1000L
+                            logEvent("casetofon: înregistrez " + label(q))
+                        }
+                    }
+                    "stop" -> { tapeSrc = null; logEvent("casetofon: oprit (" + tapeFrames.size + " cadre)") }
+                    "play" -> {
+                        val rec = targets(m.optString("to", "all"), p).filter { it.role != "regie" }
+                        val frames = synchronized(tapeFrames) { ArrayList(tapeFrames) }
+                        if (frames.isNotEmpty() && rec.isNotEmpty()) {
+                            Thread {
+                                for (f in frames) {
+                                    val b = f.copyOf()
+                                    b[0] = Tape_SRC.toByte()
+                                    for (r in rec) r.conn?.send(Frame(1, b))
+                                    try { Thread.sleep(20) } catch (_: Exception) { return@Thread }
+                                }
+                            }.apply { isDaemon = true; start() }
+                            logEvent("casetofon: redau " + frames.size + " cadre → " + rec.size)
+                        }
+                    }
                 }
             }
             "sync" -> sendTo(p, jo("t" to "sync", "c" to m.optLong("c"), "s" to System.currentTimeMillis()))
@@ -875,6 +1017,7 @@ class Hub(
     }
 
     private fun dial(p: Peer, number: String) {
+        p.nCalls++
         if (number.isEmpty() || number.length > 16 || p.callId != 0) return
         if (!p.offhook) {
             offhook(p)
@@ -1183,6 +1326,10 @@ class Hub(
 
     private fun onAudio(p: Peer, data: ByteArray, type: Int) {
         if (p.muted) return
+        if (tapeSrc == p.id) {
+            if (System.currentTimeMillis() > tapeUntil || tapeBytes > 6_000_000) tapeSrc = null
+            else synchronized(tapeFrames) { tapeFrames.add(data.copyOf()); tapeBytes += data.size }
+        }
         val mode = data[0].toInt()
         val out = ByteArray(data.size)
         System.arraycopy(data, 1, out, 1, data.size - 1)
@@ -1204,3 +1351,6 @@ class Hub(
 
 /** Sursa audio rezervată anunțurilor PA (au prioritate: restul sunetelor se atenuează). */
 const val Media_PA_SRC = 254
+
+/** Sursa audio a casetofonului-fantomă. */
+const val Tape_SRC = 253

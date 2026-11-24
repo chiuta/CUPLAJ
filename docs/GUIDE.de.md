@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.7.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.8.0 · Letzte Aktualisierung: 2026-11-24_
 
 ## 1. Vor der Vorstellung
 
@@ -104,6 +104,16 @@ _Version: 1.7.0 · Letzte Aktualisierung: 2026-11-24_
 - **Publikumsmesser** — Reiter Cues: *Lärm* oder *Bewegung messen*, 5 s auf den gewählten Telefonen. Jedes sendet nur eine Zahl 0–100, nie Ton. Sie sehen Mittel, Spitze und wie viele geantwortet haben; Regeln können reagieren.
 - **Stimmeffekte** — Telefone in der Regie‑Liste wählen, *Stimmeffekt…*: Roboter, altes Radio, Echo, tief, hoch, Lo‑Fi. Der Effekt wird auf diesem Telefon vor dem Senden angewendet: alle hören dieselbe Stimme.
 - **Untertitel und Sprachen** — der Cue *Untertitel* zeigt große Untertitel; jeder Text‑Cue kann `en=Hello|ro=Salut|fr=Bonjour` tragen, jedes Telefon nimmt seine Sprache (dann Englisch, dann die erste). `{name}` und `{number}` werden zu Name und Nummer des empfangenden Telefons.
+
+## 15. Bühnenwerkzeuge (1.8)
+
+- **Licht und Musik** — die Cues *dmx* (`0;1=255,2-4=128;2000`) und *midi* (`note 60 127`, `cc 7 100`, `pc 5`, `mmc play`) laufen auf dem Regie‑Telefon: Einstellungen → *Art‑Net / DMX‑Ausgang* sendet Art‑Net (UDP 6454) an einen Node oder ein Pult im selben WLAN; MIDI geht an das erste gefundene USB‑/Bluetooth‑MIDI‑Gerät.
+- **Welle** — Cue‑Text mit `~150;` beginnen: der Hub sendet ihn nacheinander in Nummernreihenfolge im Abstand von 150 ms an die Telefone.
+- **Stille Post** — *Werkzeuge → Stille Post*: Nachricht und Nummern der Reihe nach; jeder sieht, was der Vorgänger weitergab, kann es ändern und gibt es weiter. Die Regie erhält das Original und alle Verformungen.
+- **Geteiltes Geheimnis** — ein Satz wird Wort für Wort verteilt; wer zuerst den ganzen Satz sagt (Einstellungen → *Geheimen Satz sagen*), löst ihn; der Regel‑Auslöser `solved` kann einen Cue starten.
+- **Geisterband** — nimmt bis zu 60 s vom Mikrofon eines Telefons auf dem Hub auf und spielt sie später einer Gruppe vor, wie eine Stimme aus dem Nichts (reservierte Quelle 253).
+- **Saallicht** — Cue *house*: stoppt alles (wie PANIK), vibriert, weißer Bildschirm und ruhige Meldung. **Morse** — Cue *morse*: vibriert einen Text in Morsecode.
+- **Bericht** — *Werkzeuge → Bericht*: Markdown‑Datei mit Summen, Anrufen/Nachrichten/Zonenbesuchen/Akku pro Telefon und vollständiger Zeitleiste.
 
 ---
 
