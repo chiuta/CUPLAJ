@@ -1,9 +1,8 @@
 name: Pages
 
+# Run by hand only. On every push the site is already published from docs/ by GitHub's own
+# "pages-build-deployment"; running this workflow as well made two deployments race and fail.
 on:
-  push:
-    branches: [main]
-    paths: ["docs/**"]
   workflow_dispatch:
 
 permissions:
@@ -22,7 +21,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
