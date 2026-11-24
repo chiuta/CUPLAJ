@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.5.0 · Last update: 2026-11-24_
+_Version: 1.6.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -88,6 +88,14 @@ _Version: 1.5.0 · Last update: 2026-11-24_
 - **Colour** — `#RRGGBB;seconds;pulses per second` fills the screen. Pulses are capped at 2 per second for photosensitive audience members; a long press on the screen closes it.
 - **Poll** — `question;option 1;option 2;…` asks spectators and actors; each phone gets one vote (changeable). *End poll* shows the result to the control phone. Polls can be steps in the script.
 - **Delivery** — after each cue the control phone shows *sent to N of M phones online*. **Hardware PTT** — Settings → *Hardware PTT key* turns the headset button and volume‑up into push‑to‑talk while the app is in front.
+
+## 13. Media, OSC, priority (1.6)
+
+- **PA priority** — while the control phone (or an actor) speaks to everyone, every other sound on the phones drops to 30 % and returns smoothly. Settings → *PA priority* switches it off.
+- **Media cues** — on the control phone, Cue tab → *Send a file…* picks an image, video or audio file (up to 8 MB) and sends it in pieces to the selected phones; each phone checks size and checksum and ignores a damaged file. Then use the cue kinds *Image on screen*, *Video on screen* or *Audio clip* (leave the text empty to use the last file, or `code;seconds`). Long‑press closes an image or video. Phones that join later do not have the file: send it again.
+- **OSC out** — Settings → *OSC*: every cue is also sent as `/cuplaj/cue <to> <kind> <text>` over UDP to a lighting or sound desk, QLab or Companion.
+- **OSC in** — the desk can send `/cuplaj/<hub PIN>/go`, `/panic`, `/stop` or `/cue <to> <kind> <text>` to the control phone (default port 8473). The PIN in the address is the only protection: keep the show network private. At most 20 messages per second are accepted.
+- **Not included** — iOS (Android only), MIDI, a program feed, and more than the existing group channels.
 
 ---
 

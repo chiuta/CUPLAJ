@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.5.0 · Última actualización: 2026-11-24_
+_Versión: 1.6.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -88,6 +88,14 @@ _Versión: 1.5.0 · Última actualización: 2026-11-24_
 - **Color** — `#RRGGBB;segundos;pulsos por segundo` llena la pantalla. Los pulsos se limitan a 2 por segundo para el público fotosensible; una pulsación larga la cierra.
 - **Encuesta** — `pregunta;opción 1;opción 2;…` pregunta a espectadores y actores; un voto por teléfono (modificable). *Cerrar la encuesta* muestra el resultado a regiduría. Las encuestas pueden ser pasos del guion.
 - **Entrega** — tras cada señal, regiduría ve *enviada a N de M teléfonos en línea*. **PTT físico** — Ajustes → *Tecla PTT física* convierte el botón del auricular y volumen + en push‑to‑talk con la app en primer plano.
+
+## 13. Medios, OSC, prioridad (1.6)
+
+- **Prioridad PA** — mientras el teléfono de regiduría (o un actor) habla a todos, el resto de sonidos baja al 30 % y vuelve suavemente. Ajustes → *Prioridad PA* la desactiva.
+- **Señales multimedia** — en el teléfono de regiduría, pestaña Señales → *Enviar un archivo…* elige una imagen, un vídeo o un audio (hasta 8 MB) y lo envía por partes a los teléfonos elegidos; cada uno comprueba tamaño y suma de control e ignora un archivo dañado. Luego usa *Imagen en pantalla*, *Vídeo en pantalla* o *Clip de audio* (texto vacío = último archivo, o `código;segundos`). Una pulsación larga cierra la imagen o el vídeo. Los teléfonos que entran después no tienen el archivo: envíalo de nuevo.
+- **OSC de salida** — Ajustes → *OSC*: cada señal se envía también como `/cuplaj/cue <a> <tipo> <texto>` por UDP a una mesa de luces o sonido, QLab o Companion.
+- **OSC de entrada** — la mesa puede enviar `/cuplaj/<PIN del hub>/go`, `/panic`, `/stop` o `/cue <a> <tipo> <texto>` a regiduría (puerto 8473 por defecto). El PIN en la dirección es la única protección: mantén privada la red del espectáculo. Máximo 20 mensajes por segundo.
+- **No incluido** — iOS (solo Android), MIDI, program feed y más canales que los grupos existentes.
 
 ---
 

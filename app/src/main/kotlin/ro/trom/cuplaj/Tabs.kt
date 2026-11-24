@@ -393,7 +393,7 @@ class VoiceTab(a: MainActivity) : Tab(a) {
 
 // ====================================================================== REGIE
 
-val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend")
+val CUE_KINDS = listOf("text", "vibrate", "ring", "flash", "speaker", "contact", "era", "say", "sound", "blackout", "fakecall", "realcall", "panic", "color", "poll", "pollend", "image", "video", "clip")
 
 /** Țintele pentru indicii: poziție în spinner → șir de țintă. */
 fun targetOptions(): List<String> = listOf(L.t("tgt_all"), L.t("tgt_spectators"), L.t("tgt_actors"), L.t("tgt_selected"), L.t("tgt_group"), L.t("tgt_number"))
@@ -480,6 +480,10 @@ class RegieTab(a: MainActivity) : Tab(a) {
         txt.hint = L.t("hint_text")
         col.addView(txt)
         col.addView(a.btn(L.t("btn_send_cue"), GREEN) { sendCue(CUE_KINDS[kind.selectedItemPosition], txt.text.toString()) })
+        col.addView(a.btn(L.t("media_send"), BTN) {
+            val ts = targetsNow()
+            if (ts.isEmpty()) a.toast(L.t("sel_one")) else a.pickMedia(ts)
+        })
         col.addView(row(
             a.btn(L.t("btn_era", 1985), BTN) { sendCue("era", "1985") },
             a.btn(L.t("btn_era", 1995), BTN) { sendCue("era", "1995") },

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.5.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.6.0 · Letzte Aktualisierung: 2026-11-24_
 
 ## 1. Vor der Vorstellung
 
@@ -88,6 +88,14 @@ _Version: 1.5.0 · Letzte Aktualisierung: 2026-11-24_
 - **Farbe** — `#RRGGBB;Sekunden;Pulse pro Sekunde` füllt den Bildschirm. Pulse sind für lichtempfindliche Zuschauer auf 2 pro Sekunde begrenzt; langer Druck schließt den Bildschirm.
 - **Umfrage** — `Frage;Option 1;Option 2;…` fragt Zuschauer und Schauspieler; eine Stimme pro Telefon (änderbar). *Umfrage beenden* zeigt der Regie das Ergebnis. Umfragen können Schritte im Ablauf sein.
 - **Zustellung** — nach jedem Cue zeigt die Regie *an N von M Telefonen online gesendet*. **Hardware‑PTT** — Einstellungen → *Hardware‑PTT‑Taste* macht Headset‑Taste und Lauter zu Push‑to‑Talk, solange die App vorn ist.
+
+## 13. Medien, OSC, Vorrang (1.6)
+
+- **PA‑Vorrang** — solange das Regie‑Telefon (oder ein Schauspieler) zu allen spricht, fallen alle anderen Töne auf 30 % und kehren sanft zurück. Einstellungen → *PA‑Vorrang* schaltet es aus.
+- **Medien‑Cues** — am Regie‑Telefon: Reiter Cues → *Datei senden…* wählt Bild, Video oder Audio (bis 8 MB) und sendet es stückweise an die gewählten Telefone; jedes prüft Größe und Prüfsumme und ignoriert beschädigte Dateien. Danach *Bild auf dem Bildschirm*, *Video auf dem Bildschirm* oder *Audioclip* verwenden (leerer Text = letzte Datei, oder `Code;Sekunden`). Langer Druck schließt Bild oder Video. Später beigetretene Telefone haben die Datei nicht: erneut senden.
+- **OSC aus** — Einstellungen → *OSC*: jeder Cue wird auch als `/cuplaj/cue <an> <Typ> <Text>` per UDP an ein Licht‑ oder Tonpult, QLab oder Companion gesendet.
+- **OSC ein** — das Pult kann `/cuplaj/<Hub‑PIN>/go`, `/panic`, `/stop` oder `/cue <an> <Typ> <Text>` an die Regie senden (Standardport 8473). Die PIN in der Adresse ist der einzige Schutz: das Show‑Netz privat halten. Höchstens 20 Nachrichten pro Sekunde.
+- **Nicht enthalten** — iOS (nur Android), MIDI, Programm‑Feed und mehr Kanäle als die vorhandenen Gruppen.
 
 ---
 

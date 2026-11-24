@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.5.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.6.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -88,6 +88,14 @@ _Version : 1.5.0 · Dernière mise à jour : 2026-11-24_
 - **Couleur** — `#RRGGBB;secondes;pulsations par seconde` remplit l'écran. Les pulsations sont plafonnées à 2 par seconde pour les spectateurs photosensibles ; un appui long ferme l'écran.
 - **Sondage** — `question;option 1;option 2;…` interroge spectateurs et acteurs ; un vote par téléphone (modifiable). *Clore le sondage* montre le résultat à la régie. Les sondages peuvent être des étapes du scénario.
 - **Livraison** — après chaque indice, la régie voit *envoyé à N téléphones sur M en ligne*. **PTT matériel** — Réglages → *Touche PTT matérielle* transforme le bouton du casque et volume + en push‑to‑talk quand l'appli est au premier plan.
+
+## 13. Médias, OSC, priorité (1.6)
+
+- **Priorité PA** — quand le téléphone de régie (ou un acteur) parle à tous, tous les autres sons descendent à 30 % puis reviennent en douceur. Réglages → *Priorité PA* la désactive.
+- **Indices média** — sur le téléphone de régie, onglet Indices → *Envoyer un fichier…* choisit une image, une vidéo ou un audio (jusqu'à 8 Mo) et l'envoie par morceaux aux téléphones choisis ; chacun vérifie la taille et la somme de contrôle et ignore un fichier abîmé. Utilisez ensuite *Image à l'écran*, *Vidéo à l'écran* ou *Clip audio* (texte vide = dernier fichier, ou `code;secondes`). Un appui long ferme l'image ou la vidéo. Les téléphones arrivés plus tard n'ont pas le fichier : renvoyez‑le.
+- **OSC sortie** — Réglages → *OSC* : chaque indice est aussi envoyé en `/cuplaj/cue <vers> <type> <texte>` par UDP à un pupitre lumière ou son, QLab ou Companion.
+- **OSC entrée** — le pupitre peut envoyer `/cuplaj/<PIN du hub>/go`, `/panic`, `/stop` ou `/cue <vers> <type> <texte>` à la régie (port 8473 par défaut). Le PIN dans l'adresse est la seule protection : gardez le réseau du spectacle privé. 20 messages par seconde au plus.
+- **Non inclus** — iOS (Android seulement), MIDI, flux programme et plus de canaux que les groupes existants.
 
 ---
 

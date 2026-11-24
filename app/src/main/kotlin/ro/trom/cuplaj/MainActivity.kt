@@ -210,6 +210,7 @@ class MainActivity : Activity() {
             }
             k == "blackout" -> showBlackout()
             k == "color" -> showColor()
+            k == "media" -> showMedia()
             k == "poll" -> showPoll()
             k == "pollfinal" -> bigText(App.pollSummary)
             k == "log" -> logView?.let { v -> v.text = App.log.joinToString("\n") }
@@ -269,6 +270,110 @@ class MainActivity : Activity() {
         colorOv = o
         blinkVisible = true
         if (cp.hz > 0) App.ui.postDelayed(blinkRun, (500.0 / cp.hz).toLong())
+    }
+
+    private var mediaOv: View? = null
+
+    /** Imagine sau video primite de la regie, pe tot ecranul; apăsare lungă = închide. */
+    private fun showMedia() {
+        mediaOv?.let { root.removeView(it) }
+        mediaOv = null
+        val t = App.mediaShow ?: return
+        if (screen != "main") return
+        val v: View
+        if (t.first == "video") {
+            val vv = android.widget.VideoView(this)
+            vv.setVideoPath(t.second)
+            vv.setOnPreparedListener { it.isLooping = t.third > 0; vv.start() }
+            vv.setOnCompletionListener { if (t.third == 0L) { App.mediaShow = null; showMedia() } }
+            v = vv
+        } else {
+            val iv = android.widget.ImageView(this)
+            iv.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+            iv.setImageURI(android.net.Uri.fromFile(java.io.File(t.second)))
+            v = iv
+        }
+        val f = FrameLayout(this)
+        f.setBackgroundColor(Color.BLACK)
+        f.isClickable = true
+        f.setOnLongClickListener { App.mediaShow = null; showMedia(); true }
+        v.setOnLongClickListener { App.mediaShow = null; showMedia(); true }
+        f.addView(v, FrameLayout.LayoutParams(MATCH, MATCH, Gravity.CENTER))
+        root.addView(f, FrameLayout.LayoutParams(MATCH, MATCH))
+        mediaOv = f
+    }
+
+    private var pickTargets: List<String> = emptyList()
+
+    /** Regia: alege un fișier (imagine, video, audio) și îl trimite țintelor. */
+    fun pickMedia(targets: List<String>) {
+        pickTargets = targets
+        val i = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        i.addCategory(Intent.CATEGORY_OPENABLE)
+        i.type = "*/*"
+        i.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*", "audio/*"))
+        @Suppress("DEPRECATION")
+        startActivityForResult(i, 31)
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(req: Int, res: Int, data: Intent?) {
+        super.onActivityResult(req, res, data)
+        val u = data?.data ?: return
+        if (req != 31 || res != RESULT_OK) return
+        val mime = contentResolver.getType(u) ?: ""
+        val kind = when {
+            mime.startsWith("image/") -> "image"
+            mime.startsWith("video/") -> "video"
+            mime.startsWith("audio/") -> "clip"
+            else -> return
+        }
+        val to = pickTargets
+        Thread {
+            val bytes = try {
+                contentResolver.openInputStream(u)?.use { s ->
+                    val o = java.io.ByteArrayOutputStream()
+                    val b = ByteArray(65536)
+                    while (true) {
+                        val n = s.read(b)
+                        if (n < 0) break
+                        o.write(b, 0, n)
+                        if (o.size() > Media.MAX_BYTES) return@use null
+                    }
+                    o.toByteArray()
+                }
+            } catch (_: Exception) { null }
+            runOnUiThread {
+                if (bytes == null) toast(L.t("media_big")) else { toast(L.t("media_sending")); App.pushMedia(kind, bytes, to) }
+            }
+        }.start()
+    }
+
+    private fun oscDialog() {
+        val sv = ScrollView(this)
+        val col = LinearLayout(this)
+        col.orientation = LinearLayout.VERTICAL
+        col.setPadding(dp(16), dp(12), dp(16), dp(12))
+        sv.addView(col)
+        col.addView(tv(L.t("osc_hint", App.hubPin), 12f, DIM))
+        val oh = edit(L.t("osc_out_host"), App.oscOutHost)
+        val op = edit(L.t("osc_out_port"), App.oscOutPort.toString())
+        op.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        val ip = edit(L.t("osc_in_port"), App.oscInPort.toString())
+        ip.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        var inOn = App.oscInOn
+        col.addView(oh); col.addView(op)
+        val tb = btn(L.t(if (inOn) "osc_in_on" else "osc_in_off"), if (inOn) GREEN else BTN) {}
+        tb.setOnClickListener { inOn = !inOn; tb.text = L.t(if (inOn) "osc_in_on" else "osc_in_off") }
+        col.addView(tb); col.addView(ip)
+        AlertDialog.Builder(this).setView(sv).setPositiveButton(L.t("ok")) { _, _ ->
+            App.oscOutHost = oh.text.toString().trim()
+            App.oscOutPort = op.text.toString().toIntOrNull()?.coerceIn(1, 65535) ?: 53000
+            App.oscInPort = ip.text.toString().toIntOrNull()?.coerceIn(1024, 65535) ?: 8473
+            App.oscInOn = inOn
+            App.saveOsc()
+            toast(L.t("restart_hub"))
+        }.show()
     }
 
     /** Sondaj primit de la regie: întrebarea și opțiunile ca butoane. */
@@ -556,6 +661,12 @@ class MainActivity : Activity() {
             col.addView(btn(L.t("btn_invite_ac")) { dlg?.dismiss(); shareInvite("actor") })
         }
         col.addView(btn(L.t("set_air")) { dlg?.dismiss(); airDialog() })
+        if (App.role == "regie") col.addView(btn(L.t("set_osc")) { dlg?.dismiss(); oscDialog() })
+        col.addView(btn(L.t(if (App.playout.duckOn) "duck_on" else "duck_off"), if (App.playout.duckOn) GREEN else BTN) {
+            App.playout.duckOn = !App.playout.duckOn
+            dlg?.dismiss()
+            settingsDialog()
+        })
         col.addView(btn(L.t(if (App.hwPtt) "hw_ptt_on" else "hw_ptt_off"), if (App.hwPtt) GREEN else BTN) {
             App.hwPtt = !App.hwPtt
             App.saveNet()

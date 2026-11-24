@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.5.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.6.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -88,6 +88,14 @@ _Versiune: 1.5.0 · Ultima actualizare: 2026-11-24_
 - **Culoare** — `#RRGGBB;secunde;pulsuri pe secundă` umple ecranul. Pulsurile sunt plafonate la 2 pe secundă pentru spectatorii fotosensibili; apăsarea lungă pe ecran îl închide.
 - **Sondaj** — `întrebare;opțiunea 1;opțiunea 2;…` întreabă spectatorii și actorii; fiecare telefon are un vot (se poate schimba). *Încheie sondajul* arată rezultatul telefonului Regiei. Sondajele pot fi pași în scenariu.
 - **Livrare** — după fiecare replică, Regia vede *trimisă la N din M telefoane conectate*. **PTT hardware** — Setări → *Buton PTT hardware* face din butonul căștilor și volum + un push‑to‑talk cât timp aplicația e în față.
+
+## 13. Media, OSC, prioritate (1.6)
+
+- **Prioritate PA** — cât vorbește telefonul Regiei (sau un actor) către toți, restul sunetelor de pe telefoane coboară la 30 % și revin lin. Setări → *Prioritate PA* o oprește.
+- **Replici media** — pe telefonul Regiei, fila Replici → *Trimite un fișier…* alege o imagine, un video sau un audio (până la 8 MB) și îl trimite pe bucăți telefoanelor alese; fiecare telefon verifică mărimea și suma de control și ignoră un fișier deteriorat. Apoi folosește tipurile *Imagine pe ecran*, *Video pe ecran* sau *Clip audio* (lasă textul gol pentru ultimul fișier, sau `cod;secunde`). Apăsarea lungă închide imaginea sau videoul. Telefoanele care intră mai târziu nu au fișierul: trimite‑l din nou.
+- **OSC ieșire** — Setări → *OSC*: fiecare replică se trimite și ca `/cuplaj/cue <către> <tip> <text>` prin UDP către un pupitru de lumini sau sunet, QLab sau Companion.
+- **OSC intrare** — pupitrul poate trimite `/cuplaj/<PIN hub>/go`, `/panic`, `/stop` sau `/cue <către> <tip> <text>` telefonului Regiei (port implicit 8473). PIN‑ul din adresă e singura protecție: ține rețeaua spectacolului privată. Se acceptă cel mult 20 de mesaje pe secundă.
+- **Nu sunt incluse** — iOS (doar Android), MIDI, program feed și mai multe canale decât grupurile existente.
 
 ---
 

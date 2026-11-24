@@ -128,6 +128,10 @@ class Playout {
     @Volatile
     var tone: ToneSpec? = null
 
+    /** Prioritate PA: cât vorbește Regia/anunțul, restul sunetelor coboară la 30 %. */
+    @Volatile
+    var duckOn = true
+
     @Volatile
     private var run = false
     private var lastTone: ToneSpec? = null
@@ -202,10 +206,14 @@ class Playout {
         val mix = IntArray(FR)
         val out = ShortArray(FR)
         try {
+            val pa = IntArray(FR)
+            val duck = Ducker()
             while (run) {
                 java.util.Arrays.fill(mix, 0)
+                java.util.Arrays.fill(pa, 0)
                 var any = false
-                for (sq in srcs.values) {
+                var paNow = false
+                for ((sid, sq) in srcs) {
                     var chunk: ShortArray? = null
                     synchronized(sq) {
                         if (!sq.primed && sq.q.size >= 3) sq.primed = true
@@ -217,7 +225,10 @@ class Playout {
                     val ch = chunk
                     if (ch != null) {
                         any = true
-                        for (i in 0 until min(FR, ch.size)) mix[i] += ch[i].toInt()
+                        if (sid == Media_PA_SRC) {
+                            paNow = true
+                            for (i in 0 until min(FR, ch.size)) pa[i] += ch[i].toInt()
+                        } else for (i in 0 until min(FR, ch.size)) mix[i] += ch[i].toInt()
                     }
                 }
                 val tn = tone
@@ -262,8 +273,9 @@ class Playout {
                     }
                     if (e.pos >= e.d.size) iter.remove()
                 }
+                val g = if (duckOn) duck.step(paNow) else 1.0
                 if (any) {
-                    for (i in 0 until FR) out[i] = max(-32768, min(32767, mix[i])).toShort()
+                    for (i in 0 until FR) out[i] = max(-32768, min(32767, (mix[i] * g).toInt() + pa[i])).toShort()
                     track.write(out, 0, FR)
                 } else {
                     Thread.sleep(15)

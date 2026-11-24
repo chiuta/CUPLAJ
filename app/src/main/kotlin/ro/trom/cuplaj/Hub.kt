@@ -620,6 +620,15 @@ class Hub(
                 val cid = clean(m.optString("id"), 16)
                 if (cid.isNotEmpty()) sendTo(p, jo("t" to "cueack", "id" to cid, "sent" to list.size, "online" to peers.values.count { it.online && it !== p }))
             }
+            "media" -> if (reg) {
+                val mid = m.optString("mid")
+                if (Media.validId(mid) && m.optString("kind") in Media.KINDS && m.optString("b64").length <= Media.MAX_B64 && m.optInt("i", -1) >= 0) {
+                    val out = jo("t" to "media", "mid" to mid, "kind" to m.optString("kind"), "i" to m.optInt("i"), "n" to m.optInt("n"), "b64" to m.optString("b64"))
+                    if (m.optInt("i") == 0) { out.put("size", m.optLong("size")); out.put("sha", m.optString("sha")) }
+                    for (r in targets(m.optString("to", "all"), p)) sendTo(r, out)
+                    if (m.optInt("i") == 0) logEvent("media " + m.optString("kind") + " " + mid + " → " + m.optString("to"))
+                }
+            }
             "sync" -> sendTo(p, jo("t" to "sync", "c" to m.optLong("c"), "s" to System.currentTimeMillis()))
             "poll" -> if (reg) {
                 val oa = m.optJSONArray("opts")
@@ -1064,7 +1073,7 @@ class Hub(
         val mode = data[0].toInt()
         val out = ByteArray(data.size)
         System.arraycopy(data, 1, out, 1, data.size - 1)
-        out[0] = p.src.toByte()
+        out[0] = (if (mode == 1) Media_PA_SRC else p.src).toByte()
         val f = Frame(type, out)
         val dest: List<Peer> = when (mode) {
             0 -> {
@@ -1079,3 +1088,6 @@ class Hub(
         for (d in dest) d.conn?.send(f)
     }
 }
+
+/** Sursa audio rezervată anunțurilor PA (au prioritate: restul sunetelor se atenuează). */
+const val Media_PA_SRC = 254

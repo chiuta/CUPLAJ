@@ -122,3 +122,9 @@ Idle limits apply per channel: 10 s to send `hello`, 60 s of silence afterwards 
 * `cue` (control only) may carry `at` (hub ms) and `id` (≤ 16 chars). The hub relays it unchanged and answers the sender `{"t":"cueack","id","sent","online"}`. A client waits until `at`; later than 10 s or more than 10 min ahead → dropped.
 * `poll` (control only): `{"to","q"≤120,"opts"[2..6 × ≤40],"id"?}`. The hub sends it to the non‑staff recipients and actors, one poll at a time. `vote`: `{"id","o"}`, accepted only from a recipient, for the open poll, with a valid option; last vote counts. The hub pushes `pollres` `{id,q,opts,counts,n,of,open}` to staff after each change and when `pollend` closes it.
 * New cue kinds: `panic`, `color` (`#RRGGBB;seconds;hz`, hz ≤ 2), `poll`, `pollend`.
+
+## v1.6: media, OSC, PA source
+
+* `media` (control only): `{"to","mid"[a-z0-9]{1,16},"kind":"image|video|clip","i","n","b64"≤17000 chars}`, first piece also `size` (≤ 8 MB) and `sha` (SHA‑256 hex). The hub relays pieces unchanged to the targets and keeps nothing. Clients accept pieces strictly in order, at most 3 open transfers, verify size and hash, store as `<mid>.img|.vid|.snd`; a bad piece drops the transfer. Cues `image`, `video`, `clip` carry `mid[;seconds]`.
+* PA audio (mode 1) is forwarded with source byte 254; receivers scale all other sources by 0.3 (fast attack, 160 ms hold, slow release).
+* OSC 1.0 over UDP (string, int, float): out `/cuplaj/cue to kind text`; in `/cuplaj/<hub PIN>/go`, `/panic`, `/stop`, `/cue to kind text`; the PIN is compared in constant time, bundles are ignored, packets over 2 KB are dropped.

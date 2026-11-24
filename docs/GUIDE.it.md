@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.5.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.6.0 · Ultimo aggiornamento: 2026-11-24_
 
 ## 1. Prima dello spettacolo
 
@@ -88,6 +88,14 @@ _Versione: 1.5.0 · Ultimo aggiornamento: 2026-11-24_
 - **Colore** — `#RRGGBB;secondi;impulsi al secondo` riempie lo schermo. Gli impulsi sono limitati a 2 al secondo per il pubblico fotosensibile; una pressione lunga chiude lo schermo.
 - **Sondaggio** — `domanda;opzione 1;opzione 2;…` interroga spettatori e attori; un voto per telefono (modificabile). *Chiudi il sondaggio* mostra il risultato alla regia. I sondaggi possono essere passi del copione.
 - **Consegna** — dopo ogni cue la regia vede *inviato a N telefoni su M online*. **PTT hardware** — Impostazioni → *Tasto PTT hardware* trasforma il tasto dell'auricolare e volume + in push‑to‑talk con l'app in primo piano.
+
+## 13. Media, OSC, priorità (1.6)
+
+- **Priorità PA** — mentre il telefono della regia (o un attore) parla a tutti, ogni altro suono scende al 30 % e torna dolcemente. Impostazioni → *Priorità PA* la spegne.
+- **Cue media** — sul telefono della regia, scheda Cue → *Invia un file…* sceglie un'immagine, un video o un audio (fino a 8 MB) e lo invia a pezzi ai telefoni scelti; ognuno verifica dimensione e checksum e ignora un file danneggiato. Poi usa *Immagine a schermo*, *Video a schermo* o *Clip audio* (testo vuoto = ultimo file, o `codice;secondi`). Una pressione lunga chiude immagine o video. I telefoni entrati dopo non hanno il file: invialo di nuovo.
+- **OSC in uscita** — Impostazioni → *OSC*: ogni cue è inviato anche come `/cuplaj/cue <verso> <tipo> <testo>` via UDP a un mixer luci o audio, QLab o Companion.
+- **OSC in ingresso** — il mixer può inviare `/cuplaj/<PIN hub>/go`, `/panic`, `/stop` o `/cue <verso> <tipo> <testo>` alla regia (porta 8473 predefinita). Il PIN nell'indirizzo è l'unica protezione: tieni privata la rete dello spettacolo. Al massimo 20 messaggi al secondo.
+- **Non inclusi** — iOS (solo Android), MIDI, program feed e più canali dei gruppi esistenti.
 
 ---
 

@@ -167,6 +167,10 @@ object App {
         smsGw = p.getBoolean("smsgw", false)
         btOn = p.getBoolean("bton", false)
         autoMode = p.getBoolean("auto", true)
+        oscOutHost = p.getString("oscoh", "") ?: ""
+        oscOutPort = p.getInt("oscop", 53000)
+        oscInOn = p.getBoolean("oscin", false)
+        oscInPort = p.getInt("oscip", 8473)
         hwPtt = p.getBoolean("hwptt", false)
         wfdOn = p.getBoolean("wfdon", false)
         Bt.ctx = ctx
@@ -451,6 +455,7 @@ object App {
             hb.onPersist = { s -> p.edit().putString("hubstate", s).apply() }
             hubObj = hb
             hb.start()
+            startOsc()
             openLinks()
             try {
                 nsd.advertise(name, PORT)
@@ -521,6 +526,7 @@ object App {
         slot = 0
         blackoutOn = false
         colorPlanNow = null
+        stopOsc()
         ui.removeCallbacks(syncTick)
         try {
             ctx.stopService(Intent(ctx, CoreService::class.java))
@@ -657,6 +663,7 @@ object App {
                 notify("poll")
             }
             "pollres" -> pollResult(m)
+            "media" -> mediaChunk(m)
             "p2p" -> {
                 val l = p2pLink
                 val k = m.optString("key")
@@ -756,6 +763,99 @@ object App {
         ui.postDelayed(r, d)
     }
 
+    // ---- media (imagine / video / clip audio) trimise de Regie prin hub
+    private val media by lazy { MediaAsm(java.io.File(ctx.cacheDir, "media")).also { it.trim(48L * 1024 * 1024) } }
+    var lastMediaId = ""
+    var mediaShow: Triple<String, String, Long>? = null   // tip, cale, secunde
+    private var clip: android.media.MediaPlayer? = null
+
+    private fun mediaChunk(m: JSONObject) {
+        when (media.add(m)) {
+            "done" -> notify("toast:" + L.t("media_ready"))
+            "bad_hash", "overflow", "bad_meta", "bad_data" -> notify("toast:" + L.t("media_bad"))
+        }
+    }
+
+    private fun mediaPlay(kind: String, text: String) {
+        val p = text.split(";")
+        val f = media.file(p[0].trim(), kind) ?: return
+        val secs = p.getOrNull(1)?.trim()?.toLongOrNull()?.coerceIn(1L, 3600L) ?: 0L
+        if (kind == "clip") {
+            try {
+                clip?.release()
+                val mp = android.media.MediaPlayer()
+                mp.setDataSource(f.path)
+                mp.prepare()
+                mp.start()
+                clip = mp
+                if (secs > 0) ui.postDelayed({ if (clip === mp) { try { mp.stop(); mp.release() } catch (_: Exception) {}; clip = null } }, secs * 1000)
+            } catch (_: Exception) {
+            }
+            return
+        }
+        val t = Triple(kind, f.path, secs)
+        mediaShow = t
+        notify("media")
+        if (secs > 0) ui.postDelayed({ if (mediaShow === t) { mediaShow = null; notify("media") } }, secs * 1000)
+    }
+
+    /** Regia: trimite un fișier către țintele alese, în bucăți (cel mult 8 MB), apoi memorează id‑ul pentru cue. */
+    fun pushMedia(kind: String, data: ByteArray, to: List<String>) {
+        if (kind !in Media.KINDS || data.isEmpty() || data.size > Media.MAX_BYTES) { notify("toast:" + L.t("media_big")); return }
+        val id = Sec.pin(6).let { java.lang.Long.toString(System.nanoTime() and 0xFFFFFFFFFFL, 36) }.take(12)
+        val sha = Media.sha256(data)
+        Thread {
+            val ch = Media.chunks(data)
+            for (t in to) {
+                for ((i, n, b) in ch) {
+                    val o = jo("t" to "media", "to" to t, "mid" to id, "kind" to kind, "i" to i, "n" to n, "b64" to b)
+                    if (i == 0) { o.put("size", data.size.toLong()); o.put("sha", sha) }
+                    send(o)
+                    try { Thread.sleep(12) } catch (_: Exception) {}
+                }
+            }
+            ui.post { lastMediaId = id; notify("toast:" + L.t("media_sent", id)) }
+        }.apply { isDaemon = true; start() }
+    }
+
+    // ---- OSC
+    var oscOutHost = ""
+    var oscOutPort = 53000
+    var oscInOn = false
+    var oscInPort = 8473
+    private var oscOut: OscOut? = null
+    private var oscIn: OscIn? = null
+
+    fun saveOsc() {
+        prefs().edit().putString("oscoh", oscOutHost).putInt("oscop", oscOutPort).putBoolean("oscin", oscInOn).putInt("oscip", oscInPort).apply()
+    }
+
+    private fun startOsc() {
+        stopOsc()
+        if (oscOutHost.isNotBlank()) oscOut = OscOut(oscOutHost.trim(), oscOutPort)
+        if (oscInOn) {
+            val i = OscIn(oscInPort, { hubPin }) { c -> ui.post { oscCmd(c) } }
+            if (i.start()) oscIn = i else notify("toast:" + L.t("err_port"))
+        }
+    }
+
+    private fun stopOsc() {
+        oscOut?.close(); oscOut = null
+        oscIn?.stop(); oscIn = null
+    }
+
+    private fun validTarget(t: String) = t in setOf("all", "staff", "spectators", "actors") || Regex("(num|id|grp):[A-Za-z0-9 _.-]{1,40}").matches(t)
+
+    private fun oscCmd(c: Osc.Cmd) {
+        if (role != "regie" || net == null) return
+        when (c.kind) {
+            "go" -> goNext()
+            "stop" -> stopScript()
+            "panic" -> sendCue("all", "panic", "")
+            "cue" -> if (validTarget(c.to)) sendCue(c.to, c.cue, c.text)
+        }
+    }
+
     /** PANICĂ: oprește tot ce a pornit un cue, pe acest telefon. */
     fun panic() {
         for (r in pending) ui.removeCallbacks(r)
@@ -764,6 +864,9 @@ object App {
         vibCancel()
         Voice.stop()
         playout.clearEffects()
+        try { clip?.release() } catch (_: Exception) {}
+        clip = null
+        if (mediaShow != null) { mediaShow = null; notify("media") }
         blackoutOn = false
         colorPlanNow = null
         fake = null
@@ -788,6 +891,7 @@ object App {
     private fun cue(m: JSONObject) {
         val text = m.optString("text")
         when (m.optString("kind")) {
+            "image", "video", "clip" -> mediaPlay(m.optString("kind"), text)
             "panic" -> panic()
             "color" -> {
                 val cp = colorPlan(text)
@@ -1030,7 +1134,9 @@ object App {
             return
         }
         if (kind == "pollend") { send(jo("t" to "pollend")); return }
-        val (delay, body) = parseAt(text)
+        val (delay, body0) = parseAt(text)
+        val body = if (kind in Media.KINDS && body0.isBlank()) lastMediaId else body0
+        oscOut?.send(Osc.encode("/cuplaj/cue", to, kind, body))
         val o = jo("t" to "cue", "to" to to, "kind" to kind, "text" to body, "id" to Integer.toHexString((System.nanoTime() and 0xFFFFFF).toInt()))
         if (delay > 0) o.put("at", clock.hubNow(System.currentTimeMillis()) + delay)
         send(o)

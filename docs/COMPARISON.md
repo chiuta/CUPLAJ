@@ -11,6 +11,9 @@ Written 2026‑11‑24 from the public store listings and articles named below. 
 | Simulated telephone line, ringing, dial, coupled lines | Yes (core feature) | No | No | No | No | No |
 | Light / sound / vibration / text cues on phones | Yes | Tally only | No | Yes (also video, stills) | Plays media from the operator device | Colours and content on phones |
 | Cue list with delays, import / export | Yes | No | No | Dashboard | Yes (their core) | Not stated |
+| PA priority (other sounds duck) | Yes (1.6) | "priority ducking" slider (store notes) | Not checked | Not stated | n/a | n/a |
+| Image / video / audio cues delivered to phones | Yes (1.6, ≤ 8 MB, through the hub) | No | No | Yes | n/a | Content on phones |
+| OSC / MIDI to lighting and sound desks | OSC in and out (1.6); no MIDI | Not stated | No | Not stated | MIDI and OSC cues | Not stated |
 | Cues fire at one shared instant (clock sync) | Yes (1.5) | Not stated | No | Yes ("in step") | n/a | Not stated |
 | Panic / stop everything | Yes (1.5), also over AIR | n/a | n/a | Not stated | Yes (SOLOstudio) | Not stated |
 | Audience polls / votes | Yes (1.5) | No | No | Not stated | No | Yes (core) |
@@ -27,9 +30,9 @@ Fake party‑line telephony as theatre (coupled lines, distinct ringing, eavesdr
 ## What others do that CUPLAJ does not (yet)
 
 * **iOS.** CUPLAJ is Android only.
-* **Video and still‑image cues**, media delivered to phones (Augmented Theatre).
-* **MIDI / OSC output** to lights and sound desks (MiX16, SOLOstudio Pro, QLab).
-* **Program feed, many channels, priority ducking, tally from video switchers** (Unity Intercom: up to 128 channels, 63 users by default).
+* **MIDI** and Art‑Net / DMX output (MiX16, SOLOstudio Pro, QLab); CUPLAJ speaks OSC only.
+* **Program feed, many channels, tally from video switchers** (Unity Intercom: up to 128 channels, 63 users by default); CUPLAJ has groups, not independent channels.
+* **Media that reaches phones joining late, and synchronised video playback** (Augmented Theatre); in CUPLAJ a file goes only to phones online when it is sent, and video starts when the cue arrives (use `@seconds;` for a shared start).
 * **General push‑to‑talk messaging across PC, Mac and phones** (Zello, which its reviewer describes as walkie‑talkie style audio and text messages rather than a true intercom). CUPLAJ is not a general messenger.
 
 ## Sources

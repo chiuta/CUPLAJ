@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · **Português** · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versão: 1.5.0 · Última atualização: 2026-11-24_
+_Versão: 1.6.0 · Última atualização: 2026-11-24_
 
 ## 1. Antes do espetáculo
 
@@ -88,6 +88,14 @@ _Versão: 1.5.0 · Última atualização: 2026-11-24_
 - **Cor** — `#RRGGBB;segundos;pulsos por segundo` preenche o ecrã. Os pulsos são limitados a 2 por segundo para o público fotossensível; um toque longo fecha‑o.
 - **Sondagem** — `pergunta;opção 1;opção 2;…` pergunta a espectadores e atores; um voto por telemóvel (alterável). *Terminar a sondagem* mostra o resultado à Regia. As sondagens podem ser passos do guião.
 - **Entrega** — após cada sinal, a Regia vê *enviado a N de M telemóveis ligados*. **PTT físico** — Definições → *Tecla PTT física* transforma o botão do auricular e volume + em push‑to‑talk com a app em primeiro plano.
+
+## 13. Media, OSC, prioridade (1.6)
+
+- **Prioridade PA** — enquanto o telemóvel da Regia (ou um ator) fala a todos, os restantes sons descem a 30 % e voltam suavemente. Definições → *Prioridade PA* desliga‑a.
+- **Sinais multimédia** — no telemóvel da Regia, separador Sinais → *Enviar um ficheiro…* escolhe uma imagem, um vídeo ou um áudio (até 8 MB) e envia‑o por partes aos telemóveis escolhidos; cada um verifica tamanho e soma de controlo e ignora um ficheiro danificado. Depois use *Imagem no ecrã*, *Vídeo no ecrã* ou *Clipe de áudio* (texto vazio = último ficheiro, ou `código;segundos`). Um toque longo fecha a imagem ou o vídeo. Os telemóveis que entram depois não têm o ficheiro: envie‑o de novo.
+- **OSC de saída** — Definições → *OSC*: cada sinal é também enviado como `/cuplaj/cue <para> <tipo> <texto>` por UDP a uma mesa de luz ou som, QLab ou Companion.
+- **OSC de entrada** — a mesa pode enviar `/cuplaj/<PIN do hub>/go`, `/panic`, `/stop` ou `/cue <para> <tipo> <texto>` à Regia (porta 8473 por defeito). O PIN no endereço é a única proteção: mantenha privada a rede do espetáculo. No máximo 20 mensagens por segundo.
+- **Não incluído** — iOS (só Android), MIDI, program feed e mais canais do que os grupos existentes.
 
 ---
 

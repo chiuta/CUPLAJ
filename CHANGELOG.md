@@ -2,6 +2,13 @@
 
 Documentation language: English only.
 
+## 1.6.0 — 2026‑11‑24
+
+* PA priority (ducking): PA announcements travel on a reserved audio source; other sounds drop to 30 % while it plays and return smoothly (setting).
+* OSC out: every cue is also sent as `/cuplaj/cue to kind text` over UDP; OSC in: `/cuplaj/<hub PIN>/go|panic|stop|cue` with the PIN in the address, 20 messages per second at most.
+* Media cues: image, video and audio‑clip files (≤ 8 MB) sent through the hub in checked pieces (size, SHA‑256, order, path‑safe names), at most 3 transfers at a time, cache trimmed to 48 MB; new cue kinds *image*, *video*, *clip*.
+* Not done: iOS, MIDI, program feed, more channels than groups.
+
 ## 1.5.0 — 2026‑11‑24
 
 * Comparison with Unity Intercom, Zello, Augmented Theatre, QLab Remote / SOLOstudio / MiX16 and Livecube: `docs/COMPARISON.md`.

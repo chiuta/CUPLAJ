@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.5.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.6.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -88,6 +88,14 @@ _Verzió: 1.5.0 · Utolsó frissítés: 2026-11-24_
 - **Szín** — `#RRGGBB;másodperc;impulzus/másodperc` kitölti a képernyőt. Az impulzusok a fényérzékeny nézők miatt másodpercenként 2-re korlátozottak; hosszú nyomás bezárja.
 - **Szavazás** — `kérdés;1. lehetőség;2. lehetőség;…` megkérdezi a nézőket és színészeket; telefononként egy szavazat (módosítható). A *Szavazás lezárása* az eredményt a rendezői telefonon mutatja. A szavazás a forgatókönyv lépése is lehet.
 - **Kézbesítés** — minden jelzés után a rendező látja: *N / M online telefonra elküldve*. **Hardveres PTT** — Beállítások → *Hardveres PTT gomb*: a headset gomb és a hangerő + adó-gombbá válik, amíg az app előtérben van.
+
+## 13. Média, OSC, elsőbbség (1.6)
+
+- **PA elsőbbség** — amíg a rendezői telefon (vagy egy színész) mindenkihez beszél, a többi hang 30%-ra halkul, majd finoman visszatér. Beállítások → *PA elsőbbség* kikapcsolja.
+- **Média jelzések** — a rendezői telefonon a Jelzések fül → *Fájl küldése…* kiválaszt egy képet, videót vagy hangot (legfeljebb 8 MB), és darabokban elküldi a kijelölt telefonoknak; mindegyik ellenőrzi a méretet és az ellenőrző összeget, a sérült fájlt eldobja. Utána használd a *Kép a képernyőn*, *Videó a képernyőn* vagy *Hangklip* jelzést (üres szöveg = utolsó fájl, vagy `kód;másodperc`). Hosszú nyomás bezárja a képet/videót. A később csatlakozók nem kapják meg a fájlt: küldd újra.
+- **OSC kimenet** — Beállítások → *OSC*: minden jelzés `/cuplaj/cue <cél> <típus> <szöveg>` üzenetként is megy UDP-n egy fény- vagy hangpultra, QLab-ra vagy Companionra.
+- **OSC bemenet** — a pult `/cuplaj/<hub PIN>/go`, `/panic`, `/stop` vagy `/cue <cél> <típus> <szöveg>` üzenetet küldhet a rendezői telefonnak (alap port: 8473). A címben lévő PIN az egyetlen védelem: tartsd privátban az előadás hálózatát. Másodpercenként legfeljebb 20 üzenet fogadható.
+- **Nem része** — iOS (csak Android), MIDI, program feed és a meglévő csoportoknál több csatorna.
 
 ---
 

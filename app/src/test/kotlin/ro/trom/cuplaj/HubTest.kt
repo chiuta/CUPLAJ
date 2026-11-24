@@ -565,6 +565,11 @@ class HubTest {
     }
 
     @Test
+    fun show() {
+        assertEquals(0L, runShow().toLong())
+    }
+
+    @Test
     fun v15() {
         assertEquals(0L, runV15().toLong())
     }
@@ -1000,5 +1005,114 @@ fun runV15(): Int {
     check("sondaj: vot după încheiere ignorat", r.next("pollres", 500) == null)
     hub.stop(); Thread.sleep(200)
     println(if (fails == 0) "V15 OK" else "$fails ESECURI V15")
+    return fails
+}
+
+// ---------------------------------------------------------------- v1.6: ducking, OSC, media
+
+fun runShow(): Int {
+    fails = 0
+    val rnd = java.util.Random(9)
+    // ---- ducking
+    val d = Ducker()
+    var g = 1.0
+    for (i in 0 until 6) g = d.step(true)
+    check("ducking: coboară sub 0,4 în 6 cadre (120 ms)", g < 0.4)
+    for (i in 0 until 6) g = d.step(false)
+    check("ducking: rămâne jos în pauzele scurte (hold)", g < 0.45)
+    for (i in 0 until 60) g = d.step(false)
+    check("ducking: revine peste 0,95 în ~1,2 s", g > 0.95)
+    // ---- OSC
+    val m = Osc.decode(Osc.encode("/cuplaj/cue", "all", "text", "Salut", 7, 1.5f))
+    check("OSC: dus‑întors șir, întreg, real", m != null && m.addr == "/cuplaj/cue" && m.args == listOf<Any>("all", "text", "Salut", 7, 1.5f))
+    var crashed = false
+    for (i in 0 until 5000) {
+        val b = ByteArray(rnd.nextInt(300)); rnd.nextBytes(b)
+        try { Osc.decode(b) } catch (_: Throwable) { crashed = true }
+    }
+    val good = Osc.encode("/cuplaj/123456/cue", "all", "text", "x")
+    for (n in 0 until good.size) try { Osc.decode(good, n) } catch (_: Throwable) { crashed = true }
+    check("OSC: 5000 pachete aleatorii și trunchieri nu aruncă excepții", !crashed)
+    check("OSC: tip necunoscut / fără virgulă / prea lung respinse", Osc.decode("/a\u0000\u0000\u0000xyz\u0000".toByteArray()) == null && Osc.decode(ByteArray(3000)) == null)
+    val pin = "482913"
+    check("OSC: PIN corect → go/panic/stop", Osc.command(Osc.decode(Osc.encode("/cuplaj/$pin/go"))!!, pin)?.kind == "go" && Osc.command(Osc.decode(Osc.encode("/cuplaj/$pin/panic"))!!, pin)?.kind == "panic" && Osc.command(Osc.decode(Osc.encode("/cuplaj/$pin/stop"))!!, pin)?.kind == "stop")
+    check("OSC: PIN greșit / lipsă / prefix apropiat respinse", Osc.command(Osc.decode(Osc.encode("/cuplaj/000000/panic"))!!, pin) == null && Osc.command(Osc.decode(Osc.encode("/cuplaj/panic"))!!, pin) == null && Osc.command(Osc.decode(Osc.encode("/cuplaj/48291/panic"))!!, pin) == null && Osc.command(Osc.decode(Osc.encode("/cuplaj//panic"))!!, pin) == null)
+    check("OSC: PIN gol pe hub => nimic acceptat", Osc.command(Osc.decode(Osc.encode("/cuplaj//go"))!!, "") == null)
+    val cc = Osc.command(Osc.decode(Osc.encode("/cuplaj/$pin/cue", "spectators", "color", "#ff0000;2"))!!, pin)
+    check("OSC: /cue cu țintă, tip și text", cc != null && cc.to == "spectators" && cc.cue == "color" && cc.text == "#ff0000;2")
+    check("OSC: tip de cue necunoscut respins", Osc.command(Osc.decode(Osc.encode("/cuplaj/$pin/cue", "all", "format_disk", "x"))!!, pin) == null)
+    // UDP real, cu limita de 20/s
+    val got = java.util.concurrent.atomic.AtomicInteger()
+    val oin = OscIn(18591, { pin }) { got.incrementAndGet() }
+    check("OSC: ascultă pe UDP", oin.start())
+    val out = OscOut("127.0.0.1", 18591)
+    Thread.sleep(200)
+    out.send(Osc.encode("/cuplaj/$pin/go")); Thread.sleep(300)
+    check("OSC: comanda prin UDP ajunge", got.get() == 1)
+    out.send(Osc.encode("/cuplaj/zzzzzz/go")); Thread.sleep(200)
+    check("OSC: PIN greșit prin UDP ignorat", got.get() == 1)
+    for (i in 0 until 100) out.send(Osc.encode("/cuplaj/$pin/go"))
+    Thread.sleep(500)
+    check("OSC: inundația e limitată (≤ 21 din 100 pe secundă)", got.get() <= 22)
+    oin.stop(); out.close()
+    // ---- media
+    val dir = java.io.File(System.getProperty("java.io.tmpdir"), "cuplaj-media-" + System.nanoTime())
+    val asm = MediaAsm(dir)
+    val data = ByteArray(40000); rnd.nextBytes(data)
+    val ch = Media.chunks(data)
+    fun jm(id: String, i: Int, n: Int, b: String, size: Long = data.size.toLong(), sha: String = Media.sha256(data), kind: String = "image") =
+        jo("mid" to id, "kind" to kind, "i" to i, "n" to n, "b64" to b, "size" to size, "sha" to sha)
+    var res = ""
+    for ((i, n, b) in ch) res = asm.add(jm("abc123", i, n, b))
+    check("media: 40 KB în ${ch.size} bucăți, fișier identic", res == "done" && asm.file("abc123", "image")?.readBytes()?.contentEquals(data) == true)
+    for ((i, n, b) in ch) res = asm.add(jm("bad1", i, n, if (i == 1) Media.chunks(ByteArray(12000))[0].third else b))
+    check("media: bucată modificată => hash greșit, fișier șters", res == "bad_hash" && asm.file("bad1", "image") == null)
+    check("media: ordine greșită respinsă", asm.add(jm("ord1", 1, ch.size, ch[1].third)) == "order")
+    asm.add(jm("ord2", 0, ch.size, ch[0].third)); 
+    check("media: bucată sărită respinsă", asm.add(jm("ord2", 2, ch.size, ch[2].third)) == "order")
+    check("media: id cu cale (../x) respins", asm.add(jm("../evil", 0, 1, ch[0].third)) == "bad_id" && asm.add(jm("A B", 0, 1, ch[0].third)) == "bad_id")
+    check("media: mărime peste 8 MB respinsă", asm.add(jm("big1", 0, 3, ch[0].third, size = 9_000_000)) == "bad_meta")
+    check("media: hash scris greșit respins", asm.add(jm("hsh1", 0, 3, ch[0].third, sha = "xyz")) == "bad_meta")
+    check("media: tip necunoscut respins", asm.add(jm("kk1", 0, 3, ch[0].third, kind = "exe")) == "bad_id")
+    asm.add(jm("t1", 0, 3, ch[0].third)); asm.add(jm("t2", 0, 3, ch[0].third)); asm.add(jm("t3", 0, 3, ch[0].third))
+    check("media: cel mult 3 transferuri deschise", asm.add(jm("t4", 0, 3, ch[0].third)) == "busy")
+    check("media: bucată prea mare respinsă", asm.add(jm("t5", 0, 3, "A".repeat(20000))) == "chunk_big")
+    val small = ByteArray(100)
+    val sc = Media.chunks(small)
+    check("media: depășirea mărimii declarate respinsă", MediaAsm(java.io.File(dir, "o")).add(jm("ovf1", 0, 1, sc[0].third, size = 50, sha = Media.sha256(small))) == "overflow")
+    asm.trim(1000)
+    check("media: trim șterge peste limită", (dir.listFiles() ?: emptyArray()).filter { it.isFile }.sumOf { it.length() } <= 1000)
+    dir.deleteRecursively()
+
+    // ---- hub: relay media + PA
+    val port = 18592
+    val hub = Hub("S", "1234", "", port, null, false)
+    hub.start(); Thread.sleep(400)
+    val r = C("r", "Regia", "regie", pin = "1234", room = "", port = port)
+    val s1 = C("s1", "Ana", "spectator", room = "", port = port)
+    val s2 = C("s2", "Bob", "spectator", room = "", port = port)
+    for (x in listOf(r, s1, s2)) x.drain()
+    r.send("t" to "media", "to" to "all", "mid" to "x1", "kind" to "image", "i" to 0, "n" to 2, "b64" to "AAAA", "size" to 6L, "sha" to "ab")
+    r.send("t" to "media", "to" to "all", "mid" to "x1", "kind" to "image", "i" to 1, "n" to 2, "b64" to "BBBB")
+    val a0 = s1.next("media"); val a1 = s1.next("media"); val b0 = s2.next("media")
+    check("hub: media relay la toți, meta doar în prima bucată", a0 != null && a1 != null && b0 != null && a0.has("sha") && !a1.has("sha") && a1.getInt("i") == 1)
+    s2.drain()
+    s1.send("t" to "media", "to" to "all", "mid" to "x2", "kind" to "image", "i" to 0, "n" to 1, "b64" to "AAAA")
+    check("hub: spectatorul nu poate trimite media", s2.next("media", 500) == null)
+    r.send("t" to "media", "to" to "all", "mid" to "../x", "kind" to "image", "i" to 0, "n" to 1, "b64" to "AAAA")
+    r.send("t" to "media", "to" to "all", "mid" to "x3", "kind" to "image", "i" to 0, "n" to 1, "b64" to "A".repeat(20000))
+    r.send("t" to "media", "to" to "all", "mid" to "x4", "kind" to "script", "i" to 0, "n" to 1, "b64" to "AAAA")
+    check("hub: id invalid, bucată uriașă, tip necunoscut — nimic relayat", s2.next("media", 600) == null)
+    val pcm = ByteArray(321); pcm[0] = 1; pcm[1] = 7
+    r.conn.send(Frame(T_AUDIO, pcm))
+    var src = -1
+    val end = System.currentTimeMillis() + 1500
+    while (System.currentTimeMillis() < end && src < 0) {
+        val f = s1.q.poll(300, java.util.concurrent.TimeUnit.MILLISECONDS) ?: continue
+        if (f.type == T_AUDIO) src = f.data[0].toInt() and 0xFF
+    }
+    check("PA: anunțul Regiei poartă sursa rezervată 254 (prioritate)", src == 254)
+    hub.stop(); Thread.sleep(200)
+    println(if (fails == 0) "SHOW OK" else "$fails ESECURI SHOW")
     return fails
 }
