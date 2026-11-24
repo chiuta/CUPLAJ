@@ -1,4 +1,4 @@
-# CUPLAJ protocol (v1.1)
+# CUPLAJ protocol (v1.2)
 
 Documentation language: English only (the app UI, README and user guide are available in 8 languages).
 
@@ -80,3 +80,16 @@ Plain TCP on a trusted local network. The room code and PIN are access gates, no
 **Gateway role.** A client with role `gateway` (number 90) is a SIP bridge; it requires the PIN unless local. Staff dial `0`+number; the hub sends `ring` with `dest` to the gateway. `unknown` is returned to spectators.
 
 **SMS.** Staff → hub `{"t":"sms","to","text"}`; hub → gateway `{"t":"smsout",...}`; hub → staff `{"t":"smsres","ok","why"}` (`bad_number`, `no_gateway`, `limit`). Gateway → hub `{"t":"smsin","from","text"}`, delivered to staff as `msg` with role `sms`. `hello.smsgw:true` registers a gateway.
+
+## v1.2: transports
+
+The framing and messages are identical on every transport; only the byte channel differs.
+
+| Transport | How the client reaches the hub |
+| --- | --- |
+| TCP | `host[:port]`, default port 8470 (LAN, hotspot, USB tethering, Ethernet, Wi‑Fi Direct group at 192.168.49.1, internet) |
+| Bluetooth | classic RFCOMM, insecure service record, UUID `7c6a0c5e-3d10-4f6e-9a55-2b1c8f0d4a71`; addressed as `bt:AA:BB:CC:DD:EE:FF` |
+
+Discovery: UDP beacon `CUPLAJ1|name|port|room?|key?` every 2 s on port 8471; mDNS/DNS‑SD service `_cuplaj._tcp`; Bluetooth device scan; Wi‑Fi Direct peer discovery.
+
+Idle limits apply per channel: 10 s to send `hello`, 60 s of silence afterwards (clients ping every 15 s). Bluetooth clients send μ‑law audio.

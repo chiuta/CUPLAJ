@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.1.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.2.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -55,6 +55,15 @@ _Version : 1.1.0 · Dernière mise à jour : 2026-11-24_
 - **Ligne SIP** — Réglages → *Ligne VoIP / SIP…* : serveur, utilisateur, mot de passe, domaine facultatif et numéro interne pour les appels entrants (100 par défaut). Redémarrez le hub pour appliquer. L'équipe compose `0` + numéro externe ; les spectateurs ne peuvent pas appeler à l'extérieur. Chaque appel est limité à 15 minutes. SIP et RTP ne sont pas chiffrés.
 - **SMS** — Réglages → *Passerelle SMS* (SIM et permissions SMS requises). L'équipe choisit *SMS vers un vrai numéro* dans l'onglet Messages ; les SMS reçus apparaissent comme messages de *SMS*. Limite : 20 par minute. Les tarifs de l'opérateur s'appliquent.
 - **Appel réel** — le cue *appel réel* ouvre le numéroteur avec le numéro. Android interdit à une application d'injecter un appel cellulaire dans la ligne partagée : l'audio GSM ne peut pas être relayé ; utilisez la ligne SIP pour cela.
+
+## 9. Se connecter sans routeur (1.2)
+
+- **Même hub, n'importe quelle liaison** — appels, ligne partagée, cues, chiffrement et PIN fonctionnent de la même façon ; seul le chemin du téléphone vers le hub change.
+- **Point d'accès, partage USB, Ethernet** — toute liaison qui donne un réseau IP aux téléphones fonctionne sans réglage ; utilisez l'adresse ou laissez le hub être trouvé.
+- **Bluetooth** — sur le téléphone de la régie, démarrez le hub avec *Liaison Bluetooth : OUI* et appuyez sur *Rendre visible par Bluetooth*. Sur les autres, appuyez sur *Chercher par Bluetooth* et choisissez le téléphone de la régie (🔵). La portée est courte et environ 7 téléphones tiennent sur un hub ; la voix est compressée automatiquement. L'appairage n'est pas obligatoire ; l'accès reste protégé par le PIN, le code de salle et la clé réseau.
+- **Wi‑Fi Direct** — sur le téléphone de la régie, démarrez le hub avec *Groupe Wi‑Fi Direct : OUI*. Sur les autres, appuyez sur *Chercher Wi‑Fi Direct* et choisissez le téléphone de la régie (📡) ; il peut demander d'accepter chaque téléphone. Après la jonction, le hub apparaît dans la liste. Les téléphones ne peuvent généralement pas rester sur leur Wi‑Fi habituel dans un groupe Wi‑Fi Direct, et certains modèles ne gèrent pas les deux à la fois.
+- **mDNS** — le hub s'annonce aussi par mDNS/DNS‑SD (🌐), ce qui le rend visible sur les réseaux qui bloquent la diffusion habituelle.
+- **Non inclus** — Wi‑Fi Aware (peu de téléphones) et Nearby Connections de Google (nécessite Google Play Services, que cette application trade‑free évite). Le Bluetooth Low Energy est trop lent pour la voix.
 
 ---
 

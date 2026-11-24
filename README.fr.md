@@ -6,7 +6,7 @@
 
 > **Téléphonie à ligne partagée pour le théâtre immersif**
 
-_Version : 1.1.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.2.0 · Dernière mise à jour : 2026-11-24_
 
 CUPLAJ transforme une flotte de téléphones Android ordinaires en central téléphonique privé pour le théâtre immersif. Organisateurs et acteurs parlent aux spectateurs (et entre eux) via le Wi‑Fi local du lieu — sans cloud, sans compte, sans publicité. Sa fonction phare est le *cuplaj* : la **ligne partagée** des téléphones fixes des années 1980 jusqu'à environ 2006, où deux abonnés se partageaient une même ligne, sonnaient avec des cadences différentes et pouvaient s'entendre l'un l'autre.
 
@@ -24,6 +24,7 @@ CUPLAJ transforme une flotte de téléphones Android ordinaires en central tél�
 - **Appels directs P2P (1.1)** — l'audio circule de téléphone à téléphone en UDP avec traversée de NAT, avec repli sur le relais du hub ; la régie peut le désactiver, le limiter au réseau local (défaut) ou l'ouvrir partout.
 - **Passerelle VoIP / SIP (1.1)** — le téléphone de la régie s'enregistre chez un opérateur SIP ou un PBX ; l'équipe compose `0`+numéro pour sortir, les appels SIP entrants sonnent à un numéro interne.
 - **Réseau mobile (1.1)** — passerelle SMS via la SIM du téléphone de la régie (envoi et réception), cue *appel réel* qui ouvre le numéroteur, indicateur Wi‑Fi / mobile.
+- **Davantage de modes de connexion (1.2)** — Bluetooth (sans routeur, environ 7 téléphones), Wi‑Fi Direct (le téléphone de la régie crée son propre réseau Wi‑Fi) et découverte mDNS, en plus du Wi‑Fi, du point d'accès, du partage USB, de l'Ethernet et des données mobiles.
 
 ## Démarrage rapide
 
@@ -60,7 +61,7 @@ CUPLAJ transforme une flotte de téléphones Android ordinaires en central tél�
 
 ## État réel
 
-La logique du hub (appels, ligne partagée, permissions, limites, persistance) est couverte par ~55 vérifications automatiques exécutées sur une JVM. L'interface Android et le chemin audio ont passé le contrôle de types face au SDK Android 14 mais **n'ont pas encore été testés sur de vrais appareils** ; l'APK est construit par GitHub Actions. Testez avec quelques téléphones avant un spectacle. Le trafic du réseau local n'est pas chiffré (le PIN et le code de salle écartent les curieux de bonne foi, ce n'est pas de la cryptographie). Le réseau de la version 1.1 (chiffrement, P2P, SIP, SMS) est couvert par des tests du hub contre un serveur SIP simulé, mais **n'a pas** été essayé sur de vrais opérateurs, NAT ou cartes SIM.
+La logique du hub (appels, ligne partagée, permissions, limites, persistance) est couverte par ~55 vérifications automatiques exécutées sur une JVM. L'interface Android et le chemin audio ont passé le contrôle de types face au SDK Android 14 mais **n'ont pas encore été testés sur de vrais appareils** ; l'APK est construit par GitHub Actions. Testez avec quelques téléphones avant un spectacle. Le trafic du réseau local n'est pas chiffré (le PIN et le code de salle écartent les curieux de bonne foi, ce n'est pas de la cryptographie). Le réseau de la version 1.1 (chiffrement, P2P, SIP, SMS) est couvert par des tests du hub contre un serveur SIP simulé, mais **n'a pas** été essayé sur de vrais opérateurs, NAT ou cartes SIM. Les liaisons Bluetooth, Wi‑Fi Direct et mDNS (1.2) partagent la même couche de transport, testée sur JVM avec des canaux simulés, mais **n'ont pas** été essayées sur de vrais appareils ; le comportement varie selon les fabricants.
 
 ## Compilation
 

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.1.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.2.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -55,6 +55,15 @@ _Verzió: 1.1.0 · Utolsó frissítés: 2026-11-24_
 - **SIP vonal** — Beállítások → *VoIP / SIP vonal…*: szerver, felhasználó, jelszó, opcionális tartomány és a bejövő hívások belső száma (alap 100). Az alkalmazáshoz indítsd újra a hubot. A stáb `0` + külső számot tárcsáz; a nézők nem hívhatnak kifelé. Egy hívás legfeljebb 15 percig tarthat. A SIP és az RTP nem titkosított.
 - **SMS** — Beállítások → *SMS‑átjáró* (SIM és SMS‑jogosultság kell). A stáb az Üzenetek fülön az *SMS valódi számra* célt választja; a fogadott SMS‑ek *SMS* feladótól érkező üzenetként jelennek meg. Korlát: percenként 20. A szolgáltató díjai érvényesek.
 - **Valódi hívás** — a *valódi hívás* cue megnyitja a tárcsázót a számmal. Az Android nem engedi, hogy egy alkalmazás mobilhívást vezessen a közös vonalra: a GSM‑hang nem hidalható át; ehhez használd a SIP vonalat.
+
+## 9. Csatlakozás router nélkül (1.2)
+
+- **Ugyanaz a hub, bármilyen kapcsolat** — a hívások, közös vonal, cue‑k, titkosítás és PIN mindenhol ugyanúgy működnek; csak a telefon útja változik a hubig.
+- **Hotspot, USB‑megosztás, Ethernet** — minden kapcsolat, amely IP‑hálózatot ad a telefonoknak, beállítás nélkül működik; add meg a címet, vagy hagyd, hogy a hub megtalálható legyen.
+- **Bluetooth** — a rendezői telefonon indítsd a hubot *Bluetooth kapcsolat: BE* mellett, és nyomd meg a *Láthatóvá tétel Bluetoothon* gombot. A többin nyomd meg a *Keresés Bluetoothon* gombot, és válaszd a rendezői telefont (🔵). A hatótáv kicsi, egy hubra kb. 7 telefon fér; a hang automatikusan tömörítve megy. Párosítás nem szükséges; a hozzáférést továbbra is a PIN, a szobakód és a hálózati kulcs védi.
+- **Wi‑Fi Direct** — a rendezői telefonon indítsd a hubot *Wi‑Fi Direct csoport: BE* mellett. A többin nyomd meg a *Wi‑Fi Direct keresése* gombot, és válaszd a rendezői telefont (📡); az kérheti minden telefon jóváhagyását. Csatlakozás után a hub megjelenik a listában. A telefonok általában nem maradhatnak a megszokott Wi‑Fi‑n Wi‑Fi Direct csoportban, és egyes típusok nem tudják mindkettőt.
+- **mDNS** — a hub mDNS/DNS‑SD‑vel is jelzi magát (🌐), így azokon a hálózatokon is megtalálható, amelyek tiltják a szokásos szórást.
+- **Nincs benne** — a Wi‑Fi Aware (kevés telefon támogatja) és a Google Nearby Connections (Google Play Services kell, amit ez a trade‑free app elkerül). A Bluetooth Low Energy túl lassú a beszédhez.
 
 ---
 

@@ -234,7 +234,7 @@ class Hub(
             while (running) {
                 try {
                     val s = ss.accept()
-                    Thread { handle(s) }.apply { isDaemon = true; start() }
+                    adopt(SocketChan(s))
                 } catch (e: SocketException) {
                     if (!running) break
                     Thread.sleep(100)
@@ -296,11 +296,16 @@ class Hub(
 
     private fun clean(s: String, n: Int): String = s.filter { it >= ' ' }.trim().take(n)
 
-    private fun handle(s: Socket) {
-        val c = Conn(s, key, true)
+    /** Preia un canal nou (TCP, Bluetooth…) și îl tratează într-un fir propriu. */
+    fun adopt(ch: Chan) {
+        Thread { handle(ch) }.apply { isDaemon = true; start() }
+    }
+
+    private fun handle(ch: Chan) {
+        val c = Conn(ch, key, true)
         var me: Peer? = null
         try {
-            s.soTimeout = 10000
+            ch.setIdleTimeout(10000)
             val f = c.readFrame()
             if (f.bad) {
                 // cheie de rețea lipsă sau greșită: refuz în clar, ca utilizatorul să afle motivul
@@ -319,15 +324,14 @@ class Hub(
                 c.close()
                 return
             }
-            s.soTimeout = idleTimeoutMs
-            s.keepAlive = true
+            ch.setIdleTimeout(idleTimeoutMs)
             val id = clean(m.getString("id"), 64)
             if (id.isEmpty()) {
                 c.close()
                 return
             }
             var role = m.optString("role", "spectator")
-            val local = trustLoopback && s.inetAddress.isLoopbackAddress
+            val local = trustLoopback && ch.loopback
             if (!local && room.isNotEmpty() && m.optString("room") != room) {
                 deny(c, "bad_room")
                 return

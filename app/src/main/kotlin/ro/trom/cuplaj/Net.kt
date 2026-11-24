@@ -54,14 +54,17 @@ class Net(
         while (run && gen == my) {
             try {
                 onState(L.t("net_connecting", hostPort))
-                val s = Socket()
-                s.connect(InetSocketAddress(host, port), 5000)
-                s.keepAlive = true
-                s.soTimeout = 45000 // hubul răspunde la ping la 15 s; liniște de 45 s = legătură moartă
-                val a = s.inetAddress
-                remote = !(a.isSiteLocalAddress || a.isLoopbackAddress || a.isLinkLocalAddress)
-                compress = forceCompress ?: remote
-                val c = Conn(s, key, false)
+                val ch: Chan = if (hostPort.startsWith("bt:")) {
+                    Bt.connect(hostPort.substring(3))
+                } else {
+                    val s = Socket()
+                    s.connect(InetSocketAddress(host, port), 5000)
+                    SocketChan(s)
+                }
+                ch.setIdleTimeout(45000) // hubul răspunde la ping la 15 s; liniște de 45 s = legătură moartă
+                remote = ch.remote
+                compress = forceCompress ?: (ch.remote || ch.lowBandwidth)
+                val c = Conn(ch, key, false)
                 conn = c
                 c.startWriter()
                 c.sendJson(hello)

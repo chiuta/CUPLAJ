@@ -33,7 +33,7 @@ class PeerInfo(
     val muted: Boolean, val bat: Int
 )
 
-class Found(val name: String, val host: String, val locked: Boolean, val keyed: Boolean = false)
+class Found(val name: String, val host: String, val locked: Boolean, val keyed: Boolean = false, val via: String = "lan")
 
 class Fake(val name: String, val num: String, val text: String)
 
@@ -65,6 +65,12 @@ object App {
     var joinKey = ""         // cheia de rețea introdusă de client
     var encOn = false        // regie: legătură cifrată
     var smsGw = false        // regie: poartă SMS
+    var btOn = false         // regie: acceptă conexiuni Bluetooth
+    var wfdOn = false        // regie: grup Wi‑Fi Direct
+    private var btServer: Bt.Server? = null
+    private var wfd: Wfd? = null
+    private var btScan: Bt.Scanner? = null
+    private val nsd: Nsd by lazy { Nsd(ctx) }
     var sipOn = false
     var sipHost = ""
     var sipPort = 5060
@@ -159,6 +165,9 @@ object App {
         netKey = p.getString("nkey", null) ?: Sec.newPassphrase().also { p.edit().putString("nkey", it).apply() }
         joinKey = p.getString("jkey", "") ?: ""
         smsGw = p.getBoolean("smsgw", false)
+        btOn = p.getBoolean("bton", false)
+        wfdOn = p.getBoolean("wfdon", false)
+        Bt.ctx = ctx
         sipOn = p.getBoolean("sipon", false)
         sipHost = p.getString("siph", "") ?: ""
         sipPort = p.getInt("sipp", 5060)
@@ -175,7 +184,7 @@ object App {
     }
 
     fun saveNet() {
-        prefs().edit().putBoolean("enc", encOn).putString("nkey", netKey).putBoolean("smsgw", smsGw).putString("jkey", joinKey)
+        prefs().edit().putBoolean("enc", encOn).putString("nkey", netKey).putBoolean("smsgw", smsGw).putBoolean("bton", btOn).putBoolean("wfdon", wfdOn).putString("jkey", joinKey)
             .putBoolean("sipon", sipOn).putString("siph", sipHost).putInt("sipp", sipPort).putString("sipu", sipUser)
             .putString("sipw", sipPass).putString("sipd", sipDomain).putString("sipi", sipInbound).apply()
     }
@@ -224,6 +233,13 @@ object App {
             mlock = l
         } catch (_: Exception) {
         }
+        try {
+            nsd.discover { name, host, port ->
+                val h = if (port == PORT) host else "$host:$port"
+                ui.post { if (found.put(h, Found(name, h, false, false, "nsd")) == null) notify("found") }
+            }
+        } catch (_: Exception) {
+        }
         Thread {
             var ds: DatagramSocket? = null
             try {
@@ -256,7 +272,37 @@ object App {
         }
     }
 
+    fun scanBluetooth(): Boolean {
+        btScan?.stop()
+        val sc = Bt.Scanner(ctx) { name, mac ->
+            ui.post { if (found.put("bt:$mac", Found(name, "bt:$mac", false, false, "bt")) == null) notify("found") }
+        }
+        btScan = sc
+        return sc.start()
+    }
+
+    fun scanWifiDirect(): Boolean {
+        val w = wfd ?: Wfd(ctx).also { wfd = it }
+        w.onPeer = { name, mac ->
+            ui.post { if (found.put("wfd:$mac", Found(name, "wfd:$mac", false, false, "wfd")) == null) notify("found") }
+        }
+        w.onGroupOwner = { ip ->
+            ui.post { if (found.put(ip, Found("Wi‑Fi Direct", ip, false, false, "wfd")) == null) notify("found") }
+        }
+        return w.scan()
+    }
+
+    fun joinWifiDirect(mac: String) {
+        wfd?.join(mac) { ok -> ui.post { notify("toast:" + L.t(if (ok) "wfd_joining" else "wfd_fail")) } }
+    }
+
     fun stopDiscovery() {
+        try {
+            nsd.stopDiscover()
+        } catch (_: Exception) {
+        }
+        btScan?.stop()
+        btScan = null
         discRun = false
         try {
             mlock?.release()
@@ -305,6 +351,19 @@ object App {
             hb.onPersist = { s -> p.edit().putString("hubstate", s).apply() }
             hubObj = hb
             hb.start()
+            if (btOn) {
+                val bs = Bt.Server(ctx, hb)
+                if (bs.start()) btServer = bs else ui.post { notify("toast:" + L.t("bt_unavailable")) }
+            }
+            if (wfdOn) {
+                val w = Wfd(ctx)
+                wfd = w
+                w.startGroup { ok -> if (!ok) ui.post { notify("toast:" + L.t("wfd_fail")) } }
+            }
+            try {
+                nsd.advertise(name, PORT)
+            } catch (_: Exception) {
+            }
             ui.postDelayed({
                 if (hubObj?.error != null) notify("toast:" + L.t("err_port"))
             }, 1000)
@@ -346,6 +405,14 @@ object App {
         stopScript()
         stopP2p(true)
         stopSip()
+        btServer?.stop()
+        btServer = null
+        try {
+            wfd?.stop()
+            nsd.unadvertise()
+        } catch (_: Exception) {
+        }
+        wfd = null
         net?.stop()
         net = null
         hubObj?.stop()

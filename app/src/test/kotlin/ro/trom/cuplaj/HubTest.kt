@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit
 private const val TP = 18470
 
 /** Un telefon simulat care vorbește protocolul cu hubul. */
-class C(val id: String, val name: String, val role: String, pin: String = "1234", room: String = "R1", tok: String = "", port: Int = TP, key: ByteArray? = null, p2p: Boolean = false, smsgw: Boolean = false) {
-    val sock = Socket("127.0.0.1", port)
-    val conn = Conn(sock, key, false)
+class C(val id: String, val name: String, val role: String, pin: String = "1234", room: String = "R1", tok: String = "", port: Int = TP, key: ByteArray? = null, p2p: Boolean = false, smsgw: Boolean = false, chan: Chan? = null) {
+    val sock: Socket? = if (chan == null) Socket("127.0.0.1", port) else null
+    val conn = Conn(chan ?: SocketChan(sock!!), key, false)
     val q = LinkedBlockingQueue<Frame>()
     var number = ""
     var tok = ""
@@ -120,7 +120,7 @@ fun runAll(): Int {
     check("uzurparea id-ului fără token refuzată", C("s1", "Intrus", "spectator").denied == "dup")
     val s1b = C("s1", "Ana", "spectator", tok = s1.tok)
     check("reconectare cu token păstrează numărul", s1b.number == s1.number)
-    s1.sock.close()
+    s1.sock!!.close()
     val s1x = s1b
     check("nume curățat și limitat", C("n1", "A\u0001B" + "x".repeat(80), "spectator").let { it.number.isNotEmpty() })
 
@@ -223,7 +223,7 @@ fun runAll(): Int {
     // ---- conexiune, eliminare, persistență
     s3.send("t" to "dial", "number" to s4.number); s4.next("ring"); s4.send("t" to "answer"); s3.next("connected"); s4.next("connected")
     s3.drain(); s4.drain()
-    s3.sock.close()
+    s3.sock!!.close()
     check("cădere conexiune => partenerul primește ended", s4.next("ended", 2000) != null)
     val s3b = C("s3", "Cip", "spectator", tok = s3.tok)
     check("reconectare păstrează numărul", s3b.number == s3.number)
@@ -564,7 +564,48 @@ class HubTest {
     }
 
     @Test
+    fun canal() {
+        assertEquals(0L, runChan().toLong())
+    }
+
+    @Test
     fun retea() {
         assertEquals(0L, runNet().toLong())
     }
+}
+
+
+/** Transport generic: un canal peste fluxuri (cum e Bluetooth) este tratat de hub la fel ca TCP. */
+fun runChan(): Int {
+    fails = 0
+    val port = 18490
+    val hub = Hub("B", "1234", "", port, null, false, "cheie-bt")
+    hub.idleTimeoutMs = 1500
+    hub.start(); Thread.sleep(400)
+    fun pipe(key: ByteArray?, id: String, name: String): C {
+        val c2h = java.io.PipedOutputStream(); val hubIn = java.io.PipedInputStream(c2h, 65536)
+        val h2c = java.io.PipedOutputStream(); val cliIn = java.io.PipedInputStream(h2c, 65536)
+        hub.adopt(StreamChan(hubIn, h2c, { try { h2c.close(); c2h.close() } catch (_: Exception) {} }))
+        return C(id, name, "spectator", room = "", port = port, key = key, chan = StreamChan(cliIn, c2h, { try { c2h.close() } catch (_: Exception) {} }))
+    }
+    val key = Sec.deriveKey("cheie-bt")
+    val a = pipe(key, "b1", "Ana"); val b = pipe(key, "b2", "Bob")
+    check("canal generic: conectare cu cheie", a.number.isNotEmpty() && b.number.isNotEmpty())
+    check("canal generic: fără cheie => bad_key", pipe(null, "b3", "X").denied == "bad_key")
+    val tcp = C("b4", "Cip", "spectator", room = "", port = port, key = key)
+    a.drain(); b.drain(); tcp.drain()
+    a.send("t" to "dial", "number" to b.number)
+    check("canal generic: apel între două canale", b.next("ring") != null)
+    b.send("t" to "answer"); a.next("connected"); b.next("connected"); a.drain(); b.drain()
+    a.audioU(0)
+    check("canal generic: audio ajunge", b.audioIn() == T_AUDIO_U)
+    a.send("t" to "hangup"); a.drain(); b.drain()
+    a.send("t" to "dial", "number" to tcp.number)
+    check("canal generic ↔ TCP: apel între transporturi diferite", tcp.next("ring") != null)
+    Thread.sleep(2600)
+    a.send("t" to "ping")
+    check("canal generic: liniște => închis de paznic", a.next("pong", 800) == null)
+    hub.stop(); Thread.sleep(200)
+    println(if (fails == 0) "CANAL OK" else "$fails ESECURI CANAL")
+    return fails
 }

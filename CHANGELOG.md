@@ -2,6 +2,14 @@
 
 Documentation language: English only.
 
+## 1.2.0 — 2026‑11‑24
+
+* Generic transport layer: the hub accepts any byte channel, not only TCP (`Chan`, `StreamChan`, `Hub.adopt`); covered by JVM tests with simulated channels, including mixed TCP and channel calls.
+* Bluetooth (classic RFCOMM, no pairing required): control phone listens, other phones scan and connect; audio is compressed automatically.
+* Wi‑Fi Direct: the control phone creates a group, other phones find and join it; the hub is then found as on any local network.
+* mDNS/DNS‑SD announcement and discovery (`_cuplaj._tcp`) alongside the UDP beacon.
+* New permissions: Bluetooth (connect, scan, advertise), nearby Wi‑Fi devices, location on Android 12 and below (required by Android for scanning).
+
 ## 1.1.0 — 2026‑11‑24
 
 * Internet and mobile data: `host:port` addressing, optional AES‑128‑GCM network key, G.711 μ‑law compression off the LAN, keepalive and idle timeout.

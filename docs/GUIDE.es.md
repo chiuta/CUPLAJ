@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.1.0 · Última actualización: 2026-11-24_
+_Versión: 1.2.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -55,6 +55,15 @@ _Versión: 1.1.0 · Última actualización: 2026-11-24_
 - **Línea SIP** — Ajustes → *Línea VoIP / SIP…*: servidor, usuario, contraseña, dominio opcional y número interno para llamadas entrantes (100 por defecto). Reinicia el hub para aplicar. El equipo marca `0` + número externo; los espectadores no pueden llamar al exterior. Cada llamada se limita a 15 minutos. SIP y RTP no van cifrados.
 - **SMS** — Ajustes → *Pasarela SMS* (requiere SIM y permisos SMS). El equipo elige *SMS a un número real* en la pestaña Mensajes; los SMS recibidos aparecen como mensajes de *SMS*. Límite: 20 por minuto. Se aplican las tarifas del operador.
 - **Llamada real** — el cue *llamada real* abre el marcador con el número. Android no permite a una app meter una llamada celular en la línea compartida: el audio GSM no se puede enlazar; para eso usa la línea SIP.
+
+## 9. Conectarse sin router (1.2)
+
+- **Mismo hub, cualquier enlace** — llamadas, línea compartida, cues, cifrado y PIN funcionan igual; solo cambia el camino del teléfono hasta el hub.
+- **Punto de acceso, anclaje USB, Ethernet** — cualquier enlace que dé a los teléfonos una red IP funciona sin configurar; usa la dirección o deja que se encuentre el hub.
+- **Bluetooth** — en el teléfono de la regiduría inicia el hub con *Enlace Bluetooth: SÍ* y pulsa *Hacer visible por Bluetooth*. En los demás pulsa *Buscar por Bluetooth* y elige el teléfono de la regiduría (🔵). El alcance es corto y caben unos 7 teléfonos por hub; la voz se comprime automáticamente. No hace falta emparejar; el acceso sigue protegido por PIN, código de sala y clave de red.
+- **Wi‑Fi Direct** — en el teléfono de la regiduría inicia el hub con *Grupo Wi‑Fi Direct: SÍ*. En los demás pulsa *Buscar Wi‑Fi Direct* y elige el teléfono de la regiduría (📡); puede pedir que aceptes cada teléfono. Tras unirse, el hub aparece en la lista. Normalmente los teléfonos no pueden seguir en su Wi‑Fi habitual dentro de un grupo Wi‑Fi Direct, y algunos modelos no admiten ambos a la vez.
+- **mDNS** — el hub también se anuncia por mDNS/DNS‑SD (🌐), lo que lo hace visible en redes que bloquean la difusión habitual.
+- **No incluidos** — Wi‑Fi Aware (pocos teléfonos) y Nearby Connections de Google (requiere Google Play Services, que esta app trade‑free evita). Bluetooth Low Energy es demasiado lento para voz.
 
 ---
 

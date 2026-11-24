@@ -924,3 +924,91 @@ for _l, _v in _V11.items():
     D[_l]["feat"] = D[_l]["feat"] + _v["feat"]
     D[_l]["g"] = D[_l]["g"] + [_v["sec"]]
     D[_l]["status"] = D[_l]["status"] + _v["status"]
+
+# ---------------------------------------------------------------- v1.2.0 additions (Bluetooth, Wi-Fi Direct, mDNS)
+_V12 = {
+"en": ("**More ways to connect (1.2)** — Bluetooth (no router, about 7 phones), Wi‑Fi Direct (the control phone makes its own Wi‑Fi network) and mDNS discovery, in addition to Wi‑Fi, hotspot, USB tethering, Ethernet and mobile data.",
+ ("Connecting without a router (1.2)", [
+  "**Same hub, any link** — calls, party line, cues, encryption and PIN work identically over every link; only the way the phone reaches the hub changes.",
+  "**Hotspot, USB tethering, Ethernet** — any link that gives the phones an IP network works with no setup; use the address or let the hub be found.",
+  "**Bluetooth** — on the control phone start the hub with *Bluetooth link: ON* and press *Make visible by Bluetooth*. On other phones press *Find via Bluetooth* and choose the control phone (🔵). Range is short and about 7 phones fit on one hub; voice is compressed automatically. Pairing is not required; access is still protected by the PIN, room code and network key.",
+  "**Wi‑Fi Direct** — on the control phone start the hub with *Wi‑Fi Direct group: ON*. On other phones press *Find Wi‑Fi Direct* and choose the control phone (📡); the control phone may ask you to accept each phone. After joining, the hub appears in the list. Phones usually cannot stay on their normal Wi‑Fi while in a Wi‑Fi Direct group, and some models do not support the control phone being both.",
+  "**mDNS** — the hub also announces itself by mDNS/DNS‑SD (🌐), which finds it on networks that block the usual broadcast.",
+  "**Not included** — Wi‑Fi Aware (few phones support it) and Google's Nearby Connections (needs Google Play Services, which this trade‑free app avoids). Bluetooth Low Energy is too slow for voice.",
+ ]),
+ " Bluetooth, Wi‑Fi Direct and mDNS links (1.2) share the same transport layer, tested on the JVM with simulated channels, but have **not** been tried on real devices; behaviour differs between phone makers."),
+"ro": ("**Mai multe moduri de conectare (1.2)** — Bluetooth (fără router, circa 7 telefoane), Wi‑Fi Direct (telefonul Regiei își face propria rețea Wi‑Fi) și descoperire mDNS, pe lângă Wi‑Fi, hotspot, tethering USB, Ethernet și date mobile.",
+ ("Conectare fără router (1.2)", [
+  "**Același hub, orice legătură** — apelurile, cuplajul, cue‑urile, cifrarea și PIN‑ul funcționează la fel pe orice legătură; se schimbă doar drumul telefonului către hub.",
+  "**Hotspot, tethering USB, Ethernet** — orice legătură care dă telefoanelor o rețea IP merge fără nicio configurare; folosește adresa sau lasă hubul să fie găsit.",
+  "**Bluetooth** — pe telefonul Regiei pornește hubul cu *Legătură Bluetooth: DA* și apasă *Fă telefonul vizibil prin Bluetooth*. Pe celelalte apasă *Caută prin Bluetooth* și alege telefonul Regiei (🔵). Raza e mică și încap circa 7 telefoane pe un hub; vocea se comprimă automat. Asocierea nu e obligatorie; accesul rămâne protejat de PIN, codul camerei și cheia de rețea.",
+  "**Wi‑Fi Direct** — pe telefonul Regiei pornește hubul cu *Grup Wi‑Fi Direct: DA*. Pe celelalte apasă *Caută Wi‑Fi Direct* și alege telefonul Regiei (📡); telefonul Regiei poate cere să accepți fiecare telefon. După alăturare, hubul apare în listă. De obicei telefoanele nu pot rămâne pe Wi‑Fi‑ul obișnuit cât sunt într‑un grup Wi‑Fi Direct, iar unele modele nu pot face ambele.",
+  "**mDNS** — hubul se anunță și prin mDNS/DNS‑SD (🌐), ceea ce îl face vizibil în rețele care blochează difuzarea obișnuită.",
+  "**Nu sunt incluse** — Wi‑Fi Aware (puține telefoane îl au) și Nearby Connections de la Google (cere Google Play Services, pe care această aplicație trade‑free îl evită). Bluetooth Low Energy e prea lent pentru voce.",
+ ]),
+ " Legăturile Bluetooth, Wi‑Fi Direct și mDNS (1.2) folosesc același strat de transport, testat pe JVM cu canale simulate, dar **nu** au fost încercate pe dispozitive reale; comportamentul diferă între producători."),
+"fr": ("**Davantage de modes de connexion (1.2)** — Bluetooth (sans routeur, environ 7 téléphones), Wi‑Fi Direct (le téléphone de la régie crée son propre réseau Wi‑Fi) et découverte mDNS, en plus du Wi‑Fi, du point d'accès, du partage USB, de l'Ethernet et des données mobiles.",
+ ("Se connecter sans routeur (1.2)", [
+  "**Même hub, n'importe quelle liaison** — appels, ligne partagée, cues, chiffrement et PIN fonctionnent de la même façon ; seul le chemin du téléphone vers le hub change.",
+  "**Point d'accès, partage USB, Ethernet** — toute liaison qui donne un réseau IP aux téléphones fonctionne sans réglage ; utilisez l'adresse ou laissez le hub être trouvé.",
+  "**Bluetooth** — sur le téléphone de la régie, démarrez le hub avec *Liaison Bluetooth : OUI* et appuyez sur *Rendre visible par Bluetooth*. Sur les autres, appuyez sur *Chercher par Bluetooth* et choisissez le téléphone de la régie (🔵). La portée est courte et environ 7 téléphones tiennent sur un hub ; la voix est compressée automatiquement. L'appairage n'est pas obligatoire ; l'accès reste protégé par le PIN, le code de salle et la clé réseau.",
+  "**Wi‑Fi Direct** — sur le téléphone de la régie, démarrez le hub avec *Groupe Wi‑Fi Direct : OUI*. Sur les autres, appuyez sur *Chercher Wi‑Fi Direct* et choisissez le téléphone de la régie (📡) ; il peut demander d'accepter chaque téléphone. Après la jonction, le hub apparaît dans la liste. Les téléphones ne peuvent généralement pas rester sur leur Wi‑Fi habituel dans un groupe Wi‑Fi Direct, et certains modèles ne gèrent pas les deux à la fois.",
+  "**mDNS** — le hub s'annonce aussi par mDNS/DNS‑SD (🌐), ce qui le rend visible sur les réseaux qui bloquent la diffusion habituelle.",
+  "**Non inclus** — Wi‑Fi Aware (peu de téléphones) et Nearby Connections de Google (nécessite Google Play Services, que cette application trade‑free évite). Le Bluetooth Low Energy est trop lent pour la voix.",
+ ]),
+ " Les liaisons Bluetooth, Wi‑Fi Direct et mDNS (1.2) partagent la même couche de transport, testée sur JVM avec des canaux simulés, mais **n'ont pas** été essayées sur de vrais appareils ; le comportement varie selon les fabricants."),
+"it": ("**Più modi per collegarsi (1.2)** — Bluetooth (senza router, circa 7 telefoni), Wi‑Fi Direct (il telefono della regia crea una propria rete Wi‑Fi) e scoperta mDNS, oltre a Wi‑Fi, hotspot, tethering USB, Ethernet e dati mobili.",
+ ("Collegarsi senza router (1.2)", [
+  "**Stesso hub, qualunque collegamento** — chiamate, linea condivisa, cue, cifratura e PIN funzionano allo stesso modo; cambia solo il percorso del telefono verso l'hub.",
+  "**Hotspot, tethering USB, Ethernet** — ogni collegamento che dà ai telefoni una rete IP funziona senza configurazione; usa l'indirizzo o lascia che l'hub venga trovato.",
+  "**Bluetooth** — sul telefono della regia avvia l'hub con *Collegamento Bluetooth: SÌ* e premi *Rendi visibile via Bluetooth*. Sugli altri premi *Cerca via Bluetooth* e scegli il telefono della regia (🔵). Il raggio è corto e su un hub stanno circa 7 telefoni; la voce viene compressa automaticamente. L'abbinamento non è obbligatorio; l'accesso resta protetto da PIN, codice sala e chiave di rete.",
+  "**Wi‑Fi Direct** — sul telefono della regia avvia l'hub con *Gruppo Wi‑Fi Direct: SÌ*. Sugli altri premi *Cerca Wi‑Fi Direct* e scegli il telefono della regia (📡); può chiedere di accettare ogni telefono. Dopo l'unione l'hub compare nell'elenco. Di solito i telefoni non possono restare sul loro Wi‑Fi abituale in un gruppo Wi‑Fi Direct, e alcuni modelli non gestiscono entrambi.",
+  "**mDNS** — l'hub si annuncia anche via mDNS/DNS‑SD (🌐), così è visibile su reti che bloccano il broadcast abituale.",
+  "**Non inclusi** — Wi‑Fi Aware (pochi telefoni) e Nearby Connections di Google (richiede Google Play Services, che questa app trade‑free evita). Il Bluetooth Low Energy è troppo lento per la voce.",
+ ]),
+ " I collegamenti Bluetooth, Wi‑Fi Direct e mDNS (1.2) usano lo stesso livello di trasporto, testato su JVM con canali simulati, ma **non** sono stati provati su dispositivi reali; il comportamento varia tra i produttori."),
+"es": ("**Más formas de conectarse (1.2)** — Bluetooth (sin router, unos 7 teléfonos), Wi‑Fi Direct (el teléfono de la regiduría crea su propia red Wi‑Fi) y descubrimiento mDNS, además de Wi‑Fi, punto de acceso, anclaje USB, Ethernet y datos móviles.",
+ ("Conectarse sin router (1.2)", [
+  "**Mismo hub, cualquier enlace** — llamadas, línea compartida, cues, cifrado y PIN funcionan igual; solo cambia el camino del teléfono hasta el hub.",
+  "**Punto de acceso, anclaje USB, Ethernet** — cualquier enlace que dé a los teléfonos una red IP funciona sin configurar; usa la dirección o deja que se encuentre el hub.",
+  "**Bluetooth** — en el teléfono de la regiduría inicia el hub con *Enlace Bluetooth: SÍ* y pulsa *Hacer visible por Bluetooth*. En los demás pulsa *Buscar por Bluetooth* y elige el teléfono de la regiduría (🔵). El alcance es corto y caben unos 7 teléfonos por hub; la voz se comprime automáticamente. No hace falta emparejar; el acceso sigue protegido por PIN, código de sala y clave de red.",
+  "**Wi‑Fi Direct** — en el teléfono de la regiduría inicia el hub con *Grupo Wi‑Fi Direct: SÍ*. En los demás pulsa *Buscar Wi‑Fi Direct* y elige el teléfono de la regiduría (📡); puede pedir que aceptes cada teléfono. Tras unirse, el hub aparece en la lista. Normalmente los teléfonos no pueden seguir en su Wi‑Fi habitual dentro de un grupo Wi‑Fi Direct, y algunos modelos no admiten ambos a la vez.",
+  "**mDNS** — el hub también se anuncia por mDNS/DNS‑SD (🌐), lo que lo hace visible en redes que bloquean la difusión habitual.",
+  "**No incluidos** — Wi‑Fi Aware (pocos teléfonos) y Nearby Connections de Google (requiere Google Play Services, que esta app trade‑free evita). Bluetooth Low Energy es demasiado lento para voz.",
+ ]),
+ " Los enlaces Bluetooth, Wi‑Fi Direct y mDNS (1.2) comparten la misma capa de transporte, probada en JVM con canales simulados, pero **no** se han probado en dispositivos reales; el comportamiento varía entre fabricantes."),
+"pt": ("**Mais formas de ligação (1.2)** — Bluetooth (sem router, cerca de 7 telemóveis), Wi‑Fi Direct (o telemóvel da régie cria a sua própria rede Wi‑Fi) e descoberta mDNS, além de Wi‑Fi, hotspot, partilha por USB, Ethernet e dados móveis.",
+ ("Ligar sem router (1.2)", [
+  "**Mesmo hub, qualquer ligação** — chamadas, linha partilhada, cues, cifra e PIN funcionam da mesma maneira; muda só o caminho do telemóvel até ao hub.",
+  "**Hotspot, partilha por USB, Ethernet** — qualquer ligação que dê aos telemóveis uma rede IP funciona sem configuração; usa o endereço ou deixa o hub ser encontrado.",
+  "**Bluetooth** — no telemóvel da régie inicia o hub com *Ligação Bluetooth: SIM* e carrega em *Tornar visível por Bluetooth*. Nos outros carrega em *Procurar por Bluetooth* e escolhe o telemóvel da régie (🔵). O alcance é curto e cabem cerca de 7 telemóveis por hub; a voz é comprimida automaticamente. Não é preciso emparelhar; o acesso continua protegido por PIN, código da sala e chave de rede.",
+  "**Wi‑Fi Direct** — no telemóvel da régie inicia o hub com *Grupo Wi‑Fi Direct: SIM*. Nos outros carrega em *Procurar Wi‑Fi Direct* e escolhe o telemóvel da régie (📡); pode pedir para aceitares cada telemóvel. Depois de entrar, o hub aparece na lista. Normalmente os telemóveis não podem ficar no Wi‑Fi habitual dentro de um grupo Wi‑Fi Direct, e alguns modelos não suportam ambos.",
+  "**mDNS** — o hub também se anuncia por mDNS/DNS‑SD (🌐), o que o torna visível em redes que bloqueiam a difusão habitual.",
+  "**Não incluídos** — Wi‑Fi Aware (poucos telemóveis) e Nearby Connections da Google (exige Google Play Services, que esta app trade‑free evita). O Bluetooth Low Energy é demasiado lento para voz.",
+ ]),
+ " As ligações Bluetooth, Wi‑Fi Direct e mDNS (1.2) partilham a mesma camada de transporte, testada em JVM com canais simulados, mas **não** foram experimentadas em dispositivos reais; o comportamento varia entre fabricantes."),
+"de": ("**Weitere Verbindungsarten (1.2)** — Bluetooth (ohne Router, etwa 7 Telefone), Wi‑Fi Direct (das Regie‑Telefon baut ein eigenes WLAN auf) und mDNS‑Erkennung, zusätzlich zu WLAN, Hotspot, USB‑Tethering, Ethernet und Mobilfunk.",
+ ("Verbinden ohne Router (1.2)", [
+  "**Derselbe Hub, jede Verbindung** — Anrufe, Gemeinschaftsleitung, Cues, Verschlüsselung und PIN funktionieren gleich; nur der Weg des Telefons zum Hub ändert sich.",
+  "**Hotspot, USB‑Tethering, Ethernet** — jede Verbindung, die den Telefonen ein IP‑Netz gibt, funktioniert ohne Einrichtung; Adresse eingeben oder den Hub finden lassen.",
+  "**Bluetooth** — am Regie‑Telefon den Hub mit *Bluetooth‑Verbindung: AN* starten und *Per Bluetooth sichtbar machen* drücken. An den anderen *Per Bluetooth suchen* drücken und das Regie‑Telefon wählen (🔵). Die Reichweite ist kurz und etwa 7 Telefone passen an einen Hub; die Stimme wird automatisch komprimiert. Koppeln ist nicht nötig; der Zugang bleibt durch PIN, Raumcode und Netzwerkschlüssel geschützt.",
+  "**Wi‑Fi Direct** — am Regie‑Telefon den Hub mit *Wi‑Fi‑Direct‑Gruppe: AN* starten. An den anderen *Wi‑Fi Direct suchen* drücken und das Regie‑Telefon wählen (📡); es fragt eventuell bei jedem Telefon nach Bestätigung. Nach dem Beitritt erscheint der Hub in der Liste. Meist können Telefone in einer Wi‑Fi‑Direct‑Gruppe nicht im gewohnten WLAN bleiben, und manche Modelle können nicht beides.",
+  "**mDNS** — der Hub meldet sich zusätzlich per mDNS/DNS‑SD (🌐) und ist so auch in Netzen auffindbar, die das übliche Broadcast sperren.",
+  "**Nicht enthalten** — Wi‑Fi Aware (wenige Telefone) und Googles Nearby Connections (braucht Google Play Services, die diese Trade‑free‑App meidet). Bluetooth Low Energy ist für Sprache zu langsam.",
+ ]),
+ " Die Verbindungen über Bluetooth, Wi‑Fi Direct und mDNS (1.2) nutzen dieselbe Transportschicht, auf der JVM mit simulierten Kanälen getestet, wurden aber **nicht** an echten Geräten erprobt; das Verhalten unterscheidet sich je nach Hersteller."),
+"hu": ("**További csatlakozási módok (1.2)** — Bluetooth (router nélkül, kb. 7 telefon), Wi‑Fi Direct (a rendezői telefon saját Wi‑Fi hálózatot hoz létre) és mDNS‑felderítés, a Wi‑Fi, hotspot, USB‑megosztás, Ethernet és mobiladat mellett.",
+ ("Csatlakozás router nélkül (1.2)", [
+  "**Ugyanaz a hub, bármilyen kapcsolat** — a hívások, közös vonal, cue‑k, titkosítás és PIN mindenhol ugyanúgy működnek; csak a telefon útja változik a hubig.",
+  "**Hotspot, USB‑megosztás, Ethernet** — minden kapcsolat, amely IP‑hálózatot ad a telefonoknak, beállítás nélkül működik; add meg a címet, vagy hagyd, hogy a hub megtalálható legyen.",
+  "**Bluetooth** — a rendezői telefonon indítsd a hubot *Bluetooth kapcsolat: BE* mellett, és nyomd meg a *Láthatóvá tétel Bluetoothon* gombot. A többin nyomd meg a *Keresés Bluetoothon* gombot, és válaszd a rendezői telefont (🔵). A hatótáv kicsi, egy hubra kb. 7 telefon fér; a hang automatikusan tömörítve megy. Párosítás nem szükséges; a hozzáférést továbbra is a PIN, a szobakód és a hálózati kulcs védi.",
+  "**Wi‑Fi Direct** — a rendezői telefonon indítsd a hubot *Wi‑Fi Direct csoport: BE* mellett. A többin nyomd meg a *Wi‑Fi Direct keresése* gombot, és válaszd a rendezői telefont (📡); az kérheti minden telefon jóváhagyását. Csatlakozás után a hub megjelenik a listában. A telefonok általában nem maradhatnak a megszokott Wi‑Fi‑n Wi‑Fi Direct csoportban, és egyes típusok nem tudják mindkettőt.",
+  "**mDNS** — a hub mDNS/DNS‑SD‑vel is jelzi magát (🌐), így azokon a hálózatokon is megtalálható, amelyek tiltják a szokásos szórást.",
+  "**Nincs benne** — a Wi‑Fi Aware (kevés telefon támogatja) és a Google Nearby Connections (Google Play Services kell, amit ez a trade‑free app elkerül). A Bluetooth Low Energy túl lassú a beszédhez.",
+ ]),
+ " A Bluetooth, Wi‑Fi Direct és mDNS kapcsolatok (1.2) ugyanazt a szállítási réteget használják, amelyet JVM‑en szimulált csatornákkal teszteltünk, de **nem** próbáltuk valódi eszközön; a viselkedés gyártónként eltér."),
+}
+for _l, (_f, _sec, _st) in _V12.items():
+    D[_l]["feat"] = D[_l]["feat"] + [_f]
+    D[_l]["g"] = D[_l]["g"] + [_sec]
+    D[_l]["status"] = D[_l]["status"] + _st

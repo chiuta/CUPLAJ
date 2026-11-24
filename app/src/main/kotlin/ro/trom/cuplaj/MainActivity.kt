@@ -232,15 +232,73 @@ class MainActivity : Activity() {
                 col.addView(tv(L.t("enc_help"), 12f, DIM))
             }
             col.addView(tv(L.t("wan_help", PORT, PORT + P2P_PORT_OFFSET), 12f, DIM), lp().apply { topMargin = dp(6) })
+            col.addView(tv(L.t("set_links"), 13f, DIM), lp().apply { topMargin = dp(10) })
+            col.addView(btn(if (App.btOn) L.t("bt_on") else L.t("bt_off"), if (App.btOn) GREEN else BTN) {
+                saveFields()
+                App.btOn = !App.btOn
+                if (App.btOn && !Bt.hasPerm(this)) {
+                    requestPermissions(Bt.permissions(), 3)
+                    toast(L.t("perm_nearby"))
+                }
+                App.saveNet()
+                showStart()
+            })
+            if (App.btOn) {
+                col.addView(btn(L.t("bt_visible")) {
+                    try {
+                        startActivity(Bt.discoverableIntent())
+                    } catch (_: Exception) {
+                        toast(L.t("bt_unavailable"))
+                    }
+                })
+                col.addView(tv(L.t("bt_help"), 12f, DIM))
+            }
+            col.addView(btn(if (App.wfdOn) L.t("wfd_on") else L.t("wfd_off"), if (App.wfdOn) GREEN else BTN) {
+                saveFields()
+                App.wfdOn = !App.wfdOn
+                if (App.wfdOn && !Wfd.hasPerm(this)) {
+                    requestPermissions(Wfd.permissions(), 4)
+                    toast(L.t("perm_nearby"))
+                }
+                App.saveNet()
+                showStart()
+            })
+            if (App.wfdOn) col.addView(tv(L.t("wfd_help"), 12f, DIM))
             col.addView(btn(L.t("btn_refresh")) { saveFields(); showStart() })
         } else {
             col.addView(tv(L.t("hubs_found"), 13f, DIM), lp().apply { topMargin = dp(16) })
             if (App.found.isEmpty()) col.addView(tv(L.t("hubs_none"), 14f, DIM))
+            col.addView(row2(
+                btn(L.t("btn_scan_bt")) {
+                    if (!Bt.available(this)) toast(L.t("bt_unavailable"))
+                    else if (!Bt.hasPerm(this)) {
+                        requestPermissions(Bt.permissions(), 3)
+                        toast(L.t("perm_nearby"))
+                    } else if (!App.scanBluetooth()) toast(L.t("bt_turn_on"))
+                },
+                btn(L.t("btn_scan_wfd")) {
+                    if (!Wfd.available(this)) toast(L.t("wfd_unavailable"))
+                    else if (!Wfd.hasPerm(this)) {
+                        requestPermissions(Wfd.permissions(), 4)
+                        toast(L.t("perm_nearby"))
+                    } else if (!App.scanWifiDirect()) toast(L.t("wfd_fail"))
+                }
+            ))
             for (f in App.found.values) {
-                col.addView(btn((if (f.locked) "🔒 " else "") + (if (f.keyed) "🔑 " else "") + f.name + " — " + f.host) {
+                val tag = when (f.via) {
+                    "bt" -> "🔵 "
+                    "wfd" -> "📡 "
+                    "nsd" -> "🌐 "
+                    else -> ""
+                }
+                col.addView(btn(tag + (if (f.locked) "🔒 " else "") + (if (f.keyed) "🔑 " else "") + f.name + " — " + f.host) {
                     saveFields()
-                    App.hubHost = f.host
-                    showStart()
+                    if (f.host.startsWith("wfd:") && !f.host.contains(".")) {
+                        App.joinWifiDirect(f.host.substring(4))
+                    } else {
+                        App.hubHost = f.host
+                        showStart()
+                    }
                 })
             }
             val host = edit(L.t("host_hint"), App.hubHost)
@@ -343,6 +401,14 @@ class MainActivity : Activity() {
         col.addView(btn(L.t("set_about")) { dlg?.dismiss(); aboutDialog() })
         dlg = AlertDialog.Builder(this).setView(sv).setPositiveButton(L.t("ok"), null).create()
         dlg.show()
+    }
+
+    private fun row2(a: View, b: View): LinearLayout {
+        val r = LinearLayout(this)
+        r.orientation = LinearLayout.HORIZONTAL
+        r.addView(a, LinearLayout.LayoutParams(0, WRAP, 1f))
+        r.addView(b, LinearLayout.LayoutParams(0, WRAP, 1f))
+        return r
     }
 
     private fun sipDialog() {

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.1.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.2.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -55,6 +55,15 @@ _Versiune: 1.1.0 · Ultima actualizare: 2026-11-24_
 - **Linia SIP** — Setări → *Linie VoIP / SIP…*: server, utilizator, parolă, domeniu opțional și numărul intern pentru apeluri primite (implicit 100). Repornește hubul pentru aplicare. Echipa formează `0` + număr extern; spectatorii nu pot suna în afară. Fiecare apel e limitat la 15 minute. SIP și RTP nu sunt cifrate.
 - **SMS** — Setări → *Poartă SMS* (necesită SIM și permisiunile SMS). Echipa alege *SMS către un număr real* în fila Mesaje; SMS‑urile primite apar echipei ca mesaje de la *SMS*. Limită: 20 pe minut. Se aplică tarifele operatorului.
 - **Apel real** — cue‑ul *apel real* deschide formatorul telefonului cu numărul. Android nu permite unei aplicații să ducă un apel celular în cuplaj, deci sunetul apelurilor GSM nu poate fi legat; pentru asta folosește linia SIP.
+
+## 9. Conectare fără router (1.2)
+
+- **Același hub, orice legătură** — apelurile, cuplajul, cue‑urile, cifrarea și PIN‑ul funcționează la fel pe orice legătură; se schimbă doar drumul telefonului către hub.
+- **Hotspot, tethering USB, Ethernet** — orice legătură care dă telefoanelor o rețea IP merge fără nicio configurare; folosește adresa sau lasă hubul să fie găsit.
+- **Bluetooth** — pe telefonul Regiei pornește hubul cu *Legătură Bluetooth: DA* și apasă *Fă telefonul vizibil prin Bluetooth*. Pe celelalte apasă *Caută prin Bluetooth* și alege telefonul Regiei (🔵). Raza e mică și încap circa 7 telefoane pe un hub; vocea se comprimă automat. Asocierea nu e obligatorie; accesul rămâne protejat de PIN, codul camerei și cheia de rețea.
+- **Wi‑Fi Direct** — pe telefonul Regiei pornește hubul cu *Grup Wi‑Fi Direct: DA*. Pe celelalte apasă *Caută Wi‑Fi Direct* și alege telefonul Regiei (📡); telefonul Regiei poate cere să accepți fiecare telefon. După alăturare, hubul apare în listă. De obicei telefoanele nu pot rămâne pe Wi‑Fi‑ul obișnuit cât sunt într‑un grup Wi‑Fi Direct, iar unele modele nu pot face ambele.
+- **mDNS** — hubul se anunță și prin mDNS/DNS‑SD (🌐), ceea ce îl face vizibil în rețele care blochează difuzarea obișnuită.
+- **Nu sunt incluse** — Wi‑Fi Aware (puține telefoane îl au) și Nearby Connections de la Google (cere Google Play Services, pe care această aplicație trade‑free îl evită). Bluetooth Low Energy e prea lent pentru voce.
 
 ---
 

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · **Português** · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versão: 1.1.0 · Última atualização: 2026-11-24_
+_Versão: 1.2.0 · Última atualização: 2026-11-24_
 
 ## 1. Antes do espetáculo
 
@@ -55,6 +55,15 @@ _Versão: 1.1.0 · Última atualização: 2026-11-24_
 - **Linha SIP** — Definições → *Linha VoIP / SIP…*: servidor, utilizador, palavra‑passe, domínio opcional e número interno para chamadas recebidas (100 por omissão). Reinicia o hub para aplicar. A equipa marca `0` + número externo; os espectadores não podem chamar para fora. Cada chamada é limitada a 15 minutos. SIP e RTP não são cifrados.
 - **SMS** — Definições → *Porta SMS* (requer SIM e permissões SMS). A equipa escolhe *SMS para um número real* no separador Mensagens; os SMS recebidos aparecem como mensagens de *SMS*. Limite: 20 por minuto. Aplicam‑se as tarifas do operador.
 - **Chamada real** — o cue *chamada real* abre o marcador com o número. O Android não permite a uma app meter uma chamada celular na linha partilhada: o áudio GSM não pode ser ligado; para isso usa a linha SIP.
+
+## 9. Ligar sem router (1.2)
+
+- **Mesmo hub, qualquer ligação** — chamadas, linha partilhada, cues, cifra e PIN funcionam da mesma maneira; muda só o caminho do telemóvel até ao hub.
+- **Hotspot, partilha por USB, Ethernet** — qualquer ligação que dê aos telemóveis uma rede IP funciona sem configuração; usa o endereço ou deixa o hub ser encontrado.
+- **Bluetooth** — no telemóvel da régie inicia o hub com *Ligação Bluetooth: SIM* e carrega em *Tornar visível por Bluetooth*. Nos outros carrega em *Procurar por Bluetooth* e escolhe o telemóvel da régie (🔵). O alcance é curto e cabem cerca de 7 telemóveis por hub; a voz é comprimida automaticamente. Não é preciso emparelhar; o acesso continua protegido por PIN, código da sala e chave de rede.
+- **Wi‑Fi Direct** — no telemóvel da régie inicia o hub com *Grupo Wi‑Fi Direct: SIM*. Nos outros carrega em *Procurar Wi‑Fi Direct* e escolhe o telemóvel da régie (📡); pode pedir para aceitares cada telemóvel. Depois de entrar, o hub aparece na lista. Normalmente os telemóveis não podem ficar no Wi‑Fi habitual dentro de um grupo Wi‑Fi Direct, e alguns modelos não suportam ambos.
+- **mDNS** — o hub também se anuncia por mDNS/DNS‑SD (🌐), o que o torna visível em redes que bloqueiam a difusão habitual.
+- **Não incluídos** — Wi‑Fi Aware (poucos telemóveis) e Nearby Connections da Google (exige Google Play Services, que esta app trade‑free evita). O Bluetooth Low Energy é demasiado lento para voz.
 
 ---
 

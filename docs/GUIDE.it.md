@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.1.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.2.0 · Ultimo aggiornamento: 2026-11-24_
 
 ## 1. Prima dello spettacolo
 
@@ -55,6 +55,15 @@ _Versione: 1.1.0 · Ultimo aggiornamento: 2026-11-24_
 - **Linea SIP** — Impostazioni → *Linea VoIP / SIP…*: server, utente, password, dominio opzionale e numero interno per le chiamate in arrivo (predefinito 100). Riavvia l'hub per applicare. La squadra compone `0` + numero esterno; gli spettatori non possono chiamare fuori. Ogni chiamata è limitata a 15 minuti. SIP e RTP non sono cifrati.
 - **SMS** — Impostazioni → *Gateway SMS* (servono SIM e permessi SMS). La squadra sceglie *SMS a un numero reale* nella scheda Messaggi; gli SMS ricevuti compaiono come messaggi da *SMS*. Limite: 20 al minuto. Si applicano le tariffe dell'operatore.
 - **Chiamata reale** — il cue *chiamata reale* apre il tastierino con il numero. Android non consente a un'app di portare una chiamata cellulare nella linea condivisa: l'audio GSM non può essere instradato; per questo usa la linea SIP.
+
+## 9. Collegarsi senza router (1.2)
+
+- **Stesso hub, qualunque collegamento** — chiamate, linea condivisa, cue, cifratura e PIN funzionano allo stesso modo; cambia solo il percorso del telefono verso l'hub.
+- **Hotspot, tethering USB, Ethernet** — ogni collegamento che dà ai telefoni una rete IP funziona senza configurazione; usa l'indirizzo o lascia che l'hub venga trovato.
+- **Bluetooth** — sul telefono della regia avvia l'hub con *Collegamento Bluetooth: SÌ* e premi *Rendi visibile via Bluetooth*. Sugli altri premi *Cerca via Bluetooth* e scegli il telefono della regia (🔵). Il raggio è corto e su un hub stanno circa 7 telefoni; la voce viene compressa automaticamente. L'abbinamento non è obbligatorio; l'accesso resta protetto da PIN, codice sala e chiave di rete.
+- **Wi‑Fi Direct** — sul telefono della regia avvia l'hub con *Gruppo Wi‑Fi Direct: SÌ*. Sugli altri premi *Cerca Wi‑Fi Direct* e scegli il telefono della regia (📡); può chiedere di accettare ogni telefono. Dopo l'unione l'hub compare nell'elenco. Di solito i telefoni non possono restare sul loro Wi‑Fi abituale in un gruppo Wi‑Fi Direct, e alcuni modelli non gestiscono entrambi.
+- **mDNS** — l'hub si annuncia anche via mDNS/DNS‑SD (🌐), così è visibile su reti che bloccano il broadcast abituale.
+- **Non inclusi** — Wi‑Fi Aware (pochi telefoni) e Nearby Connections di Google (richiede Google Play Services, che questa app trade‑free evita). Il Bluetooth Low Energy è troppo lento per la voce.
 
 ---
 

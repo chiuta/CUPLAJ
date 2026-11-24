@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.1.0 · Last update: 2026-11-24_
+_Version: 1.2.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -55,6 +55,15 @@ _Version: 1.1.0 · Last update: 2026-11-24_
 - **SIP line** — Settings → *VoIP / SIP line…*: server, user, password, optional domain and the internal number for incoming calls (default 100). Restart the hub to apply. Staff dial `0` + external number; spectators cannot place outside calls. Each call is limited to 15 minutes. SIP and RTP are not encrypted.
 - **SMS** — Settings → *SMS gateway* (needs a SIM and the SMS permissions). Staff pick *SMS to a real phone number* in the Messages tab; incoming SMS appear to staff as messages from *SMS*. Limit: 20 per minute. Operator charges apply.
 - **Real call** — the *real phone call* cue opens the phone's dialler with the number. Android does not allow an app to route a cellular call into the party line, so GSM call audio cannot be bridged; use the SIP line for that.
+
+## 9. Connecting without a router (1.2)
+
+- **Same hub, any link** — calls, party line, cues, encryption and PIN work identically over every link; only the way the phone reaches the hub changes.
+- **Hotspot, USB tethering, Ethernet** — any link that gives the phones an IP network works with no setup; use the address or let the hub be found.
+- **Bluetooth** — on the control phone start the hub with *Bluetooth link: ON* and press *Make visible by Bluetooth*. On other phones press *Find via Bluetooth* and choose the control phone (🔵). Range is short and about 7 phones fit on one hub; voice is compressed automatically. Pairing is not required; access is still protected by the PIN, room code and network key.
+- **Wi‑Fi Direct** — on the control phone start the hub with *Wi‑Fi Direct group: ON*. On other phones press *Find Wi‑Fi Direct* and choose the control phone (📡); the control phone may ask you to accept each phone. After joining, the hub appears in the list. Phones usually cannot stay on their normal Wi‑Fi while in a Wi‑Fi Direct group, and some models do not support the control phone being both.
+- **mDNS** — the hub also announces itself by mDNS/DNS‑SD (🌐), which finds it on networks that block the usual broadcast.
+- **Not included** — Wi‑Fi Aware (few phones support it) and Google's Nearby Connections (needs Google Play Services, which this trade‑free app avoids). Bluetooth Low Energy is too slow for voice.
 
 ---
 

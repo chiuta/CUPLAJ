@@ -69,3 +69,13 @@ Method: code review of all sources, then JVM integration tests of the hub with s
 5. **Cellular call audio cannot be bridged.** Stock Android gives apps no access to GSM call audio; the *real call* cue is only a dialler handoff.
 6. **Not tested on real networks:** NAT types, mobile carriers (CGNAT may block P2P), SIP providers, SIM cards, battery cost of keepalive. Hub logic is tested on a JVM against a simulated SIP server.
 7. Port forwarding (TCP 8470, UDP 8472) exposes the hub to the internet; always enable the network key and PIN in that case.
+
+## G. Version 1.2 risks and mitigations
+
+1. **Bluetooth uses the insecure RFCOMM profile** (no pairing), so any nearby phone can open a channel. Admission still needs the PIN, room code and, if enabled, the network key; with the key on, traffic is AES‑GCM encrypted. Bluetooth is only listening while the hub runs with the option on.
+2. **Idle detection on non‑TCP channels** is done by a watchdog thread (no socket timeout exists); a silent channel is closed after the same limits as TCP (10 s before hello, 60 s afterwards).
+3. **Wi‑Fi Direct group invitations** may need a manual accept on the control phone; many phones cannot use a normal Wi‑Fi connection and a Wi‑Fi Direct group at once. Not tested.
+4. **Bluetooth capacity** is limited by the piconet (about 7 simultaneous links) and range; CUPLAJ does not fall back to another link automatically.
+5. **mDNS** advertises the hub name on the local network; disable the option by not using the hub name for anything sensitive.
+6. Permissions grew: Bluetooth, nearby Wi‑Fi devices and, on Android ≤ 12, location (Android requirement for scanning; CUPLAJ never reads the location).
+7. **Not tested on real devices**; the channel layer is covered by JVM simulation only.
