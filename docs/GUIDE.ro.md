@@ -114,6 +114,7 @@ _Versiune: 1.8.0 · Ultima actualizare: 2026-11-24_
 - **Casetofon‑fantomă** — înregistrezi până la 60 s din microfonul unui telefon pe hub și le redai mai târziu oricărui grup, ca o voce de nicăieri (sursa rezervată 253).
 - **Lumini de sală** — cue *house*: oprește tot (ca PANICA), vibrează, arată un ecran alb și un mesaj calm. **Morse** — cue *morse* vibrează un text în cod Morse.
 - **Raport** — *Instrumente → Raport*: un fișier Markdown cu totaluri, apeluri/mesaje/intrări în zone/baterie pe telefon și cronologia completă, partajat cu orice aplicație.
+- **Limite și siguranță (1.8)** — un val nu durează mai mult de 20 s (pasul se scurtează în săli mari; cel mult 4 valuri simultan); un telefon din telefonul fără fir care nu răspunde în 90 s e sărit; un secret fragmentat cere o frază de cel puțin 2 cuvinte și 4 litere latine sau cifre (verificarea ignoră majusculele, diacriticele și punctuația); o singură redare de casetofon la un moment dat; Morse e tăiat la 45 s; Art‑Net nu trimite nimic până la primul cue *dmx* (deci nu poate stinge luminile doar fiindcă l‑ai pornit) și ține până la 8 universuri; *dmx* și *midi* merg doar pe telefonul Regiei (cue‑uri și scenarii de acolo), nu ca acțiuni de regulă.
 
 ## 16. Referință cue‑uri (toate tipurile)
 

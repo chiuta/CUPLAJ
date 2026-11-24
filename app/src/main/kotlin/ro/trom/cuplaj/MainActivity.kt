@@ -421,7 +421,6 @@ class MainActivity : Activity() {
         val m = App.chainCur ?: return
         val e = edit(L.t("chain_text"), m.optString("text"))
         AlertDialog.Builder(this).setTitle(L.t("chain_title", m.optInt("hop"), m.optInt("of"))).setView(e)
-            .setCancelable(false)
             .setPositiveButton(L.t("chain_send")) { _, _ -> App.chainForward(e.text.toString()) }.show()
     }
 

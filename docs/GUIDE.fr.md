@@ -114,6 +114,7 @@ _Version : 1.8.0 · Dernière mise à jour : 2026-11-24_
 - **Magnétophone fantôme** — enregistre jusqu'à 60 s du micro d'un téléphone sur le hub et le rejoue plus tard à un groupe, comme une voix venue de nulle part (source réservée 253).
 - **Lumière de salle** — signal *house* : arrête tout (comme PANIQUE), vibre, écran blanc et message calme. **Morse** — signal *morse* : vibre un texte en Morse.
 - **Rapport** — *Outils → Rapport* : fichier Markdown avec totaux, appels/messages/entrées de zone/batterie par téléphone et chronologie complète.
+- **Limites et sécurité (1.8)** — une vague ne dure jamais plus de 20 s (le pas se réduit dans les grandes salles ; 4 vagues à la fois au plus) ; un téléphone qui ne répond pas en 90 s dans le téléphone arabe est sauté ; un secret fragmenté exige une phrase d'au moins 2 mots et 4 lettres latines ou chiffres (la vérification ignore casse, accents et ponctuation) ; une seule lecture de magnétophone à la fois ; le Morse est coupé à 45 s ; l'Art‑Net n'envoie rien avant le premier signal *dmx* (il ne peut donc pas éteindre un plateau en étant activé) et gère 8 univers au plus ; *dmx* et *midi* ne fonctionnent que sur le téléphone de la régie (signaux et scénarios), pas comme actions de règle.
 
 ## 16. Référence des signaux (tous les types)
 

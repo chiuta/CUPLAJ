@@ -581,6 +581,8 @@ class Hub(
     private val tapeFrames = ArrayList<ByteArray>()
     private var tapeBytes = 0
     @Volatile private var tapeSrc: String? = null
+    @Volatile private var tapePlaying = false
+    @Volatile private var waves = 0
     private var tapeUntil = 0L
 
     private fun norm(s: String) = java.text.Normalizer.normalize(s.lowercase(), java.text.Normalizer.Form.NFD).filter { it.isLetterOrDigit() && it.code < 128 }
@@ -599,20 +601,33 @@ class Hub(
         val cur = if (c.texts.isEmpty()) c.orig else c.texts.last()
         if (q == null || !q.online) { c.texts.add(cur); c.hop++; chainStep(c, p); return }
         sendTo(q, jo("t" to "chainmsg", "id" to c.id, "text" to cur, "hop" to (c.hop + 1), "of" to c.order.size))
+        val h = c.hop
+        Thread {
+            try { Thread.sleep(90_000) } catch (_: Exception) { return@Thread }
+            synchronized(this) {
+                if (chain === c && c.hop == h) { c.texts.add(cur); c.hop++; logEvent("telefon fără fir: " + label(q) + " nu a răspuns, sărit"); chainStep(c, null) }
+            }
+        }.apply { isDaemon = true; start() }
     }
 
     private fun reportMd(): String {
         val ps = peers.values.map { RPeer(it.name, it.role, it.number, it.online, it.bat, it.zone, it.nCalls, it.nMsgs, it.nZones) }
-        return Report.markdown(hubName, startedAt, System.currentTimeMillis(), ps, log.toList(), linkedMapOf("cues sent" to cueCount, "calls placed" to ps.sumOf { it.calls }, "messages" to ps.sumOf { it.msgs }))
+        return Report.markdown(hubName, startedAt, System.currentTimeMillis(), ps, run { var l: List<String> = emptyList(); for (i in 0 until 5) { try { l = ArrayList(log); break } catch (_: Exception) { Thread.sleep(5) } }; l }, linkedMapOf("cues sent" to cueCount, "calls placed" to ps.sumOf { it.calls }, "messages" to ps.sumOf { it.msgs }))
     }
 
     private fun waveSend(list: List<Peer>, m: JSONObject, stepMs: Int) {
         val order = list.sortedBy { it.number.toLongOrNull() ?: Long.MAX_VALUE }
+        // cel mult 4 valuri în același timp; o undă durează cel mult 20 s (pasul se scurtează pentru săli mari)
+        if (waves >= 4) { for (r in order) sendTo(r, m); return }
+        val step = minOf(stepMs.toLong(), 20_000L / maxOf(1, order.size - 1))
+        waves++
         Thread {
-            for ((i, r) in order.withIndex()) {
-                if (i > 0) try { Thread.sleep(stepMs.toLong()) } catch (_: Exception) { return@Thread }
-                sendTo(r, m)
-            }
+            try {
+                for ((i, r) in order.withIndex()) {
+                    if (i > 0) try { Thread.sleep(step) } catch (_: Exception) { return@Thread }
+                    sendTo(r, m)
+                }
+            } finally { waves-- }
         }.apply { isDaemon = true; start() }
     }
 
@@ -809,24 +824,25 @@ class Hub(
                 }
                 if (text.isNotEmpty() && order.size >= 2) {
                     val c = Chain("c" + System.currentTimeMillis() % 100000, text, order)
-                    chain = c
-                    chainStep(c, null)
+                    synchronized(this) { chain = c; chainStep(c, null) }
                     logEvent("telefon fără fir pornit: " + order.size + " persoane")
                 }
             }
             "chainfwd" -> {
                 val c = chain
-                if (c != null && c.hop < c.order.size && c.order[c.hop] == p.id && m.optString("id") == c.id) {
-                    c.texts.add(clean(m.optString("text"), 200))
-                    c.hop++
-                    chainStep(c, p)
+                synchronized(this) {
+                    if (c != null && chain === c && c.hop < c.order.size && c.order[c.hop] == p.id && m.optString("id") == c.id) {
+                        c.texts.add(clean(m.optString("text"), 200))
+                        c.hop++
+                        chainStep(c, p)
+                    }
                 }
             }
             "secret" -> if (reg) {
                 val phrase = clean(m.optString("phrase"), 120)
                 val words = phrase.split(Regex("\\s+")).filter { it.isNotEmpty() }
                 val rec = targets(m.optString("to", "spectators"), p).filter { it.role != "regie" }
-                if (words.size >= 2 && rec.isNotEmpty()) {
+                if (words.size >= 2 && rec.isNotEmpty() && norm(phrase).length >= 4) {
                     secret = Secret(phrase, rec.map { it.id }.toSet())
                     val sh = rec.sortedBy { it.number.toLongOrNull() ?: Long.MAX_VALUE }
                     for ((i, r) in sh.withIndex()) {
@@ -866,14 +882,19 @@ class Hub(
                     "play" -> {
                         val rec = targets(m.optString("to", "all"), p).filter { it.role != "regie" }
                         val frames = synchronized(tapeFrames) { ArrayList(tapeFrames) }
-                        if (frames.isNotEmpty() && rec.isNotEmpty()) {
+                        if (frames.isNotEmpty() && rec.isNotEmpty() && !tapePlaying) {
+                            tapePlaying = true
                             Thread {
-                                for (f in frames) {
-                                    val b = f.copyOf()
-                                    b[0] = Tape_SRC.toByte()
-                                    for (r in rec) r.conn?.send(Frame(1, b))
-                                    try { Thread.sleep(20) } catch (_: Exception) { return@Thread }
-                                }
+                                try {
+                                    for (f in frames) {
+                                        val b = f.copyOfRange(1, f.size)
+                                        if (b.isEmpty()) continue
+                                        b[0] = Tape_SRC.toByte()
+                                        val ty = if (f[0].toInt() == T_AUDIO_U) T_AUDIO_U else T_AUDIO
+                                        for (r in rec) r.conn?.send(Frame(ty, b))
+                                        try { Thread.sleep(20) } catch (_: Exception) { return@Thread }
+                                    }
+                                } finally { tapePlaying = false }
                             }.apply { isDaemon = true; start() }
                             logEvent("casetofon: redau " + frames.size + " cadre → " + rec.size)
                         }
@@ -1328,7 +1349,7 @@ class Hub(
         if (p.muted) return
         if (tapeSrc == p.id) {
             if (System.currentTimeMillis() > tapeUntil || tapeBytes > 6_000_000) tapeSrc = null
-            else synchronized(tapeFrames) { tapeFrames.add(data.copyOf()); tapeBytes += data.size }
+            else synchronized(tapeFrames) { tapeFrames.add(byteArrayOf(type.toByte()) + data); tapeBytes += data.size + 1 }
         }
         val mode = data[0].toInt()
         val out = ByteArray(data.size)

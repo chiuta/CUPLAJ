@@ -346,7 +346,7 @@ class VoiceFx(val kind: String) {
 class Rule(val id: String, val on: String, val arg: Int, val meterKind: String, val to: String, val kind: String, val text: String, val once: Boolean)
 
 object Rules {
-    val ALLOWED = Osc.CUE_KIND_NAMES - setOf("poll", "pollend", "realcall") + "goto"
+    val ALLOWED = Osc.CUE_KIND_NAMES - setOf("poll", "pollend", "realcall", "dmx", "midi") + "goto"
 
     /**
      * Linii: `zone 3 once > self | text | Bine ai venit, {name}`; `pollwin 0 > all | color | #00ff00;3`;
@@ -520,6 +520,7 @@ object Morse {
             for (ch in w) {
                 val code = T[ch] ?: continue
                 for ((i, s) in code.withIndex()) {
+                    if (out.sum() > 45_000) return out.toLongArray()
                     val pause = if (i > 0) unit else if (inWord) unit * 3 else if (out.isNotEmpty()) unit * 7 else 0L
                     out.add(pause)
                     out.add(if (s == '.') unit else unit * 3)

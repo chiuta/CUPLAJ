@@ -113,6 +113,7 @@ Open items: SIP/RTP are unencrypted; key strength depends on the passphrase; Blu
 * **Ghost tape** is bounded (90 s, 6 MB) and records only the phone chosen by the control phone; there is no consent mechanism in the protocol, so tell the audience that the show may record voices (this is a legal matter in some countries).
 * **DMX/MIDI** commands are parsed strictly (channels 1–512, values clamped, fade ≤ 10 min) and never come from the network: they are executed only from the control phone's own cue form or script. Art‑Net itself is unauthenticated; use a separate lighting Wi‑Fi.
 * **House cue** flashes nothing (steady white), so it does not interact with the photosensitivity limit of the colour cue.
+* **Found and fixed in the 1.8 audit**: tape replay used the JSON frame type (garbage on phones); DMX output sent zeros on switch‑on (could black out a rig); unbounded wave threads and an unbounded whispering game; secrets that could never be verified (non‑Latin phrase); rules able to name *dmx*/*midi* (silent no‑ops); Morse with no length cap; a possible `ConcurrentModificationException` in the report.
 * Not verified: ghost tape audio quality, MIDI on real devices, Art‑Net with real hardware.
 
 ## H. Version 1.3 risks and mitigations

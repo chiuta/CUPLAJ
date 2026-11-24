@@ -114,6 +114,7 @@ _Version: 1.8.0 · Last update: 2026-11-24_
 - **Ghost tape** — record up to 60 s of one phone's microphone on the hub and play it back later to any group, as a voice from nowhere (reserved source 253).
 - **House lights** — cue kind *house*: stops everything (like PANIC), vibrates, shows a white screen and a calm message. **Morse** — cue kind *morse* vibrates a text in Morse code.
 - **Report** — *Show tools → Report*: a Markdown file with totals, per‑phone calls/messages/zone entries/battery and the full timeline, shared with any app.
+- **Limits and safety (1.8)** — a wave never lasts more than 20 s (the step shrinks for big rooms; at most 4 waves at once); a whispering‑game phone that does not answer in 90 s is skipped; a split secret needs a phrase of at least 2 words and 4 Latin letters or digits (the guess check ignores case, accents and punctuation); one ghost‑tape playback at a time; Morse is cut at 45 s; Art‑Net sends nothing until the first *dmx* cue (so it cannot black out a rig by being switched on) and keeps up to 8 universes; *dmx* and *midi* only work on the control phone (cues and scripts there), not as rule actions.
 
 ## 16. Cue reference (all kinds)
 

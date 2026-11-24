@@ -114,6 +114,7 @@ _Verzió: 1.8.0 · Utolsó frissítés: 2026-11-24_
 - **Szellemmagnó** — egy telefon mikrofonjából legfeljebb 60 mp-et rögzít a hubon, és később lejátssza egy csoportnak, mint a semmiből jövő hangot (fenntartott forrás: 253).
 - **Nézőtéri fények** — *house* jelzés: mindent leállít (mint a PÁNIK), rezeg, fehér képernyő és nyugodt üzenet. **Morze** — a *morse* jelzés egy szöveget Morze‑kóddal rezeg.
 - **Jelentés** — *Eszközök → Jelentés*: Markdown fájl összesítéssel, telefononkénti hívás/üzenet/zónabelépés/akku adatokkal és teljes idővonallal.
+- **Korlátok és biztonság (1.8)** — egy hullám sosem tart tovább 20 mp-nél (nagy termekben a lépés rövidül; egyszerre legfeljebb 4 hullám); a süket telefonban a 90 mp alatt nem válaszoló telefont átugorja; a szétosztott titokhoz legalább 2 szavas, 4 latin betűt vagy számjegyet tartalmazó mondat kell (az ellenőrzés figyelmen kívül hagyja a kis‑/nagybetűt, ékezetet és írásjelet); egyszerre egy magnólejátszás; a Morze 45 mp-nél megszakad; az Art‑Net az első *dmx* jelzésig semmit sem küld (így bekapcsolással nem sötétítheti el a fényeket), és legfeljebb 8 univerzumot kezel; a *dmx* és *midi* csak a rendezői telefonon működik (jelzések és forgatókönyvek), szabályműveletként nem.
 
 ## 16. Jelzések referenciája (minden típus)
 

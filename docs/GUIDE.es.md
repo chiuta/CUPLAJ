@@ -114,6 +114,7 @@ _Versión: 1.8.0 · Última actualización: 2026-11-24_
 - **Grabadora fantasma** — graba hasta 60 s del micrófono de un teléfono en el hub y los reproduce luego a un grupo, como una voz de la nada (fuente reservada 253).
 - **Luces de sala** — señal *house*: detiene todo (como PÁNICO), vibra, pantalla blanca y mensaje tranquilo. **Morse** — señal *morse*: vibra un texto en Morse.
 - **Informe** — *Herramientas → Informe*: archivo Markdown con totales, llamadas/mensajes/entradas de zona/batería por teléfono y cronología completa.
+- **Límites y seguridad (1.8)** — una ola nunca dura más de 20 s (el paso se acorta en salas grandes; máximo 4 olas a la vez); un teléfono que no responde en 90 s en el teléfono descompuesto se salta; un secreto fragmentado exige una frase de al menos 2 palabras y 4 letras latinas o cifras (la comprobación ignora mayúsculas, acentos y puntuación); una sola reproducción de la grabadora a la vez; el Morse se corta a 45 s; Art‑Net no envía nada hasta la primera señal *dmx* (no puede apagar las luces solo por activarse) y admite hasta 8 universos; *dmx* y *midi* solo funcionan en el teléfono de regiduría (señales y guiones), no como acciones de regla.
 
 ## 16. Referencia de señales (todos los tipos)
 

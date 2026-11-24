@@ -114,6 +114,7 @@ _Version: 1.8.0 · Letzte Aktualisierung: 2026-11-24_
 - **Geisterband** — nimmt bis zu 60 s vom Mikrofon eines Telefons auf dem Hub auf und spielt sie später einer Gruppe vor, wie eine Stimme aus dem Nichts (reservierte Quelle 253).
 - **Saallicht** — Cue *house*: stoppt alles (wie PANIK), vibriert, weißer Bildschirm und ruhige Meldung. **Morse** — Cue *morse*: vibriert einen Text in Morsecode.
 - **Bericht** — *Werkzeuge → Bericht*: Markdown‑Datei mit Summen, Anrufen/Nachrichten/Zonenbesuchen/Akku pro Telefon und vollständiger Zeitleiste.
+- **Grenzen und Sicherheit (1.8)** — eine Welle dauert nie länger als 20 s (der Abstand schrumpft in großen Sälen; höchstens 4 Wellen gleichzeitig); ein Telefon, das bei Stille Post nicht in 90 s antwortet, wird übersprungen; ein geteiltes Geheimnis braucht einen Satz mit mindestens 2 Wörtern und 4 lateinischen Buchstaben oder Ziffern (die Prüfung ignoriert Groß‑/Kleinschreibung, Akzente und Satzzeichen); nur eine Geisterband‑Wiedergabe gleichzeitig; Morse wird bei 45 s abgeschnitten; Art‑Net sendet nichts vor dem ersten *dmx*‑Cue (es kann also nicht durch Einschalten das Licht ausknipsen) und verwaltet bis zu 8 Universen; *dmx* und *midi* funktionieren nur auf dem Regie‑Telefon (Cues und Skripte), nicht als Regelaktionen.
 
 ## 16. Cue‑Referenz (alle Arten)
 

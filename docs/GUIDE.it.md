@@ -114,6 +114,7 @@ _Versione: 1.8.0 · Ultimo aggiornamento: 2026-11-24_
 - **Registratore fantasma** — registra fino a 60 s dal microfono di un telefono sull'hub e lo riproduce poi a un gruppo, come una voce dal nulla (sorgente riservata 253).
 - **Luci di sala** — cue *house*: ferma tutto (come PANICO), vibra, schermo bianco e messaggio calmo. **Morse** — cue *morse*: vibra un testo in Morse.
 - **Rapporto** — *Strumenti → Rapporto*: file Markdown con totali, chiamate/messaggi/ingressi in zona/batteria per telefono e cronologia completa.
+- **Limiti e sicurezza (1.8)** — un'onda non dura mai più di 20 s (il passo si riduce nelle sale grandi; al massimo 4 onde insieme); un telefono che non risponde in 90 s nel telefono senza fili viene saltato; un segreto frammentato richiede una frase di almeno 2 parole e 4 lettere latine o cifre (il controllo ignora maiuscole, accenti e punteggiatura); una sola riproduzione del registratore alla volta; il Morse è tagliato a 45 s; Art‑Net non invia nulla prima del primo cue *dmx* (non può spegnere le luci solo perché attivato) e gestisce fino a 8 universi; *dmx* e *midi* funzionano solo sul telefono della regia (cue e copioni), non come azioni di regola.
 
 ## 16. Riferimento dei cue (tutti i tipi)
 

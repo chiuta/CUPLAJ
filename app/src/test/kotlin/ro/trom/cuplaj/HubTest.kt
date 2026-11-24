@@ -1329,6 +1329,26 @@ fun runV18(): Int {
     check("secret: Regia află cine a rezolvat și regula „solved” declanșează", sr != null && sr.optString("phrase") == "Luna cade mâine" && s1.next("cue", 1500)?.optString("text") == "Ușa se deschide")
     s3.send("t" to "guess", "text" to "Luna cade mâine")
     check("secret: după rezolvare nu se mai acceptă", s3.next("guessres", 400) == null)
+    // secret cu fraze imposibil de ghicit/verificat
+    r.send("t" to "secret", "phrase" to "а б", "to" to "spectators")
+    check("secret: fraza fără litere latine (neverificabilă) refuzată", s1.next("cue", 500) == null)
+    // casetofon‑fantomă
+    for (x in listOf(r, s1, s2, s3)) x.drain()
+    r.send("t" to "tape", "a" to "rec", "id" to "s1", "secs" to 5)
+    Thread.sleep(300)
+    repeat(6) { s1.audio(0); Thread.sleep(25) }
+    s2.send("t" to "tape", "a" to "play", "to" to "all")
+    r.send("t" to "tape", "a" to "stop")
+    Thread.sleep(200)
+    check("casetofon: spectatorul nu poate reda", !s3.gotAudio(400))
+    r.send("t" to "tape", "a" to "play", "to" to "num:" + num["s3"])
+    check("casetofon: înregistrarea redată ajunge ca AUDIO (nu JSON) la țintă", s3.gotAudio(2000))
+    check("casetofon: alți spectatori nu aud", !s2.gotAudio(300))
+    // cadrul 0 rămâne interdit pentru sursa 253: redarea nu poate fi pornită de două ori simultan
+    r.send("t" to "tape", "a" to "play", "to" to "all"); r.send("t" to "tape", "a" to "play", "to" to "all")
+    Thread.sleep(500)
+    check("reguli: dmx/midi nu pot fi acțiuni de regulă (rulează doar pe telefonul Regiei)", Rules.parse("zone 1 > all | dmx | 0;1=255\nzone 2 > all | midi | note 1 1\nzone 3 > all | morse | sos").size == 1)
+    check("Morse: text lung plafonat la ~45 s", Morse.pattern("0".repeat(60), 120).sum() < 50_000)
     // raport
     r.send("t" to "report")
     val rp = r.next("reportres")

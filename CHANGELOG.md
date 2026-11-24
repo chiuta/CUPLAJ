@@ -11,6 +11,7 @@ Documentation language: English only.
 * **Ghost tape** (`tape`): the hub records up to 60 s of one phone's audio (6 MB cap) and replays it to a group on reserved source 253.
 * **House‑lights cue** (*house*: PANIC + white screen + message + vibration) and **Morse cue** (*morse*, text → vibration pattern, 60 characters).
 * **Post‑show report** (`report`): Markdown with totals, per‑phone calls, messages, zone entries, battery, and the timeline; shared through the system share sheet.
+* Adversarial audit of 1.8: ghost‑tape playback was sent as JSON frames instead of audio (fixed, test added, one playback at a time); Art‑Net no longer sends all‑zero frames when switched on (it waits for the first *dmx* cue, up to 8 universes); waves capped at 20 s and 4 at once; whispering‑game holders that do not answer in 90 s are skipped; split secrets need ≥ 4 Latin letters/digits; Morse capped at 45 s; *dmx*/*midi* rejected as rule actions; MIDI message queued until the device is open; report building tolerates concurrent log writes.
 * Not tested: ghost tape, real lighting desks, MIDI devices, everything on real phones. Not done: iOS, field test on real phones, program feed.
 
 ## 1.7.0 — 2026‑11‑24

@@ -114,6 +114,7 @@ _Versão: 1.8.0 · Última atualização: 2026-11-24_
 - **Gravador fantasma** — grava até 60 s do microfone de um telemóvel no hub e reproduz depois a um grupo, como uma voz de lado nenhum (fonte reservada 253).
 - **Luzes de sala** — sinal *house*: pára tudo (como PÂNICO), vibra, ecrã branco e mensagem calma. **Morse** — sinal *morse*: vibra um texto em Morse.
 - **Relatório** — *Ferramentas → Relatório*: ficheiro Markdown com totais, chamadas/mensagens/entradas em zona/bateria por telemóvel e cronologia completa.
+- **Limites e segurança (1.8)** — uma onda nunca dura mais de 20 s (o passo encurta em salas grandes; no máximo 4 ondas ao mesmo tempo); um telemóvel que não responde em 90 s no telefone estragado é saltado; um segredo fragmentado exige uma frase de pelo menos 2 palavras e 4 letras latinas ou algarismos (a verificação ignora maiúsculas, acentos e pontuação); uma só reprodução do gravador de cada vez; o Morse é cortado aos 45 s; o Art‑Net não envia nada até ao primeiro sinal *dmx* (não pode apagar as luzes só por ser ativado) e suporta até 8 universos; *dmx* e *midi* só funcionam no telemóvel da regia (sinais e guiões), não como ações de regra.
 
 ## 16. Referência de sinais (todos os tipos)
 
