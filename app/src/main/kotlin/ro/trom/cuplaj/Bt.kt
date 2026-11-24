@@ -111,30 +111,58 @@ object Bt {
     fun discoverableIntent(): Intent =
         Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
 
-    /** Client: caută telefoane apropiate (cele asociate + cele descoperite) și le raportează. */
+    /** Client: caută telefoane apropiate care rulează hub CUPLAJ (se verifică prin SDP) și le raportează. */
     class Scanner(private val c: Context, private val onDev: (name: String, mac: String) -> Unit) {
         private var rx: BroadcastReceiver? = null
+        private val asked = HashSet<String>()
 
+        private fun check(d: BluetoothDevice) {
+            val has = try {
+                d.uuids?.any { it.uuid == SERVICE }
+            } catch (_: Exception) {
+                null
+            }
+            if (has == true) {
+                onDev(d.name ?: d.address, d.address)
+            } else if (has == null || !asked.contains(d.address)) {
+                asked.add(d.address)
+                try {
+                    d.fetchUuidsWithSdp()
+                } catch (_: Exception) {
+                }
+            }
+        }
+
+        @Suppress("DEPRECATION")
+        private fun dev(i: Intent): BluetoothDevice? =
+            if (Build.VERSION.SDK_INT >= 33) i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+            else i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+
+        @Suppress("DEPRECATION")
         fun start(): Boolean {
             val ad = adapter(c) ?: return false
             if (!ad.isEnabled || !hasPerm(c)) return false
             try {
-                for (d in ad.bondedDevices) onDev(d.name ?: d.address, d.address)
+                for (d in ad.bondedDevices) check(d)
             } catch (_: Exception) {
             }
             val r = object : BroadcastReceiver() {
                 override fun onReceive(context: Context, i: Intent) {
-                    if (i.action == BluetoothDevice.ACTION_FOUND) {
-                        val d: BluetoothDevice? = if (Build.VERSION.SDK_INT >= 33)
-                            i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
-                        else @Suppress("DEPRECATION") i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                        if (d != null) onDev(d.name ?: d.address, d.address)
+                    val d = dev(i) ?: return
+                    when (i.action) {
+                        BluetoothDevice.ACTION_FOUND -> check(d)
+                        BluetoothDevice.ACTION_UUID -> {
+                            val arr = i.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID)
+                            if (arr != null && arr.any { (it as? android.os.ParcelUuid)?.uuid == SERVICE }) onDev(d.name ?: d.address, d.address)
+                        }
                     }
                 }
             }
             rx = r
             try {
-                c.registerReceiver(r, IntentFilter(BluetoothDevice.ACTION_FOUND))
+                val f = IntentFilter(BluetoothDevice.ACTION_FOUND)
+                f.addAction(BluetoothDevice.ACTION_UUID)
+                c.registerReceiver(r, f)
                 ad.startDiscovery()
             } catch (_: Exception) {
                 return false

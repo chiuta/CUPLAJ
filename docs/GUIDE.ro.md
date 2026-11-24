@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.2.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.3.0 · Ultima actualizare: 2026-11-24_
 
 ## 1. Înainte de spectacol
 
@@ -64,6 +64,14 @@ _Versiune: 1.2.0 · Ultima actualizare: 2026-11-24_
 - **Wi‑Fi Direct** — pe telefonul Regiei pornește hubul cu *Grup Wi‑Fi Direct: DA*. Pe celelalte apasă *Caută Wi‑Fi Direct* și alege telefonul Regiei (📡); telefonul Regiei poate cere să accepți fiecare telefon. După alăturare, hubul apare în listă. De obicei telefoanele nu pot rămâne pe Wi‑Fi‑ul obișnuit cât sunt într‑un grup Wi‑Fi Direct, iar unele modele nu pot face ambele.
 - **mDNS** — hubul se anunță și prin mDNS/DNS‑SD (🌐), ceea ce îl face vizibil în rețele care blochează difuzarea obișnuită.
 - **Nu sunt incluse** — Wi‑Fi Aware (puține telefoane îl au) și Nearby Connections de la Google (cere Google Play Services, pe care această aplicație trade‑free îl evită). Bluetooth Low Energy e prea lent pentru voce.
+
+## 10. Plug and play (1.3)
+
+- **Telefonul Regiei** — alege *Regie*, apoi *Pornește hubul*. Cu *Plug & play* pornit (implicit) CUPLAJ deschide Wi‑Fi / hotspot, mDNS, Bluetooth și Wi‑Fi Aware și creează un grup Wi‑Fi Direct când nu există rețea Wi‑Fi. Acceptă o singură cerere de permisiuni. Setările arată legăturile active.
+- **Celelalte telefoane, cel mai simplu** — Setări → *Trimite invitație pentru spectatori* (sau *actori*) pe telefonul Regiei; trimite linkul prin orice aplicație. Cine îl atinge, cu CUPLAJ instalat, este configurat (adresă, cheie, PIN, cameră) și conectat.
+- **Celelalte telefoane, fără link** — alege un rol și apasă *Găsește și alătură‑mă automat*. CUPLAJ caută pe toate legăturile deodată (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) și se conectează la cel mai bun hub găsit: întâi rețeaua locală, la urmă Bluetooth.
+- **Wi‑Fi Aware** — telefoanele care îl au se găsesc fără router și fără configurare. Multe telefoane nu îl au; nimic nu se strică dacă al tău nu îl are.
+- **Siguranță** — o invitație poate crea doar spectator sau actor, niciodată telefon de Regie. Linkurile conțin cheia și PIN‑ul; trimite‑le doar celor invitați.
 
 ---
 

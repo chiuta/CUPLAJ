@@ -79,3 +79,11 @@ Method: code review of all sources, then JVM integration tests of the hub with s
 5. **mDNS** advertises the hub name on the local network; disable the option by not using the hub name for anything sensitive.
 6. Permissions grew: Bluetooth, nearby Wi‑Fi devices and, on Android ≤ 12, location (Android requirement for scanning; CUPLAJ never reads the location).
 7. **Not tested on real devices**; the channel layer is covered by JVM simulation only.
+
+## H. Version 1.3 risks and mitigations
+
+1. **Invitation links carry the network key and PIN.** Anyone who gets the link can join as spectator (or actor if it is the actor link). Links are parsed strictly: scheme and host fixed, length capped, fields sanitised, roles limited to spectator/actor so a link can never create a control phone.
+2. **Auto‑join picks the best hub found**, which may not be the intended one if several shows run nearby; the room code and PIN still decide admission, so a wrong hub refuses the connection.
+3. **Wi‑Fi Aware uses a fixed passphrase** at the network layer; it is only a transport. Access control is the hub's PIN, room code and optional key.
+4. **Plug & play opens more doors** (Bluetooth, Wi‑Fi Aware, Wi‑Fi Direct): each is listening while the hub runs. Switch *Plug & play* off to choose links by hand.
+5. **Not tested on real devices**; Wi‑Fi Aware in particular depends on hardware and vendor firmware.

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.2.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.3.0 · Letzte Aktualisierung: 2026-11-24_
 
 ## 1. Vor der Vorstellung
 
@@ -64,6 +64,14 @@ _Version: 1.2.0 · Letzte Aktualisierung: 2026-11-24_
 - **Wi‑Fi Direct** — am Regie‑Telefon den Hub mit *Wi‑Fi‑Direct‑Gruppe: AN* starten. An den anderen *Wi‑Fi Direct suchen* drücken und das Regie‑Telefon wählen (📡); es fragt eventuell bei jedem Telefon nach Bestätigung. Nach dem Beitritt erscheint der Hub in der Liste. Meist können Telefone in einer Wi‑Fi‑Direct‑Gruppe nicht im gewohnten WLAN bleiben, und manche Modelle können nicht beides.
 - **mDNS** — der Hub meldet sich zusätzlich per mDNS/DNS‑SD (🌐) und ist so auch in Netzen auffindbar, die das übliche Broadcast sperren.
 - **Nicht enthalten** — Wi‑Fi Aware (wenige Telefone) und Googles Nearby Connections (braucht Google Play Services, die diese Trade‑free‑App meidet). Bluetooth Low Energy ist für Sprache zu langsam.
+
+## 10. Plug and Play (1.3)
+
+- **Regie‑Telefon** — *Regie* wählen, dann *Hub starten*. Bei aktivem *Plug & Play* (Standard) öffnet CUPLAJ WLAN / Hotspot, mDNS, Bluetooth und Wi‑Fi Aware und erstellt eine Wi‑Fi‑Direct‑Gruppe, wenn kein WLAN vorhanden ist. Die einzige Berechtigungsabfrage bestätigen. Die Einstellungen zeigen die aktiven Verbindungen.
+- **Andere Telefone, am einfachsten** — Einstellungen → *Einladung für Zuschauer teilen* (oder *Schauspieler*) am Regie‑Telefon; den Link über eine beliebige App senden. Wer ihn mit installiertem CUPLAJ antippt, ist konfiguriert (Adresse, Schlüssel, PIN, Raum) und verbunden.
+- **Andere Telefone, ohne Link** — Rolle wählen und *Automatisch finden und beitreten* tippen. CUPLAJ sucht auf allen Verbindungen gleichzeitig (WLAN, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) und verbindet sich mit dem besten Hub: erst das lokale Netz, zuletzt Bluetooth.
+- **Wi‑Fi Aware** — unterstützende Telefone finden sich ohne Router und ohne Einrichtung. Viele unterstützen es nicht; nichts geht kaputt, wenn Ihres es nicht kann.
+- **Sicherheit** — eine Einladung kann nur Zuschauer oder Schauspieler anlegen, nie ein Regie‑Telefon. Links enthalten Schlüssel und PIN; nur an Eingeladene senden.
 
 ---
 

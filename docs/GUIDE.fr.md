@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.2.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.3.0 · Dernière mise à jour : 2026-11-24_
 
 ## 1. Avant le spectacle
 
@@ -64,6 +64,14 @@ _Version : 1.2.0 · Dernière mise à jour : 2026-11-24_
 - **Wi‑Fi Direct** — sur le téléphone de la régie, démarrez le hub avec *Groupe Wi‑Fi Direct : OUI*. Sur les autres, appuyez sur *Chercher Wi‑Fi Direct* et choisissez le téléphone de la régie (📡) ; il peut demander d'accepter chaque téléphone. Après la jonction, le hub apparaît dans la liste. Les téléphones ne peuvent généralement pas rester sur leur Wi‑Fi habituel dans un groupe Wi‑Fi Direct, et certains modèles ne gèrent pas les deux à la fois.
 - **mDNS** — le hub s'annonce aussi par mDNS/DNS‑SD (🌐), ce qui le rend visible sur les réseaux qui bloquent la diffusion habituelle.
 - **Non inclus** — Wi‑Fi Aware (peu de téléphones) et Nearby Connections de Google (nécessite Google Play Services, que cette application trade‑free évite). Le Bluetooth Low Energy est trop lent pour la voix.
+
+## 10. Plug and play (1.3)
+
+- **Téléphone de la régie** — choisissez *Régie*, puis *Démarrer le hub*. Avec *Plug & play* activé (par défaut), CUPLAJ ouvre Wi‑Fi / point d'accès, mDNS, Bluetooth et Wi‑Fi Aware, et crée un groupe Wi‑Fi Direct s'il n'y a pas de réseau Wi‑Fi. Acceptez la demande de permissions unique. Les réglages montrent les liaisons actives.
+- **Autres téléphones, le plus simple** — Réglages → *Partager l'invitation pour spectateurs* (ou *acteurs*) sur le téléphone de la régie ; envoyez le lien par n'importe quelle appli. Quiconque le touche avec CUPLAJ installé est configuré (adresse, clé, PIN, salle) et connecté.
+- **Autres téléphones, sans lien** — choisissez un rôle et touchez *Trouver et rejoindre automatiquement*. CUPLAJ cherche sur toutes les liaisons à la fois (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) et se connecte au meilleur hub : réseau local d'abord, Bluetooth en dernier.
+- **Wi‑Fi Aware** — les téléphones compatibles se trouvent sans routeur ni réglage. Beaucoup ne le gèrent pas ; rien ne casse si le vôtre non.
+- **Sécurité** — une invitation ne peut créer qu'un spectateur ou un acteur, jamais un téléphone de régie. Les liens contiennent la clé et le PIN ; ne les envoyez qu'aux personnes invitées.
 
 ---
 

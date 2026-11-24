@@ -564,6 +564,11 @@ class HubTest {
     }
 
     @Test
+    fun invitatie() {
+        assertEquals(0L, runInvite().toLong())
+    }
+
+    @Test
     fun canal() {
         assertEquals(0L, runChan().toLong())
     }
@@ -607,5 +612,22 @@ fun runChan(): Int {
     check("canal generic: liniște => închis de paznic", a.next("pong", 800) == null)
     hub.stop(); Thread.sleep(200)
     println(if (fails == 0) "CANAL OK" else "$fails ESECURI CANAL")
+    return fails
+}
+
+
+fun runInvite(): Int {
+    fails = 0
+    val i = Invite(listOf("192.168.1.5", "192.168.49.1:8470"), "ab12-cd34", "4821", "sala 1", "Teatru & Co", "actor")
+    val l = InviteLink.build(i)
+    val b = InviteLink.parse(l)!!
+    check("invitație: dus-întors păstrează totul", b.hosts == i.hosts && b.key == i.key && b.pin == i.pin && b.room == i.room && b.hub == i.hub && b.role == "actor")
+    check("invitație: spectator fără PIN", InviteLink.parse(InviteLink.build(Invite(emptyList())))!!.role == "spectator")
+    check("invitație: nu poate da rolul de regie", InviteLink.parse("cuplaj://join?r=regie&h=1.2.3.4") == null)
+    check("invitație: altă schemă respinsă", InviteLink.parse("https://x.y/join?r=actor") == null && InviteLink.parse(null) == null)
+    check("invitație: gazde nepotrivite sunt aruncate", InviteLink.parse("cuplaj://join?r=actor&h=a%3Bb,ok.host,x%20y")!!.hosts == listOf("ok.host"))
+    check("invitație: PIN doar cifre", InviteLink.parse("cuplaj://join?r=actor&p=12ab34")!!.pin == "1234")
+    check("invitație: link prea lung respins", InviteLink.parse("cuplaj://join?r=actor&k=" + "a".repeat(900)) == null)
+    println(if (fails == 0) "INVITATIE OK" else "$fails ESECURI INVITATIE")
     return fails
 }

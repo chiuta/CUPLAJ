@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.2.0 · Última actualización: 2026-11-24_
+_Versión: 1.3.0 · Última actualización: 2026-11-24_
 
 ## 1. Antes de la función
 
@@ -64,6 +64,14 @@ _Versión: 1.2.0 · Última actualización: 2026-11-24_
 - **Wi‑Fi Direct** — en el teléfono de la regiduría inicia el hub con *Grupo Wi‑Fi Direct: SÍ*. En los demás pulsa *Buscar Wi‑Fi Direct* y elige el teléfono de la regiduría (📡); puede pedir que aceptes cada teléfono. Tras unirse, el hub aparece en la lista. Normalmente los teléfonos no pueden seguir en su Wi‑Fi habitual dentro de un grupo Wi‑Fi Direct, y algunos modelos no admiten ambos a la vez.
 - **mDNS** — el hub también se anuncia por mDNS/DNS‑SD (🌐), lo que lo hace visible en redes que bloquean la difusión habitual.
 - **No incluidos** — Wi‑Fi Aware (pocos teléfonos) y Nearby Connections de Google (requiere Google Play Services, que esta app trade‑free evita). Bluetooth Low Energy es demasiado lento para voz.
+
+## 10. Plug and play (1.3)
+
+- **Teléfono de la regiduría** — elige *Regiduría* y *Iniciar el hub*. Con *Plug & play* activado (por defecto) CUPLAJ abre Wi‑Fi / punto de acceso, mDNS, Bluetooth y Wi‑Fi Aware, y crea un grupo Wi‑Fi Direct si no hay red Wi‑Fi. Acepta la única petición de permisos. Los ajustes muestran los enlaces activos.
+- **Otros teléfonos, lo más fácil** — Ajustes → *Compartir invitación para espectadores* (o *actores*) en el teléfono de la regiduría; envía el enlace por cualquier app. Quien lo toque con CUPLAJ instalado queda configurado (dirección, clave, PIN, sala) y conectado.
+- **Otros teléfonos, sin enlace** — elige un rol y pulsa *Buscar y unirme automáticamente*. CUPLAJ busca en todos los enlaces a la vez (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) y se conecta al mejor hub: primero la red local, al final Bluetooth.
+- **Wi‑Fi Aware** — los teléfonos compatibles se encuentran sin router ni configuración. Muchos no lo admiten; no se rompe nada si el tuyo no.
+- **Seguridad** — una invitación solo puede crear un espectador o un actor, nunca un teléfono de regiduría. Los enlaces contienen la clave y el PIN; envíalos solo a quien invites.
 
 ---
 

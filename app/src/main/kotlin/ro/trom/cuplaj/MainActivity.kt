@@ -58,12 +58,80 @@ class MainActivity : Activity() {
         if (Build.VERSION.SDK_INT >= 33) perms.add(Manifest.permission.POST_NOTIFICATIONS)
         requestPermissions(perms.toTypedArray(), 1)
         if (App.net != null) showMain() else showStart()
+        handleInvite(intent)
     }
 
     override fun onRequestPermissionsResult(code: Int, p: Array<out String>, r: IntArray) {
         super.onRequestPermissionsResult(code, p, r)
         // serviciul pornit fără microfon nu are voie să capteze; îl repornim după acordare
         if (App.net != null && App.hasMic()) App.startService()
+        if (code == 5) {
+            if (App.role == "regie" && App.net != null) App.openLinks()
+            else if (screen == "start" && App.role != "regie") App.scanAll(App.autoJoin)
+        }
+    }
+
+    /** O singură cerere pentru toate permisiunile legăturilor (Bluetooth, dispozitive din apropiere). */
+    private fun ensureLinkPerms(): Boolean {
+        val need = (Bt.permissions().toList() + Wfd.permissions().toList()).distinct()
+            .filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
+        if (need.isEmpty()) return true
+        requestPermissions(need.toTypedArray(), 5)
+        return false
+    }
+
+    private fun connectNow() {
+        saveFields()
+        if (App.myName.trim().isEmpty()) App.myName = Build.MODEL ?: "CUPLAJ"
+        val n = App.myName.trim()
+        if (App.role != "regie" && App.hubHost.isBlank()) {
+            toast(L.t("err_host"))
+        } else {
+            App.start(this, App.role, n, App.hubHost.trim(), App.apin.trim(), App.room, App.era)
+            showMain()
+        }
+    }
+
+    /** Link de invitație: configurează tot și se alătură (sau începe căutarea dacă nu are adrese). */
+    private fun handleInvite(i: Intent?) {
+        val inv = InviteLink.parse(i?.dataString) ?: return
+        i?.data = null
+        App.role = inv.role
+        App.joinKey = inv.key
+        App.room = inv.room
+        App.apin = inv.pin
+        App.saveNet()
+        App.saveProfile()
+        toast(L.t("invite_applied", inv.hub))
+        if (inv.hosts.isEmpty()) {
+            showStart()
+            ensureLinkPerms()
+            App.scanAll(true)
+            return
+        }
+        Thread {
+            var pick = inv.hosts[0]
+            for (h in inv.hosts) {
+                try {
+                    val (hh, pp) = parseHostPort(h)
+                    val s = java.net.Socket()
+                    s.connect(java.net.InetSocketAddress(hh, pp), 1500)
+                    s.close()
+                    pick = h
+                    break
+                } catch (_: Exception) {
+                }
+            }
+            runOnUiThread {
+                App.hubHost = pick
+                connectNow()
+            }
+        }.start()
+    }
+
+    override fun onNewIntent(i: Intent?) {
+        super.onNewIntent(i)
+        handleInvite(i)
     }
 
     override fun onResume() {
@@ -107,6 +175,11 @@ class MainActivity : Activity() {
             k == "lang" -> {
                 saveFields()
                 if (screen == "main") showMain() else showStart()
+            }
+            k.startsWith("autojoin:") -> if (screen == "start") {
+                toast(L.t("auto_found"))
+                App.hubHost = k.substring(9)
+                connectNow()
             }
             k.startsWith("toast:") -> toast(k.substring(6))
             k.startsWith("bigtext:") -> bigText(k.substring(8))
@@ -233,40 +306,56 @@ class MainActivity : Activity() {
             }
             col.addView(tv(L.t("wan_help", PORT, PORT + P2P_PORT_OFFSET), 12f, DIM), lp().apply { topMargin = dp(6) })
             col.addView(tv(L.t("set_links"), 13f, DIM), lp().apply { topMargin = dp(10) })
-            col.addView(btn(if (App.btOn) L.t("bt_on") else L.t("bt_off"), if (App.btOn) GREEN else BTN) {
+            col.addView(btn(if (App.autoMode) L.t("auto_on") else L.t("auto_off"), if (App.autoMode) GREEN else BTN) {
                 saveFields()
-                App.btOn = !App.btOn
-                if (App.btOn && !Bt.hasPerm(this)) {
-                    requestPermissions(Bt.permissions(), 3)
-                    toast(L.t("perm_nearby"))
-                }
+                App.autoMode = !App.autoMode
                 App.saveNet()
                 showStart()
             })
-            if (App.btOn) {
-                col.addView(btn(L.t("bt_visible")) {
-                    try {
-                        startActivity(Bt.discoverableIntent())
-                    } catch (_: Exception) {
-                        toast(L.t("bt_unavailable"))
+            if (App.autoMode) {
+                col.addView(tv(L.t("auto_help"), 12f, DIM))
+            } else {
+                col.addView(btn(if (App.btOn) L.t("bt_on") else L.t("bt_off"), if (App.btOn) GREEN else BTN) {
+                    saveFields()
+                    App.btOn = !App.btOn
+                    if (App.btOn && !Bt.hasPerm(this)) {
+                        requestPermissions(Bt.permissions(), 3)
+                        toast(L.t("perm_nearby"))
                     }
+                    App.saveNet()
+                    showStart()
                 })
-                col.addView(tv(L.t("bt_help"), 12f, DIM))
-            }
-            col.addView(btn(if (App.wfdOn) L.t("wfd_on") else L.t("wfd_off"), if (App.wfdOn) GREEN else BTN) {
-                saveFields()
-                App.wfdOn = !App.wfdOn
-                if (App.wfdOn && !Wfd.hasPerm(this)) {
-                    requestPermissions(Wfd.permissions(), 4)
-                    toast(L.t("perm_nearby"))
+                if (App.btOn) {
+                    col.addView(btn(L.t("bt_visible")) {
+                        try {
+                            startActivity(Bt.discoverableIntent())
+                        } catch (_: Exception) {
+                            toast(L.t("bt_unavailable"))
+                        }
+                    })
+                    col.addView(tv(L.t("bt_help"), 12f, DIM))
                 }
-                App.saveNet()
-                showStart()
-            })
-            if (App.wfdOn) col.addView(tv(L.t("wfd_help"), 12f, DIM))
+                col.addView(btn(if (App.wfdOn) L.t("wfd_on") else L.t("wfd_off"), if (App.wfdOn) GREEN else BTN) {
+                    saveFields()
+                    App.wfdOn = !App.wfdOn
+                    if (App.wfdOn && !Wfd.hasPerm(this)) {
+                        requestPermissions(Wfd.permissions(), 4)
+                        toast(L.t("perm_nearby"))
+                    }
+                    App.saveNet()
+                    showStart()
+                })
+                if (App.wfdOn) col.addView(tv(L.t("wfd_help"), 12f, DIM))
+            }
             col.addView(btn(L.t("btn_refresh")) { saveFields(); showStart() })
         } else {
-            col.addView(tv(L.t("hubs_found"), 13f, DIM), lp().apply { topMargin = dp(16) })
+            col.addView(btn(L.t("btn_auto_join"), GREEN) {
+                saveFields()
+                ensureLinkPerms()
+                App.scanAll(true)
+                toast(L.t("auto_searching"))
+            }, lp().apply { topMargin = dp(16) })
+            col.addView(tv(L.t("hubs_found"), 13f, DIM), lp().apply { topMargin = dp(8) })
             if (App.found.isEmpty()) col.addView(tv(L.t("hubs_none"), 14f, DIM))
             col.addView(row2(
                 btn(L.t("btn_scan_bt")) {
@@ -336,11 +425,9 @@ class MainActivity : Activity() {
                 val n = App.myName.trim()
                 if (n.isEmpty()) {
                     toast(L.t("err_name"))
-                } else if (App.role != "regie" && App.hubHost.isBlank()) {
-                    toast(L.t("err_host"))
                 } else {
-                    App.start(this, App.role, n, App.hubHost.trim(), App.apin.trim(), App.room, App.era)
-                    showMain()
+                    if (App.role == "regie" && App.autoMode) ensureLinkPerms()
+                    connectNow()
                 }
             },
             lp().apply { topMargin = dp(20) }
@@ -386,6 +473,11 @@ class MainActivity : Activity() {
                 .setPositiveButton(L.t("yes")) { _, _ -> App.resetHubMemory(); toast(L.t("sent")) }
                 .setNegativeButton(L.t("no"), null).show()
         })
+        if (App.role == "regie") {
+            col.addView(tv(L.t("links_active", App.linksSummary()), 13f, IVORY), lp().apply { topMargin = dp(12) })
+            col.addView(btn(L.t("btn_invite_sp")) { dlg?.dismiss(); shareInvite("spectator") })
+            col.addView(btn(L.t("btn_invite_ac")) { dlg?.dismiss(); shareInvite("actor") })
+        }
         col.addView(tv(L.t("set_gateways"), 13f, DIM), lp().apply { topMargin = dp(12) })
         col.addView(btn(L.t("btn_sip")) { dlg?.dismiss(); sipDialog() })
         col.addView(btn(if (App.smsGw) L.t("sms_gw_on") else L.t("sms_gw_off"), if (App.smsGw) GREEN else BTN) {
@@ -409,6 +501,16 @@ class MainActivity : Activity() {
         r.addView(a, LinearLayout.LayoutParams(0, WRAP, 1f))
         r.addView(b, LinearLayout.LayoutParams(0, WRAP, 1f))
         return r
+    }
+
+    private fun shareInvite(role: String) {
+        try {
+            val i = Intent(Intent.ACTION_SEND)
+            i.type = "text/plain"
+            i.putExtra(Intent.EXTRA_TEXT, App.inviteText(role))
+            startActivity(Intent.createChooser(i, null))
+        } catch (_: Exception) {
+        }
     }
 
     private fun sipDialog() {

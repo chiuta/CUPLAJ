@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.2.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.3.0 · Ultimo aggiornamento: 2026-11-24_
 
 ## 1. Prima dello spettacolo
 
@@ -64,6 +64,14 @@ _Versione: 1.2.0 · Ultimo aggiornamento: 2026-11-24_
 - **Wi‑Fi Direct** — sul telefono della regia avvia l'hub con *Gruppo Wi‑Fi Direct: SÌ*. Sugli altri premi *Cerca Wi‑Fi Direct* e scegli il telefono della regia (📡); può chiedere di accettare ogni telefono. Dopo l'unione l'hub compare nell'elenco. Di solito i telefoni non possono restare sul loro Wi‑Fi abituale in un gruppo Wi‑Fi Direct, e alcuni modelli non gestiscono entrambi.
 - **mDNS** — l'hub si annuncia anche via mDNS/DNS‑SD (🌐), così è visibile su reti che bloccano il broadcast abituale.
 - **Non inclusi** — Wi‑Fi Aware (pochi telefoni) e Nearby Connections di Google (richiede Google Play Services, che questa app trade‑free evita). Il Bluetooth Low Energy è troppo lento per la voce.
+
+## 10. Plug and play (1.3)
+
+- **Telefono della regia** — scegli *Regia*, poi *Avvia l'hub*. Con *Plug & play* attivo (predefinito) CUPLAJ apre Wi‑Fi / hotspot, mDNS, Bluetooth e Wi‑Fi Aware e crea un gruppo Wi‑Fi Direct se non c'è una rete Wi‑Fi. Accetta l'unica richiesta di permessi. Le impostazioni mostrano i collegamenti attivi.
+- **Altri telefoni, il modo più semplice** — Impostazioni → *Condividi invito per spettatori* (o *attori*) sul telefono della regia; invia il link con qualsiasi app. Chi lo tocca, con CUPLAJ installato, viene configurato (indirizzo, chiave, PIN, sala) e collegato.
+- **Altri telefoni, senza link** — scegli un ruolo e tocca *Trova e unisciti automaticamente*. CUPLAJ cerca su tutti i collegamenti insieme (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) e si collega al miglior hub: prima la rete locale, per ultimo il Bluetooth.
+- **Wi‑Fi Aware** — i telefoni compatibili si trovano senza router né configurazione. Molti non lo supportano; non si rompe nulla se il tuo non lo fa.
+- **Sicurezza** — un invito può creare solo uno spettatore o un attore, mai un telefono della regia. I link contengono chiave e PIN; inviali solo alle persone invitate.
 
 ---
 

@@ -166,6 +166,7 @@ object App {
         joinKey = p.getString("jkey", "") ?: ""
         smsGw = p.getBoolean("smsgw", false)
         btOn = p.getBoolean("bton", false)
+        autoMode = p.getBoolean("auto", true)
         wfdOn = p.getBoolean("wfdon", false)
         Bt.ctx = ctx
         sipOn = p.getBoolean("sipon", false)
@@ -184,7 +185,7 @@ object App {
     }
 
     fun saveNet() {
-        prefs().edit().putBoolean("enc", encOn).putString("nkey", netKey).putBoolean("smsgw", smsGw).putBoolean("bton", btOn).putBoolean("wfdon", wfdOn).putString("jkey", joinKey)
+        prefs().edit().putBoolean("enc", encOn).putString("nkey", netKey).putBoolean("smsgw", smsGw).putBoolean("bton", btOn).putBoolean("auto", autoMode).putBoolean("wfdon", wfdOn).putString("jkey", joinKey)
             .putBoolean("sipon", sipOn).putString("siph", sipHost).putInt("sipp", sipPort).putString("sipu", sipUser)
             .putString("sipw", sipPass).putString("sipd", sipDomain).putString("sipi", sipInbound).apply()
     }
@@ -236,7 +237,7 @@ object App {
         try {
             nsd.discover { name, host, port ->
                 val h = if (port == PORT) host else "$host:$port"
-                ui.post { if (found.put(h, Found(name, h, false, false, "nsd")) == null) notify("found") }
+                addFound(h, Found(name, h, false, false, "nsd"))
             }
         } catch (_: Exception) {
         }
@@ -257,7 +258,7 @@ object App {
                         val h = pk.address.hostAddress
                         if (s.size >= 3 && s[0] == "CUPLAJ1" && h != null) {
                             val f = Found(s[1], h, s.size >= 4 && s[3] == "1", s.size >= 5 && s[4] == "1")
-                            ui.post { if (found.put(h, f) == null) notify("found") }
+                            addFound(h, f)
                         }
                     } catch (_: SocketTimeoutException) {
                     }
@@ -272,10 +273,108 @@ object App {
         }
     }
 
+    // ------------------------------------------------------------------ plug and play
+
+    @Volatile
+    var autoJoin = false
+    var autoMode = true
+    private var awareHub: Aware.Hub? = null
+    private var awareScan = false
+
+    private val autoRun = Runnable {
+        if (!autoJoin) return@Runnable
+        fun prio(f: Found) = when {
+            f.via == "lan" -> 0
+            f.via == "nsd" -> 1
+            f.via == "wfd" -> 2
+            f.via == "aw" -> 3
+            else -> 4
+        }
+        val c = found.values.filter { !(it.via == "wfd" && it.host.startsWith("wfd:")) }.sortedBy { prio(it) }
+        if (c.isNotEmpty()) {
+            autoJoin = false
+            notify("autojoin:" + c[0].host)
+        }
+    }
+
+    private fun addFound(key: String, f: Found) {
+        ui.post {
+            if (found.put(key, f) == null) {
+                notify("found")
+                if (autoJoin) {
+                    ui.removeCallbacks(autoRun)
+                    ui.postDelayed(autoRun, 3500)
+                }
+            }
+        }
+    }
+
+    /** Client: pornește toate căutările posibile deodată (rețea locală, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware). */
+    fun scanAll(join: Boolean) {
+        autoJoin = join
+        found.clear()
+        startDiscovery()
+        try {
+            if (Bt.available(ctx) && Bt.hasPerm(ctx)) scanBluetooth()
+            if (Wfd.available(ctx) && Wfd.hasPerm(ctx)) scanWifiDirect()
+            if (Aware.available(ctx) && Aware.hasPerm(ctx) && !awareScan) {
+                awareScan = Aware.scan(ctx) { k, name -> addFound(k, Found(name, k, false, false, "aw")) }
+            }
+        } catch (_: Exception) {
+        }
+        if (join) {
+            ui.removeCallbacks(autoRun)
+            ui.postDelayed(autoRun, 6000)
+        }
+    }
+
+    private fun hasLan(): Boolean = localIps().any { it.startsWith("192.168.") || it.startsWith("10.") || Regex("^172\\.(1[6-9]|2[0-9]|3[01])\\..*").matches(it) }
+
+    /** Regie: deschide legăturile potrivite; apelabilă din nou după acordarea permisiunilor. */
+    fun openLinks() {
+        val hb = hubObj ?: return
+        try {
+            if (btServer == null && (autoMode || btOn) && Bt.available(ctx) && Bt.hasPerm(ctx)) {
+                val bs = Bt.Server(ctx, hb)
+                if (bs.start()) btServer = bs
+            }
+            if (wfd == null && (wfdOn || (autoMode && !hasLan())) && Wfd.available(ctx) && Wfd.hasPerm(ctx)) {
+                val w = Wfd(ctx)
+                wfd = w
+                w.startGroup { ok -> if (!ok) ui.post { notify("toast:" + L.t("wfd_fail")) } }
+            }
+            if (awareHub == null && autoMode && Aware.available(ctx) && Aware.hasPerm(ctx)) {
+                val ah = Aware.Hub(ctx, hb)
+                if (ah.start()) awareHub = ah
+            }
+        } catch (_: Exception) {
+        }
+    }
+
+    /** Textul „Legături active” afișat Regiei. */
+    fun linksSummary(): String {
+        val l = ArrayList<String>()
+        l.add(if (hasLan()) "Wi‑Fi / hotspot" else L.t("link_none_lan"))
+        if (btServer != null) l.add("Bluetooth")
+        if (wfd != null) l.add("Wi‑Fi Direct")
+        if (awareHub != null) l.add("Wi‑Fi Aware")
+        l.add("mDNS")
+        return l.joinToString(" · ")
+    }
+
+    /** Invitație (link) pentru un spectator sau un actor. */
+    fun inviteText(forRole: String): String {
+        val hosts = localIps().filter { !it.contains(':') }.map { if (hubHostPort() == PORT) it else "$it:${hubHostPort()}" }
+        val i = Invite(hosts, if (encOn) netKey else "", if (forRole == "actor") hubPin else "", room, myName, forRole)
+        return L.t("invite_text", InviteLink.build(i))
+    }
+
+    private fun hubHostPort(): Int = PORT
+
     fun scanBluetooth(): Boolean {
         btScan?.stop()
         val sc = Bt.Scanner(ctx) { name, mac ->
-            ui.post { if (found.put("bt:$mac", Found(name, "bt:$mac", false, false, "bt")) == null) notify("found") }
+            addFound("bt:$mac", Found(name, "bt:$mac", false, false, "bt"))
         }
         btScan = sc
         return sc.start()
@@ -284,10 +383,10 @@ object App {
     fun scanWifiDirect(): Boolean {
         val w = wfd ?: Wfd(ctx).also { wfd = it }
         w.onPeer = { name, mac ->
-            ui.post { if (found.put("wfd:$mac", Found(name, "wfd:$mac", false, false, "wfd")) == null) notify("found") }
+            addFound("wfd:$mac", Found(name, "wfd:$mac", false, false, "wfd"))
         }
         w.onGroupOwner = { ip ->
-            ui.post { if (found.put(ip, Found("Wi‑Fi Direct", ip, false, false, "wfd")) == null) notify("found") }
+            addFound(ip, Found("Wi‑Fi Direct", ip, false, false, "wfd"))
         }
         return w.scan()
     }
@@ -351,15 +450,7 @@ object App {
             hb.onPersist = { s -> p.edit().putString("hubstate", s).apply() }
             hubObj = hb
             hb.start()
-            if (btOn) {
-                val bs = Bt.Server(ctx, hb)
-                if (bs.start()) btServer = bs else ui.post { notify("toast:" + L.t("bt_unavailable")) }
-            }
-            if (wfdOn) {
-                val w = Wfd(ctx)
-                wfd = w
-                w.startGroup { ok -> if (!ok) ui.post { notify("toast:" + L.t("wfd_fail")) } }
-            }
+            openLinks()
             try {
                 nsd.advertise(name, PORT)
             } catch (_: Exception) {
@@ -407,6 +498,9 @@ object App {
         stopSip()
         btServer?.stop()
         btServer = null
+        awareHub?.stop()
+        awareHub = null
+        if (awareScan) { Aware.stopScan(); awareScan = false }
         try {
             wfd?.stop()
             nsd.unadvertise()

@@ -1,4 +1,4 @@
-# CUPLAJ protocol (v1.2)
+# CUPLAJ protocol (v1.3)
 
 Documentation language: English only (the app UI, README and user guide are available in 8 languages).
 
@@ -93,3 +93,11 @@ The framing and messages are identical on every transport; only the byte channel
 Discovery: UDP beacon `CUPLAJ1|name|port|room?|key?` every 2 s on port 8471; mDNS/DNS‑SD service `_cuplaj._tcp`; Bluetooth device scan; Wi‑Fi Direct peer discovery.
 
 Idle limits apply per channel: 10 s to send `hello`, 60 s of silence afterwards (clients ping every 15 s). Bluetooth clients send μ‑law audio.
+
+## v1.3: invitation link and Wi‑Fi Aware
+
+**Invitation:** `cuplaj://join?r=<spectator|actor>&h=<host[:port],…>&k=<key>&p=<pin>&c=<room>&n=<hub name>` (all values URL‑encoded, every field except `r` optional, at most 8 hosts, 800 characters). `r=regie` is rejected. Without `h` the client starts an automatic search.
+
+**Wi‑Fi Aware:** the hub publishes service `cuplaj` and listens on a TCP port inside the Aware data path; the client subscribes, sends a message to the publisher, receives the peer IPv6 address and port and opens an ordinary TCP channel (same framing). The data path is protected with a fixed passphrase; admission is still the hub's job.
+
+**Auto‑join priority:** local network, mDNS, Wi‑Fi Direct group, Wi‑Fi Aware, Bluetooth.

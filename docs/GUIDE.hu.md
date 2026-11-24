@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.2.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.3.0 · Utolsó frissítés: 2026-11-24_
 
 ## 1. Az előadás előtt
 
@@ -64,6 +64,14 @@ _Verzió: 1.2.0 · Utolsó frissítés: 2026-11-24_
 - **Wi‑Fi Direct** — a rendezői telefonon indítsd a hubot *Wi‑Fi Direct csoport: BE* mellett. A többin nyomd meg a *Wi‑Fi Direct keresése* gombot, és válaszd a rendezői telefont (📡); az kérheti minden telefon jóváhagyását. Csatlakozás után a hub megjelenik a listában. A telefonok általában nem maradhatnak a megszokott Wi‑Fi‑n Wi‑Fi Direct csoportban, és egyes típusok nem tudják mindkettőt.
 - **mDNS** — a hub mDNS/DNS‑SD‑vel is jelzi magát (🌐), így azokon a hálózatokon is megtalálható, amelyek tiltják a szokásos szórást.
 - **Nincs benne** — a Wi‑Fi Aware (kevés telefon támogatja) és a Google Nearby Connections (Google Play Services kell, amit ez a trade‑free app elkerül). A Bluetooth Low Energy túl lassú a beszédhez.
+
+## 10. Plug and play (1.3)
+
+- **Rendezői telefon** — válaszd a *Rendező* szerepet, majd a *Hub indítása* gombot. Bekapcsolt *Plug & play* mellett (alap) a CUPLAJ megnyitja a Wi‑Fi / hotspot, mDNS, Bluetooth és Wi‑Fi Aware kapcsolatot, és Wi‑Fi Direct csoportot hoz létre, ha nincs Wi‑Fi hálózat. Fogadd el az egyetlen jogosultságkérést. A beállítások mutatják az aktív kapcsolatokat.
+- **A többi telefon, legegyszerűbben** — Beállítások → *Meghívó küldése nézőknek* (vagy *színészeknek*) a rendezői telefonon; küldd el a linket bármely appon. Aki telepített CUPLAJ‑jal megérinti, az beállítódik (cím, kulcs, PIN, szoba) és csatlakozik.
+- **A többi telefon, link nélkül** — válassz szerepet, és érintsd meg az *Automatikus keresés és csatlakozás* gombot. A CUPLAJ egyszerre keres minden kapcsolaton (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware), és a legjobb hubhoz csatlakozik: előbb a helyi hálózat, utoljára a Bluetooth.
+- **Wi‑Fi Aware** — a támogató telefonok router és beállítás nélkül megtalálják egymást. Sok telefon nem támogatja; semmi sem romlik el, ha a tiéd nem.
+- **Biztonság** — meghívóval csak néző vagy színész hozható létre, rendezői telefon soha. A linkek tartalmazzák a kulcsot és a PIN‑t; csak a meghívottaknak küldd.
 
 ---
 

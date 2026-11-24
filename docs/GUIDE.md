@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.2.0 · Last update: 2026-11-24_
+_Version: 1.3.0 · Last update: 2026-11-24_
 
 ## 1. Before the show
 
@@ -64,6 +64,14 @@ _Version: 1.2.0 · Last update: 2026-11-24_
 - **Wi‑Fi Direct** — on the control phone start the hub with *Wi‑Fi Direct group: ON*. On other phones press *Find Wi‑Fi Direct* and choose the control phone (📡); the control phone may ask you to accept each phone. After joining, the hub appears in the list. Phones usually cannot stay on their normal Wi‑Fi while in a Wi‑Fi Direct group, and some models do not support the control phone being both.
 - **mDNS** — the hub also announces itself by mDNS/DNS‑SD (🌐), which finds it on networks that block the usual broadcast.
 - **Not included** — Wi‑Fi Aware (few phones support it) and Google's Nearby Connections (needs Google Play Services, which this trade‑free app avoids). Bluetooth Low Energy is too slow for voice.
+
+## 10. Plug and play (1.3)
+
+- **Control phone** — choose *Control*, then *Start the hub*. With *Plug & play* on (default) CUPLAJ opens Wi‑Fi / hotspot, mDNS, Bluetooth and Wi‑Fi Aware, and creates a Wi‑Fi Direct group when there is no Wi‑Fi network. Accept the single permission prompt. Settings shows the active links.
+- **Other phones, easiest** — Settings → *Share invitation for spectators* (or *actors*) on the control phone; send the link by any app. Whoever taps it with CUPLAJ installed is configured (address, key, PIN, room) and connected.
+- **Other phones, without a link** — choose a role and tap *Find and join automatically*. CUPLAJ searches every link at once (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) and connects to the best hub it finds: local network first, Bluetooth last.
+- **Wi‑Fi Aware** — phones that support it find each other with no router and no setup. Many phones do not support it; nothing breaks if yours does not.
+- **Safety** — an invitation can only make a spectator or an actor, never a control phone. Links contain the key and PIN, so send them only to people you invite.
 
 ---
 

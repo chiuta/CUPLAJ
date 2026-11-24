@@ -77,7 +77,7 @@ class Wfd(private val c: Context) {
             override fun onReceive(context: Context, i: Intent) {
                 when (i.action) {
                     WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> m.requestPeers(k) { list ->
-                        for (d: WifiP2pDevice in list.deviceList) onPeer?.invoke(d.deviceName.ifEmpty { d.deviceAddress }, d.deviceAddress)
+                        for (d: WifiP2pDevice in list.deviceList) if ((d.primaryDeviceType ?: "").startsWith("10-")) onPeer?.invoke(d.deviceName.ifEmpty { d.deviceAddress }, d.deviceAddress)
                     }
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> m.requestConnectionInfo(k) { info: WifiP2pInfo? ->
                         if (info != null && info.groupFormed && !info.isGroupOwner) {

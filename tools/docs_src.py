@@ -1012,3 +1012,83 @@ for _l, (_f, _sec, _st) in _V12.items():
     D[_l]["feat"] = D[_l]["feat"] + [_f]
     D[_l]["g"] = D[_l]["g"] + [_sec]
     D[_l]["status"] = D[_l]["status"] + _st
+
+# ---------------------------------------------------------------- v1.3.0 additions (plug and play, Wi-Fi Aware, invitations)
+_V13 = {
+"en": ("**Plug and play (1.3)** — the control phone opens every fitting link by itself; other phones tap *Find and join automatically*, or tap an invitation link. Adds Wi‑Fi Aware.",
+ ("Plug and play (1.3)", [
+  "**Control phone** — choose *Control*, then *Start the hub*. With *Plug & play* on (default) CUPLAJ opens Wi‑Fi / hotspot, mDNS, Bluetooth and Wi‑Fi Aware, and creates a Wi‑Fi Direct group when there is no Wi‑Fi network. Accept the single permission prompt. Settings shows the active links.",
+  "**Other phones, easiest** — Settings → *Share invitation for spectators* (or *actors*) on the control phone; send the link by any app. Whoever taps it with CUPLAJ installed is configured (address, key, PIN, room) and connected.",
+  "**Other phones, without a link** — choose a role and tap *Find and join automatically*. CUPLAJ searches every link at once (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) and connects to the best hub it finds: local network first, Bluetooth last.",
+  "**Wi‑Fi Aware** — phones that support it find each other with no router and no setup. Many phones do not support it; nothing breaks if yours does not.",
+  "**Safety** — an invitation can only make a spectator or an actor, never a control phone. Links contain the key and PIN, so send them only to people you invite.",
+ ]),
+ " Plug and play (auto‑join, invitations, Wi‑Fi Aware, 1.3) is **not** tested on devices; the invitation format is covered by JVM tests."),
+"ro": ("**Plug and play (1.3)** — telefonul Regiei deschide singur toate legăturile potrivite; celelalte telefoane apasă *Găsește și alătură‑mă automat* sau ating un link de invitație. Adaugă Wi‑Fi Aware.",
+ ("Plug and play (1.3)", [
+  "**Telefonul Regiei** — alege *Regie*, apoi *Pornește hubul*. Cu *Plug & play* pornit (implicit) CUPLAJ deschide Wi‑Fi / hotspot, mDNS, Bluetooth și Wi‑Fi Aware și creează un grup Wi‑Fi Direct când nu există rețea Wi‑Fi. Acceptă o singură cerere de permisiuni. Setările arată legăturile active.",
+  "**Celelalte telefoane, cel mai simplu** — Setări → *Trimite invitație pentru spectatori* (sau *actori*) pe telefonul Regiei; trimite linkul prin orice aplicație. Cine îl atinge, cu CUPLAJ instalat, este configurat (adresă, cheie, PIN, cameră) și conectat.",
+  "**Celelalte telefoane, fără link** — alege un rol și apasă *Găsește și alătură‑mă automat*. CUPLAJ caută pe toate legăturile deodată (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) și se conectează la cel mai bun hub găsit: întâi rețeaua locală, la urmă Bluetooth.",
+  "**Wi‑Fi Aware** — telefoanele care îl au se găsesc fără router și fără configurare. Multe telefoane nu îl au; nimic nu se strică dacă al tău nu îl are.",
+  "**Siguranță** — o invitație poate crea doar spectator sau actor, niciodată telefon de Regie. Linkurile conțin cheia și PIN‑ul; trimite‑le doar celor invitați.",
+ ]),
+ " Plug and play (conectare automată, invitații, Wi‑Fi Aware, 1.3) **nu** a fost testat pe dispozitive; formatul invitațiilor e acoperit de teste JVM."),
+"fr": ("**Plug and play (1.3)** — le téléphone de la régie ouvre seul toutes les liaisons utiles ; les autres touchent *Trouver et rejoindre automatiquement* ou un lien d'invitation. Ajoute Wi‑Fi Aware.",
+ ("Plug and play (1.3)", [
+  "**Téléphone de la régie** — choisissez *Régie*, puis *Démarrer le hub*. Avec *Plug & play* activé (par défaut), CUPLAJ ouvre Wi‑Fi / point d'accès, mDNS, Bluetooth et Wi‑Fi Aware, et crée un groupe Wi‑Fi Direct s'il n'y a pas de réseau Wi‑Fi. Acceptez la demande de permissions unique. Les réglages montrent les liaisons actives.",
+  "**Autres téléphones, le plus simple** — Réglages → *Partager l'invitation pour spectateurs* (ou *acteurs*) sur le téléphone de la régie ; envoyez le lien par n'importe quelle appli. Quiconque le touche avec CUPLAJ installé est configuré (adresse, clé, PIN, salle) et connecté.",
+  "**Autres téléphones, sans lien** — choisissez un rôle et touchez *Trouver et rejoindre automatiquement*. CUPLAJ cherche sur toutes les liaisons à la fois (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) et se connecte au meilleur hub : réseau local d'abord, Bluetooth en dernier.",
+  "**Wi‑Fi Aware** — les téléphones compatibles se trouvent sans routeur ni réglage. Beaucoup ne le gèrent pas ; rien ne casse si le vôtre non.",
+  "**Sécurité** — une invitation ne peut créer qu'un spectateur ou un acteur, jamais un téléphone de régie. Les liens contiennent la clé et le PIN ; ne les envoyez qu'aux personnes invitées.",
+ ]),
+ " Le plug and play (connexion auto, invitations, Wi‑Fi Aware, 1.3) **n'a pas** été testé sur appareils ; le format des invitations est couvert par des tests JVM."),
+"it": ("**Plug and play (1.3)** — il telefono della regia apre da solo tutti i collegamenti utili; gli altri toccano *Trova e unisciti automaticamente* o un link d'invito. Aggiunge Wi‑Fi Aware.",
+ ("Plug and play (1.3)", [
+  "**Telefono della regia** — scegli *Regia*, poi *Avvia l'hub*. Con *Plug & play* attivo (predefinito) CUPLAJ apre Wi‑Fi / hotspot, mDNS, Bluetooth e Wi‑Fi Aware e crea un gruppo Wi‑Fi Direct se non c'è una rete Wi‑Fi. Accetta l'unica richiesta di permessi. Le impostazioni mostrano i collegamenti attivi.",
+  "**Altri telefoni, il modo più semplice** — Impostazioni → *Condividi invito per spettatori* (o *attori*) sul telefono della regia; invia il link con qualsiasi app. Chi lo tocca, con CUPLAJ installato, viene configurato (indirizzo, chiave, PIN, sala) e collegato.",
+  "**Altri telefoni, senza link** — scegli un ruolo e tocca *Trova e unisciti automaticamente*. CUPLAJ cerca su tutti i collegamenti insieme (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) e si collega al miglior hub: prima la rete locale, per ultimo il Bluetooth.",
+  "**Wi‑Fi Aware** — i telefoni compatibili si trovano senza router né configurazione. Molti non lo supportano; non si rompe nulla se il tuo non lo fa.",
+  "**Sicurezza** — un invito può creare solo uno spettatore o un attore, mai un telefono della regia. I link contengono chiave e PIN; inviali solo alle persone invitate.",
+ ]),
+ " Il plug and play (collegamento automatico, inviti, Wi‑Fi Aware, 1.3) **non** è stato provato su dispositivi; il formato degli inviti è coperto da test JVM."),
+"es": ("**Plug and play (1.3)** — el teléfono de la regiduría abre solo todos los enlaces útiles; los demás pulsan *Buscar y unirme automáticamente* o un enlace de invitación. Añade Wi‑Fi Aware.",
+ ("Plug and play (1.3)", [
+  "**Teléfono de la regiduría** — elige *Regiduría* y *Iniciar el hub*. Con *Plug & play* activado (por defecto) CUPLAJ abre Wi‑Fi / punto de acceso, mDNS, Bluetooth y Wi‑Fi Aware, y crea un grupo Wi‑Fi Direct si no hay red Wi‑Fi. Acepta la única petición de permisos. Los ajustes muestran los enlaces activos.",
+  "**Otros teléfonos, lo más fácil** — Ajustes → *Compartir invitación para espectadores* (o *actores*) en el teléfono de la regiduría; envía el enlace por cualquier app. Quien lo toque con CUPLAJ instalado queda configurado (dirección, clave, PIN, sala) y conectado.",
+  "**Otros teléfonos, sin enlace** — elige un rol y pulsa *Buscar y unirme automáticamente*. CUPLAJ busca en todos los enlaces a la vez (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) y se conecta al mejor hub: primero la red local, al final Bluetooth.",
+  "**Wi‑Fi Aware** — los teléfonos compatibles se encuentran sin router ni configuración. Muchos no lo admiten; no se rompe nada si el tuyo no.",
+  "**Seguridad** — una invitación solo puede crear un espectador o un actor, nunca un teléfono de regiduría. Los enlaces contienen la clave y el PIN; envíalos solo a quien invites.",
+ ]),
+ " El plug and play (conexión automática, invitaciones, Wi‑Fi Aware, 1.3) **no** se ha probado en dispositivos; el formato de las invitaciones está cubierto por pruebas JVM."),
+"pt": ("**Plug and play (1.3)** — o telemóvel da régie abre sozinho todas as ligações úteis; os outros tocam em *Encontrar e juntar‑me automaticamente* ou num link de convite. Acrescenta Wi‑Fi Aware.",
+ ("Plug and play (1.3)", [
+  "**Telemóvel da régie** — escolhe *Régie* e *Iniciar o hub*. Com *Plug & play* ligado (predefinição) o CUPLAJ abre Wi‑Fi / hotspot, mDNS, Bluetooth e Wi‑Fi Aware, e cria um grupo Wi‑Fi Direct se não houver rede Wi‑Fi. Aceita o único pedido de permissões. As definições mostram as ligações ativas.",
+  "**Outros telemóveis, o mais fácil** — Definições → *Partilhar convite para espectadores* (ou *atores*) no telemóvel da régie; envia o link por qualquer app. Quem lhe tocar, com o CUPLAJ instalado, fica configurado (endereço, chave, PIN, sala) e ligado.",
+  "**Outros telemóveis, sem link** — escolhe um papel e toca em *Encontrar e juntar‑me automaticamente*. O CUPLAJ procura em todas as ligações ao mesmo tempo (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) e liga‑se ao melhor hub: primeiro a rede local, por último o Bluetooth.",
+  "**Wi‑Fi Aware** — os telemóveis compatíveis encontram‑se sem router nem configuração. Muitos não o suportam; nada se estraga se o teu não suportar.",
+  "**Segurança** — um convite só pode criar um espectador ou um ator, nunca um telemóvel de régie. Os links contêm a chave e o PIN; envia‑os só a quem convidares.",
+ ]),
+ " O plug and play (ligação automática, convites, Wi‑Fi Aware, 1.3) **não** foi testado em dispositivos; o formato dos convites é coberto por testes JVM."),
+"de": ("**Plug and Play (1.3)** — das Regie‑Telefon öffnet alle passenden Verbindungen selbst; die anderen tippen auf *Automatisch finden und beitreten* oder auf einen Einladungslink. Neu: Wi‑Fi Aware.",
+ ("Plug and Play (1.3)", [
+  "**Regie‑Telefon** — *Regie* wählen, dann *Hub starten*. Bei aktivem *Plug & Play* (Standard) öffnet CUPLAJ WLAN / Hotspot, mDNS, Bluetooth und Wi‑Fi Aware und erstellt eine Wi‑Fi‑Direct‑Gruppe, wenn kein WLAN vorhanden ist. Die einzige Berechtigungsabfrage bestätigen. Die Einstellungen zeigen die aktiven Verbindungen.",
+  "**Andere Telefone, am einfachsten** — Einstellungen → *Einladung für Zuschauer teilen* (oder *Schauspieler*) am Regie‑Telefon; den Link über eine beliebige App senden. Wer ihn mit installiertem CUPLAJ antippt, ist konfiguriert (Adresse, Schlüssel, PIN, Raum) und verbunden.",
+  "**Andere Telefone, ohne Link** — Rolle wählen und *Automatisch finden und beitreten* tippen. CUPLAJ sucht auf allen Verbindungen gleichzeitig (WLAN, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware) und verbindet sich mit dem besten Hub: erst das lokale Netz, zuletzt Bluetooth.",
+  "**Wi‑Fi Aware** — unterstützende Telefone finden sich ohne Router und ohne Einrichtung. Viele unterstützen es nicht; nichts geht kaputt, wenn Ihres es nicht kann.",
+  "**Sicherheit** — eine Einladung kann nur Zuschauer oder Schauspieler anlegen, nie ein Regie‑Telefon. Links enthalten Schlüssel und PIN; nur an Eingeladene senden.",
+ ]),
+ " Plug and Play (Auto‑Beitritt, Einladungen, Wi‑Fi Aware, 1.3) ist **nicht** an Geräten getestet; das Einladungsformat ist durch JVM‑Tests abgedeckt."),
+"hu": ("**Plug and play (1.3)** — a rendezői telefon magától megnyit minden megfelelő kapcsolatot; a többiek az *Automatikus keresés és csatlakozás* gombot vagy egy meghívó linket érintenek meg. Újdonság: Wi‑Fi Aware.",
+ ("Plug and play (1.3)", [
+  "**Rendezői telefon** — válaszd a *Rendező* szerepet, majd a *Hub indítása* gombot. Bekapcsolt *Plug & play* mellett (alap) a CUPLAJ megnyitja a Wi‑Fi / hotspot, mDNS, Bluetooth és Wi‑Fi Aware kapcsolatot, és Wi‑Fi Direct csoportot hoz létre, ha nincs Wi‑Fi hálózat. Fogadd el az egyetlen jogosultságkérést. A beállítások mutatják az aktív kapcsolatokat.",
+  "**A többi telefon, legegyszerűbben** — Beállítások → *Meghívó küldése nézőknek* (vagy *színészeknek*) a rendezői telefonon; küldd el a linket bármely appon. Aki telepített CUPLAJ‑jal megérinti, az beállítódik (cím, kulcs, PIN, szoba) és csatlakozik.",
+  "**A többi telefon, link nélkül** — válassz szerepet, és érintsd meg az *Automatikus keresés és csatlakozás* gombot. A CUPLAJ egyszerre keres minden kapcsolaton (Wi‑Fi, mDNS, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware), és a legjobb hubhoz csatlakozik: előbb a helyi hálózat, utoljára a Bluetooth.",
+  "**Wi‑Fi Aware** — a támogató telefonok router és beállítás nélkül megtalálják egymást. Sok telefon nem támogatja; semmi sem romlik el, ha a tiéd nem.",
+  "**Biztonság** — meghívóval csak néző vagy színész hozható létre, rendezői telefon soha. A linkek tartalmazzák a kulcsot és a PIN‑t; csak a meghívottaknak küldd.",
+ ]),
+ " A plug and play (automatikus csatlakozás, meghívók, Wi‑Fi Aware, 1.3) **nincs** eszközökön tesztelve; a meghívó formátumát JVM‑tesztek fedik."),
+}
+for _l, (_f, _sec, _st) in _V13.items():
+    D[_l]["feat"] = D[_l]["feat"] + [_f]
+    D[_l]["g"] = D[_l]["g"] + [_sec]
+    D[_l]["status"] = D[_l]["status"] + _st

@@ -2,6 +2,14 @@
 
 Documentation language: English only.
 
+## 1.3.0 — 2026‑11‑24
+
+* Plug and play: *Plug & play* mode on the control phone opens every fitting link on its own (Wi‑Fi/hotspot, mDNS, Bluetooth, Wi‑Fi Aware, and a Wi‑Fi Direct group when there is no Wi‑Fi); one permission prompt.
+* *Find and join automatically* on other phones: searches every link at once and connects to the best hub (local network, mDNS, Wi‑Fi Direct, Wi‑Fi Aware, Bluetooth, in that order).
+* Invitation links (`cuplaj://join?…`) configure address, key, PIN and room in one tap; they can only create spectators or actors.
+* Wi‑Fi Aware (NAN) transport for phones that support it.
+* Bluetooth scan lists only phones that actually run a CUPLAJ hub (SDP check); Wi‑Fi Direct scan lists only phones.
+
 ## 1.2.0 — 2026‑11‑24
 
 * Generic transport layer: the hub accepts any byte channel, not only TCP (`Chan`, `StreamChan`, `Hub.adopt`); covered by JVM tests with simulated channels, including mixed TCP and channel calls.

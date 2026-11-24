@@ -56,6 +56,8 @@ class Net(
                 onState(L.t("net_connecting", hostPort))
                 val ch: Chan = if (hostPort.startsWith("bt:")) {
                     Bt.connect(hostPort.substring(3))
+                } else if (hostPort.startsWith("aw:")) {
+                    Aware.connect(Bt.ctx, hostPort)
                 } else {
                     val s = Socket()
                     s.connect(InetSocketAddress(host, port), 5000)
