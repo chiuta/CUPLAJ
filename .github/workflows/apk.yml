@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Hub integration tests (JVM)
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+  docs:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check translations
+        run: python3 tools/check_i18n.py
+      - name: Docs are up to date
+        run: |
+          python3 tools/gen_docs.py
+          git diff --exit-code -- README*.md docs CHANGELOG.md
+      - name: Site script parses
+        run: |
+          node -e "const h=require('fs').readFileSync('docs/index.html','utf8');new Function(h.match(/<script>([\s\S]*)<\/script>/)[1]);console.log('ok')"
+
+  apk:
+    needs: test
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build APK
+        run: ./gradlew assembleRelease --no-daemon
+      - name: Rename
+        run: cp app/build/outputs/apk/release/app-release.apk CUPLAJ.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CUPLAJ-apk
+          path: CUPLAJ.apk

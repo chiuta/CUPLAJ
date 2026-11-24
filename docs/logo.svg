@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="CUPLAJ">
+<rect width="200" height="200" rx="36" fill="#14110f"/>
+<circle cx="100" cy="100" r="78" fill="#1e1915" stroke="#e8d9b8" stroke-width="6"/>
+<g fill="#e8d9b8">
+<circle cx="100" cy="46" r="9"/><circle cx="133" cy="55" r="9"/><circle cx="154" cy="82" r="9"/>
+<circle cx="154" cy="118" r="9"/><circle cx="133" cy="145" r="9"/><circle cx="100" cy="154" r="9"/>
+<circle cx="67" cy="145" r="9"/><circle cx="46" cy="118" r="9"/><circle cx="46" cy="82" r="9"/>
+</g>
+<circle cx="100" cy="100" r="22" fill="#14110f" stroke="#b5452f" stroke-width="5"/>
+<path d="M58 100h84" stroke="#b5452f" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10"/>
+</svg>

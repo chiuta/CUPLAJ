@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CUPLAJ</title>
+<meta name="description" content="Party-line telephony for immersive theatre — Android, offline, 8 languages.">
+<link rel="icon" href="logo.svg">
+<style>
+:root{--bg:#14110f;--card:#1e1915;--ink:#e8d9b8;--dim:#a39883;--acc:#b5452f;--ok:#2e7d4f;--red:#a33a32;--fs:1}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:calc(16px*var(--fs))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.55}
+a{color:#e0a26a}
+header.top{position:sticky;top:0;z-index:5;background:#14110fee;backdrop-filter:blur(6px);border-bottom:1px solid #2b2620;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.5rem 1rem}
+header.top .brand{font-weight:bold;letter-spacing:.2em;margin-right:auto}
+select,button{font:inherit;color:var(--ink);background:#2b2f36;border:1px solid #3a3f47;border-radius:8px;padding:.35rem .7rem;cursor:pointer}
+button:hover{border-color:var(--acc)}
+.hero{text-align:center;padding:4rem 1rem 2rem;max-width:56rem;margin:0 auto}
+.hero img{width:150px;height:150px}
+.hero h1{font-size:clamp(2rem,6vw,3.6rem);margin:.4rem 0}
+.hero p{color:var(--dim);font-size:1.15rem}
+.cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin:1.4rem 0}
+.cta a{background:var(--acc);color:#fff;text-decoration:none;padding:.7rem 1.3rem;border-radius:10px}
+.cta a.alt{background:#2b2f36}
+main{max-width:60rem;margin:0 auto;padding:0 1rem 4rem}
+h2{border-bottom:1px solid #2b2620;padding-bottom:.3rem;margin-top:2.6rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem}
+.card{background:var(--card);border:1px solid #2b2620;border-radius:12px;padding:1rem}
+code{background:#2b2f36;padding:.05rem .35rem;border-radius:4px;font-size:.9em}
+ol,ul{padding-left:1.3rem}
+.demo{background:var(--card);border:1px solid #2b2620;border-radius:14px;padding:1rem}
+.lines{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.lines{grid-template-columns:1fr}}
+.line{border:1px dashed #5a5246;border-radius:12px;padding:.6rem}
+.line h4{margin:.1rem 0 .5rem;color:var(--dim);font-weight:normal}
+.phone{background:#2b2f36;border-radius:10px;padding:.6rem;margin:.4rem 0;border-left:6px solid #555}
+.phone.ringing{border-color:#e0a26a;animation:pulse 1s infinite}
+.phone.talking{border-color:var(--ok)}
+.phone.listening{border-color:#4a7fb0}
+.phone.busy{border-color:var(--red)}
+@keyframes pulse{50%{background:#3b3328}}
+@media(prefers-reduced-motion:reduce){.phone.ringing{animation:none}}
+.phone b{font-size:1.1em}
+.phone .st{color:var(--dim);margin-left:.4rem}
+.phone .row{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.4rem}
+.phone .row button{padding:.2rem .5rem;font-size:.85rem}
+#log{background:#0e0c0a;border-radius:8px;padding:.6rem;min-height:5rem;max-height:12rem;overflow:auto;font-family:monospace;font-size:.85rem;color:#c9bb98}
+footer{text-align:center;color:var(--dim);padding:2rem 1rem 4rem}
+#up{position:fixed;right:14px;bottom:14px;width:48px;height:48px;border-radius:50%;display:none;font-size:1.3rem}
+.langbar{display:flex;gap:.3rem;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="top">
+ <span class="brand">CUPLAJ</span>
+ <span class="langbar" id="langbar" role="group" aria-label="Language"></span>
+ <span role="group" aria-label="Aa"><button id="fm" aria-label="A−">A−</button><button id="fp" aria-label="A+">A+</button></span>
+</header>
+<div class="hero">
+ <img src="logo.svg" alt="CUPLAJ">
+ <h1 id="hero"></h1>
+ <p id="sub"></p>
+ <p id="tag" style="font-style:italic"></p>
+ <div class="cta"><a id="get" href="__REPO__/releases"></a><a id="repo" class="alt" href="__REPO__"></a></div>
+ <small id="ver" style="color:var(--dim)"></small>
+</div>
+<main>
+ <p id="intro"></p>
+ <h2 id="h_demo"></h2>
+ <div class="demo">
+  <p id="demo_hint" style="color:var(--dim);margin-top:0"></p>
+  <div class="lines" id="lines"></div>
+  <h4 id="h_log" style="margin:.8rem 0 .3rem"></h4>
+  <div id="log" aria-live="polite"></div>
+  <p><button id="reset"></button></p>
+ </div>
+ <h2 id="h_feat"></h2><div class="grid" id="feat"></div>
+ <h2 id="h_eras"></h2><div class="grid" id="eras"></div>
+ <h2 id="h_party"></h2><ol id="party"></ol>
+ <p style="text-align:center"><img src="partyline.svg" alt="" style="max-width:100%"></p>
+ <h2 id="h_quick"></h2><ol id="quick"></ol>
+ <h2 id="h_status"></h2><p id="status"></p>
+ <h2 id="h_priv"></h2><p id="priv"></p>
+ <h2 id="h_docs"></h2><ul id="docs"></ul>
+ <h2 id="h_support"></h2><p><a href="https://buymeacoffee.com/echo.of.the.strings" id="coffee"></a></p>
+</main>
+<footer><span id="lic"></span> · © Alexandru‑Ionuț Chiuță (Alexio) · v__VERSION__</footer>
+<button id="up" aria-label="↑">▲</button>
+<script>
+/*__DATA__*/
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/&lt;(https:[^&]+)&gt;/g,'<a href="$1">$1</a>');
+const LANGS=Object.keys(DATA);
+let lang=(location.hash||'').slice(1);
+if(!DATA[lang]){const n=(navigator.language||'en').slice(0,2);lang=DATA[n]?n:'en';}
+let fs=+(localStorage.getItem('cuplaj_fs')||1);
+try{}catch(e){}
+function setFs(v){fs=Math.min(1.6,Math.max(.8,v));document.documentElement.style.setProperty('--fs',fs);try{localStorage.setItem('cuplaj_fs',fs)}catch(e){}}
+setFs(fs);
+$('fm').onclick=()=>setFs(fs-.1);$('fp').onclick=()=>setFs(fs+.1);
+const bar=$('langbar');
+LANGS.forEach(l=>{const b=document.createElement('button');b.textContent=l.toUpperCase();b.title=DATA[l].name;b.onclick=()=>{lang=l;location.hash=l;render();};bar.appendChild(b);});
+/* ---- party-line demo ---- */
+const P={A1:{line:1,slot:0},A2:{line:1,slot:1},B1:{line:2,slot:0},B2:{line:2,slot:1}};
+let call=null,logs=[];
+function reset(){for(const k in P){P[k].st='idle';P[k].ring=0;}call=null;logs=[];}
+const nb=k=>k[0]+(k[1]==='1'?'2':'1');
+function say(t){logs.push(t);if(logs.length>40)logs.shift();}
+function doCall(from,to){
+ const s=DATA[lang].s,p=P[from];
+ if(p.st!=='idle')return;
+ if(P[nb(from)].st==='talking'){say(from+': '+s.hears+' '+s.click);p.st='listening';return;}
+ if(from===to||P[to].st!=='idle'||P[nb(to)].st==='talking'||P[nb(to)].st==='ringing'){p.st='busy';say(from+' '+s.call+' '+to+' → '+s.busy);return;}
+ p.st='calling';call={a:from,b:to,answered:false};
+ [to,nb(to)].forEach(k=>{if(P[k].st==='idle'){P[k].st='ringing';P[k].ring=P[k].slot;say(k+': '+s.ringing+' ('+(P[k].slot===P[to].slot?s.ring_long:s.ring_short)+')');}});
+ say(from+' '+s.call+' '+to);
+}
+function answer(k){
+ if(P[k].st!=='ringing'||!call)return;
+ const s=DATA[lang].s;
+ P[k].st='talking';P[call.a].st='talking';
+ [call.b,nb(call.b)].forEach(x=>{if(x!==k&&P[x].st==='ringing')P[x].st='idle';});
+ call.answered=true;call.by=k;say(k+': '+s.answer+' → '+call.a+' ⇄ '+k);
+}
+function hang(k){
+ if(call&&(k===call.a||k===call.by||(!call.answered&&P[k].st==='ringing'))){
+  for(const x in P){if(['talking','listening','calling','ringing','busy'].includes(P[x].st)&&(x===call.a||x===call.b||x===call.by||x===nb(call.b)||x===nb(call.a)))P[x].st='idle';}
+  call=null;say(k+': '+DATA[lang].s.hangup);return;}
+ P[k].st='idle';
+}
+function drawDemo(){
+ const s=DATA[lang].s,host=$('lines');host.innerHTML='';
+ [1,2].forEach(n=>{
+  const box=document.createElement('div');box.className='line';box.innerHTML='<h4>'+s.line+' '+n+'</h4>';
+  Object.keys(P).filter(k=>P[k].line===n).forEach(k=>{
+   const p=P[k],d=document.createElement('div');d.className='phone '+p.st;
+   const stTxt={idle:s.idle,ringing:s.ringing,talking:s.talking,busy:s.busy,listening:s.hears,calling:s.call+'…'}[p.st];
+   d.innerHTML='<b>'+k+'</b><span class="st">'+stTxt+'</span><div class="row"></div>';
+   const row=d.querySelector('.row');
+   const add=(t,f)=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{f();drawDemo();drawLog();};row.appendChild(b);};
+   if(p.st==='idle'){Object.keys(P).filter(x=>x!==k).forEach(x=>add('→ '+x,()=>doCall(k,x)));
+    if(P[nb(k)].st==='talking')add(s.listen,()=>doCall(k,k));}
+   if(p.st==='ringing')add(s.answer,()=>answer(k));
+   if(p.st!=='idle')add(s.hangup,()=>hang(k));
+   box.appendChild(d);
+  });host.appendChild(box);
+ });
+}
+function drawLog(){const l=$('log');l.textContent=logs.join('\n');l.scrollTop=l.scrollHeight;}
+$('reset').onclick=()=>{reset();drawDemo();drawLog();};
+/* ---- render ---- */
+function render(){
+ const d=DATA[lang],s=d.s;
+ document.documentElement.lang=lang;document.title='CUPLAJ — '+d.tag;
+ $('hero').textContent=s.hero;$('sub').textContent=s.sub;$('tag').textContent=d.tag;$('ver').textContent=d.ver;
+ $('get').textContent=s.get;$('repo').textContent=s.repo;$('intro').innerHTML=md(d.intro);
+ $('h_demo').textContent=s.demo;$('demo_hint').textContent=s.demo_hint;$('h_log').textContent=s.log;$('reset').textContent=s.reset;
+ $('h_feat').textContent=d.h_feat;$('h_eras').textContent=d.h_eras;$('h_party').textContent=d.h_party;$('h_quick').textContent=d.h_quick;
+ $('h_status').textContent=d.h_status;$('h_priv').textContent=d.h_priv;$('h_docs').textContent=d.h_docs;$('h_support').textContent=d.h_support;
+ $('feat').innerHTML=d.feat.map(x=>'<div class="card">'+md(x)+'</div>').join('');
+ $('eras').innerHTML=d.eras.map(x=>'<div class="card">'+md(x)+'</div>').join('');
+ $('party').innerHTML=d.party.map(x=>'<li>'+md(x)+'</li>').join('');
+ $('quick').innerHTML=d.quick.map(x=>'<li>'+md(x)+'</li>').join('');
+ $('status').innerHTML=md(d.status);$('priv').innerHTML=md(d.priv);$('lic').textContent=d.lic;
+ const g=lang==='en'?'GUIDE.md':'GUIDE.'+lang+'.md',R='__REPO__/blob/main/';
+ $('docs').innerHTML='<li><a href="'+R+'docs/'+g+'">'+esc(d.docs.guide)+'</a></li><li><a href="'+R+'docs/PROTOCOL.md">'+esc(d.docs.protocol)+' (EN)</a></li><li><a href="'+R+'docs/AUDIT.md">'+esc(d.docs.audit)+' (EN)</a></li><li><a href="'+R+'CHANGELOG.md">'+esc(d.docs.changelog)+' (EN)</a></li>';
+ $('coffee').textContent=s.coffee+' ☕';
+ [...bar.children].forEach(b=>b.style.borderColor=b.textContent.toLowerCase()===lang?'#b5452f':'');
+ drawDemo();drawLog();
+}
+const up=$('up');up.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+addEventListener('scroll',()=>{up.style.display=scrollY>400?'block':'none';});
+reset();render();
+</script>
+</body>
+</html>

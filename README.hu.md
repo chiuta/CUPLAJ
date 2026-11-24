@@ -1,0 +1,75 @@
+# CUPLAJ
+
+[English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
+
+<p align="center"><img src="docs/logo.svg" width="160" alt="CUPLAJ"></p>
+
+> **Közös vonalas telefonálás immerzív színházhoz**
+
+_Verzió: 1.0.0 · Utolsó frissítés: 2026-11-24_
+
+A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonközponttá immerzív színház számára. A szervezők és a színészek a helyszín helyi Wi‑Fi hálózatán beszélnek a nézőkkel (és egymással) — felhő, fiók és reklám nélkül. Névadó funkciója a *cuplaj*: az 1980-as évektől nagyjából 2006-ig használt vezetékes telefonok **közös vonala**, amelyen két előfizető osztozott, eltérő ritmusban csengettek, és hallhatták egymást.
+
+## Funkciók
+
+- **Három telefonkorszak** — 1985 tárcsás (hallható impulzusok), 1995 gombos (DTMF hangok), 2003 mobil (SMS, 160 karakter). A rendezés élőben válthat korszakot.
+- **Közös vonal (cuplaj)** — két telefon osztozik egy vonalon; az egyiknek szóló hívás mindkettőt csörgeti a hívott előfizető ritmusában; aki előbb felveszi, azé a hívás; ha a szomszéd beszélgetése közben felveszed a kagylót, belehallgathatsz, sőt közbe is szólhatsz.
+- **Infrastruktúra nélkül** — egy telefon (a rendezés) a hub. A többiek Wi‑Fi-n vagy a hub hotspotján csatlakoznak; a hubot automatikusan megtalálják; teremkód és PIN választható.
+- **Hang** — valódi hívások (8 kHz), nyomva-tartásos hangosbemondás a rendezéstől, kulissza-csatorna a stábnak.
+- **Jelzések** — teljes képernyős szöveg, rezgés, csengetés, vaku, hangszóró, korszakváltás, új névjegy, beszélt hang (helyi szövegfelolvasás), hangeffektek, fekete képernyő, szellemhívás.
+- **Forgatókönyv** — jelzéslista GO és PLAY (időzített) gombbal, átrendezés, JSON import/export.
+- **Rendezői eszközök** — számok, csoportok, párosítás/szétválasztás, automatikus párok, csendes belehallgatás, némítás, törlés, akkumulátorszint, eseménynapló, újraindítást túlélő állapot, forgalomkorlátozás.
+- **8 nyelv és hozzáférhetőség** — angol, román, francia, olasz, spanyol, portugál, német, magyar; állítható szövegméret; hívásfogadás a zárolt képernyőről; háttérben is fut.
+
+## Gyors kezdés
+
+1. Szerezd meg az APK-t az *Actions* fülről (`CUPLAJ-apk` artefaktum) vagy a *Releases* oldalról, és telepítsd minden telefonra.
+2. A rendezés telefonján kapcsold be a hotspotot (vagy tedd az összes telefont ugyanarra a Wi‑Fi-re).
+3. A rendezés telefonján válaszd a **Rendezés** → *Hub indítása* lehetőséget. Jegyezd fel a színészek PIN-jét és szükség esetén a teremkódot.
+4. A többin válaszd a **Néző** vagy **Színész** szerepet, jelöld ki a hubot a listában (vagy írd be a címét), és csatlakozz.
+5. Minden telefon kap egy számot (rendezés 100, színészek 201…, nézők 6 jegyű). Vedd fel a kagylót, és hívj.
+
+## A három korszak
+
+- **1985 · tárcsás** — valódi tárcsa, amit tekerni kell; az impulzusok hallhatók; két hosszú csengetés.
+- **1995 · gombos** — DTMF hangok, számjegyzet, csipogó-üzenetek.
+- **2003 · mobil** — nevek a telefonkönyvben, hívóazonosítás, legfeljebb 160 karakteres SMS.
+
+## Hogyan működik a közös vonal
+
+<p align="center"><img src="docs/partyline.svg" width="620" alt="party line"></p>
+
+1. A rendezés *párosít* két telefont (vagy automatikusan párokat képez). Az N. vonalon osztoznak, az 1. és 2. helyen.
+2. Az 1. előfizetőnek szóló hívás mindkettőt csörgeti; az 1. előfizető a saját számának ritmusát hallja (egy hosszú csengetés), a 2. a sajátját (két rövid).
+3. Aki felveszi, azé a hívás; a másik telefon abbahagyja a csörgést.
+4. Amíg a vonal foglalt, a szomszéd, aki felveszi a kagylót, hallja a beszélgetést, a beszélők pedig halk kattanást hallanak.
+5. A belehallgató *közbeszólhat*; a párosított telefonra érkező hívás foglalt vonalnál foglaltjelzést kap.
+6. A rendezés bármelyik vonalat csendben (kattanás nélkül) megfigyelheti.
+
+## Dokumentáció
+
+- [Felhasználói útmutató](docs/GUIDE.hu.md)
+- [Protokoll](docs/PROTOCOL.md) *(English)*
+- [Ellenséges szemléletű audit](docs/AUDIT.md) *(English)*
+- [Változásnapló](CHANGELOG.md) *(English)*
+- [Bemutatóoldal](https://chiuta.github.io/CUPLAJ/)
+
+## Őszinte állapot
+
+A hub logikáját (hívások, közös vonal, jogosultságok, korlátok, tartós állapot) ~55 automatikus ellenőrzés fedi le JVM-en. Az Android-felület és a hangút típusellenőrzésen átment az Android 14 SDK ellen, de **valódi eszközön még nem tesztelték**; az APK-t a GitHub Actions építi. Előadás előtt próbáld ki néhány telefonnal. A helyi hálózati forgalom nincs titkosítva (a PIN és a teremkód a jóhiszemű kívülállókat tartja távol, nem kriptográfia).
+
+## Építés
+
+JDK 17 szükséges. A `./gradlew assembleRelease` az `app/build/outputs/apk/release/app-release.apk` fájlt állítja elő (a hibakereső kulccsal aláírva, közvetlenül telepíthető). Egységtesztek: `./gradlew test`. A `.github/workflows` munkafolyamat mindkettőt elvégzi, Node ≥ 24 eszközökkel Ubuntu 26.04 rendszeren.
+
+## Adatvédelem
+
+Nincs analitika, nincs szerver, nincs fiók. A hang és az üzenetek csak a helyi hálózatotokon, a telefonok és a hub között haladnak. A hub a számokat, csoportokat és párosításokat a rendezés telefonján tárolja, hogy újraindítás után se vesszenek el.
+
+## Támogasd a projektet
+
+A CUPLAJ ingyenes és trade‑free. Ha segít az előadásodban, meghívhatod a szerzőt egy kávéra: <https://buymeacoffee.com/echo.of.the.strings>.
+
+## Licenc
+
+MIT © Alexandru‑Ionuț Chiuță (Alexio).

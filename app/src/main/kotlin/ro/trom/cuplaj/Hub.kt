@@ -1,0 +1,766 @@
+package ro.trom.cuplaj
+
+import org.json.JSONArray
+import org.json.JSONObject
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.NetworkInterface
+import java.net.ServerSocket
+import java.net.Socket
+import java.net.SocketException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Timer
+import java.util.TimerTask
+
+class Peer(val id: String) {
+    @Volatile
+    var conn: Conn? = null
+    var name = ""
+    var role = "spectator"
+    var number = ""
+    var group = ""
+    var tok = ""
+    var line = 0          // 0 = linie proprie; altfel id-ul liniei cuplate
+    var slot = 0          // 0 / 1 = poziția pe linia cuplată (decide soneria distinctă)
+    var src = 0           // indexul sursei audio
+    var callId = 0
+    var listening = false // ascultă o convorbire a vecinului
+    var talking = false   // intervine în convorbire
+    var silent = false    // ascultare discretă (regie)
+    var offhook = false
+    var muted = false
+    var bat = -1
+    private var winStart = 0L
+    private var jsonCnt = 0
+    private var audCnt = 0
+    val online: Boolean get() = conn?.open == true
+
+    /** Limitare de flux: kind 0 = JSON, 1 = audio. */
+    fun allow(kind: Int, now: Long): Boolean {
+        if (now - winStart >= 1000) {
+            winStart = now
+            jsonCnt = 0
+            audCnt = 0
+        }
+        return if (kind == 0) ++jsonCnt <= 40 else ++audCnt <= 90
+    }
+}
+
+class Call(val id: Int, var a: Peer, var b: Peer) {
+    var connected = false
+    val t0 = System.currentTimeMillis()
+    var tConn = 0L
+    val listeners = ArrayList<Peer>()
+    fun members(): List<Peer> = listOf(a, b)
+}
+
+/**
+ * Hubul rulează pe telefonul Regiei. Este centrala: numere, apeluri, linii cuplate, mesaje, indicii, rutare audio.
+ * Toată starea se modifică sub un singur lacăt.
+ */
+class Hub(
+    hubName: String,
+    private val pin: String,
+    private val room: String = "",
+    private val port: Int = PORT,
+    restore: String? = null,
+    private val trustLoopback: Boolean = true
+) {
+    private val hubName = hubName.replace('|', ' ').take(40)
+    private val lock = Any()
+    private val peers = LinkedHashMap<String, Peer>()
+    private val calls = HashMap<Int, Call>()
+    private var callSeq = 0
+    private var lineSeq = 0
+    private var srcSeq = 0
+    private var nReg = 0
+    private var nAct = 0
+    private var nSpec = 0
+    private var allowListen = true
+    private var clickOnJoin = true
+    private var peerMsg = true
+    private val log = ArrayList<String>()
+    private val rnd = java.security.SecureRandom()
+
+    /** Timpul de sonerie fără răspuns, în ms (public pentru teste). */
+    @Volatile
+    var ringTimeoutMs = 40000L
+
+    /** Apelat (sub lacăt) cu starea serializată, ca să poată fi salvată. */
+    @Volatile
+    var onPersist: ((String) -> Unit)? = null
+
+    @Volatile
+    var error: String? = null
+
+    @Volatile
+    private var server: ServerSocket? = null
+
+    @Volatile
+    private var running = false
+    private var timer: Timer? = null
+
+    init {
+        if (!restore.isNullOrEmpty()) {
+            try {
+                restoreState(JSONObject(restore))
+            } catch (_: Exception) {
+            }
+        }
+    }
+
+    fun start() {
+        if (running) return
+        running = true
+        Thread { acceptLoop() }.apply { isDaemon = true; start() }
+        Thread { beaconLoop() }.apply { isDaemon = true; start() }
+        val t = Timer(true)
+        t.schedule(object : TimerTask() {
+            override fun run() {
+                synchronized(lock) { sweep() }
+            }
+        }, 1000L, 1000L)
+        timer = t
+    }
+
+    fun stop() {
+        running = false
+        timer?.cancel()
+        try {
+            server?.close()
+        } catch (_: Exception) {
+        }
+        synchronized(lock) { peers.values.forEach { it.conn?.close() } }
+    }
+
+    // ------------------------------------------------------------------ persistență
+
+    private fun exportState(): String {
+        val arr = JSONArray()
+        for (q in peers.values) {
+            arr.put(
+                jo(
+                    "id" to q.id, "name" to q.name, "role" to q.role, "number" to q.number, "group" to q.group,
+                    "tok" to q.tok, "line" to q.line, "slot" to q.slot, "src" to q.src, "muted" to q.muted
+                )
+            )
+        }
+        return jo(
+            "peers" to arr, "nReg" to nReg, "nAct" to nAct, "nSpec" to nSpec, "lineSeq" to lineSeq, "srcSeq" to srcSeq,
+            "listen" to allowListen, "click" to clickOnJoin, "peerMsg" to peerMsg
+        ).toString()
+    }
+
+    private fun restoreState(o: JSONObject) {
+        nReg = o.optInt("nReg")
+        nAct = o.optInt("nAct")
+        nSpec = o.optInt("nSpec")
+        lineSeq = o.optInt("lineSeq")
+        srcSeq = o.optInt("srcSeq")
+        allowListen = o.optBoolean("listen", true)
+        clickOnJoin = o.optBoolean("click", true)
+        peerMsg = o.optBoolean("peerMsg", true)
+        val arr = o.optJSONArray("peers") ?: return
+        for (i in 0 until arr.length()) {
+            val j = arr.getJSONObject(i)
+            val p = Peer(j.getString("id"))
+            p.name = j.optString("name")
+            p.role = j.optString("role", "spectator")
+            p.number = j.optString("number")
+            p.group = j.optString("group")
+            p.tok = j.optString("tok")
+            p.line = j.optInt("line")
+            p.slot = j.optInt("slot")
+            p.src = j.optInt("src")
+            p.muted = j.optBoolean("muted")
+            peers[p.id] = p
+        }
+    }
+
+    private fun persist() {
+        val cb = onPersist ?: return
+        try {
+            cb(exportState())
+        } catch (_: Exception) {
+        }
+    }
+
+    // ------------------------------------------------------------------ jurnal
+
+    private fun logEvent(s: String) {
+        val line = SimpleDateFormat("HH:mm:ss").format(Date()) + "  " + s
+        log.add(line)
+        while (log.size > 300) log.removeAt(0)
+        val j = jo("t" to "log", "line" to line)
+        for (q in peers.values) if (q.role == "regie" && q.online) sendTo(q, j)
+    }
+
+    private fun label(p: Peer) = p.name + " (" + p.number + ")"
+
+    // ------------------------------------------------------------------ rețea
+
+    private fun acceptLoop() {
+        try {
+            val ss = ServerSocket()
+            ss.reuseAddress = true
+            ss.bind(InetSocketAddress(port))
+            server = ss
+            while (running) {
+                try {
+                    val s = ss.accept()
+                    Thread { handle(s) }.apply { isDaemon = true; start() }
+                } catch (e: SocketException) {
+                    if (!running) break
+                    Thread.sleep(100)
+                } catch (_: Exception) {
+                    Thread.sleep(100)
+                }
+            }
+        } catch (e: Exception) {
+            error = e.message ?: "bind"
+        }
+    }
+
+    private fun beaconLoop() {
+        var ds: DatagramSocket? = null
+        try {
+            val d = DatagramSocket()
+            ds = d
+            d.broadcast = true
+            val msg = "CUPLAJ1|$hubName|$port|" + (if (room.isEmpty()) "0" else "1")
+            val bytes = msg.toByteArray(Charsets.UTF_8)
+            while (running) {
+                try {
+                    val targets = ArrayList<InetAddress>()
+                    targets.add(InetAddress.getByName("255.255.255.255"))
+                    val en = NetworkInterface.getNetworkInterfaces()
+                    while (en != null && en.hasMoreElements()) {
+                        val ni = en.nextElement()
+                        if (!ni.isUp || ni.isLoopback) continue
+                        for (ia in ni.interfaceAddresses) {
+                            val b = ia.broadcast
+                            if (b != null) targets.add(b)
+                        }
+                    }
+                    for (t in targets) {
+                        try {
+                            d.send(DatagramPacket(bytes, bytes.size, t, BEACON_PORT))
+                        } catch (_: Exception) {
+                        }
+                    }
+                } catch (_: Exception) {
+                }
+                Thread.sleep(2000)
+            }
+        } catch (_: Exception) {
+        } finally {
+            ds?.close()
+        }
+    }
+
+    private fun deny(c: Conn, code: String) {
+        c.startWriter()
+        c.sendJson(jo("t" to "denied", "why" to code))
+        try {
+            Thread.sleep(300)
+        } catch (_: Exception) {
+        }
+        c.close()
+    }
+
+    private fun clean(s: String, n: Int): String = s.filter { it >= ' ' }.trim().take(n)
+
+    private fun handle(s: Socket) {
+        val c = Conn(s)
+        var me: Peer? = null
+        try {
+            s.soTimeout = 10000
+            val f = c.readFrame()
+            if (f.type != T_JSON) {
+                c.close()
+                return
+            }
+            val m = parseJson(f)
+            if (m.optString("t") != "hello") {
+                c.close()
+                return
+            }
+            s.soTimeout = 0
+            val id = clean(m.getString("id"), 64)
+            if (id.isEmpty()) {
+                c.close()
+                return
+            }
+            var role = m.optString("role", "spectator")
+            val local = trustLoopback && s.inetAddress.isLoopbackAddress
+            if (!local && room.isNotEmpty() && m.optString("room") != room) {
+                deny(c, "bad_room")
+                return
+            }
+            if (!local && (role == "actor" || role == "regie") && m.optString("pin") != pin) {
+                deny(c, "bad_pin")
+                return
+            }
+            if (role != "regie" && role != "actor") role = "spectator"
+            c.startWriter()
+            var refused: String? = null
+            synchronized(lock) {
+                var q = peers[id]
+                if (q == null && peers.size >= 400) {
+                    refused = "full"
+                } else if (q != null && !local && q.tok.isNotEmpty() && q.tok != m.optString("tok")) {
+                    refused = "dup"
+                } else {
+                    if (q == null) {
+                        q = Peer(id)
+                        peers[id] = q
+                        srcSeq++
+                        q.src = srcSeq % 250 + 1
+                    }
+                    q.conn?.close()
+                    if (q.number.isEmpty() || q.role != role) {
+                        q.role = role
+                        q.number = newNumber(role)
+                    }
+                    if (q.tok.isEmpty()) q.tok = newToken()
+                    q.name = clean(m.optString("name", "?"), 40).ifEmpty { "?" }
+                    q.conn = c
+                    me = q
+                    sendTo(q, welcome(q))
+                    pushLine(q)
+                    if (q.role == "regie") for (l in log) sendTo(q, jo("t" to "log", "line" to l))
+                    logEvent("+ " + label(q))
+                    broadcastPeers()
+                    persist()
+                }
+            }
+            val why = refused
+            if (why != null) {
+                c.sendJson(jo("t" to "denied", "why" to why))
+                Thread.sleep(300)
+                c.close()
+                return
+            }
+            while (true) {
+                val fr = c.readFrame()
+                val who = me ?: break
+                val now = System.currentTimeMillis()
+                if (fr.type == T_JSON) {
+                    val jm = parseJson(fr)
+                    synchronized(lock) { if (who.allow(0, now)) onJson(who, jm) }
+                } else if (fr.type == T_AUDIO && fr.data.size > 1) {
+                    synchronized(lock) { if (who.allow(1, now)) onAudio(who, fr.data) }
+                }
+            }
+        } catch (_: Exception) {
+        } finally {
+            val q = me
+            if (q != null) {
+                synchronized(lock) {
+                    if (q.conn === c) {
+                        hangup(q)
+                        q.conn = null
+                        logEvent("− " + label(q))
+                        broadcastPeers()
+                    }
+                }
+            }
+            c.close()
+        }
+    }
+
+    // ------------------------------------------------------------------ utilitare
+
+    private fun isStaff(p: Peer) = p.role == "regie" || p.role == "actor"
+
+    private fun newToken(): String {
+        val b = ByteArray(12)
+        rnd.nextBytes(b)
+        return b.joinToString("") { String.format("%02x", it) }
+    }
+
+    private fun newNumber(role: String): String {
+        while (true) {
+            val n = when (role) {
+                "regie" -> "10" + (nReg++)
+                "actor" -> "2" + String.format("%02d", ++nAct)
+                else -> "21" + String.format("%04d", 1000 + (++nSpec))
+            }
+            if (peers.values.none { it.number == n }) return n
+        }
+    }
+
+    private fun welcome(q: Peer) = jo(
+        "t" to "welcome", "number" to q.number, "name" to q.name, "src" to q.src,
+        "hub" to hubName, "role" to q.role, "tok" to q.tok, "group" to q.group
+    )
+
+    private fun sendTo(p: Peer, o: JSONObject) {
+        p.conn?.sendJson(o)
+    }
+
+    private fun partnerOf(p: Peer): Peer? =
+        if (p.line == 0) null else peers.values.firstOrNull { it !== p && it.line == p.line }
+
+    private fun pushLine(p: Peer) {
+        sendTo(p, jo("t" to "line", "line" to p.line, "slot" to p.slot, "partner" to (partnerOf(p)?.number ?: "")))
+    }
+
+    private fun targets(to: String, from: Peer?): List<Peer> {
+        val on = peers.values.filter { it.online && it !== from }
+        return when {
+            to == "all" -> on
+            to == "staff" -> on.filter { isStaff(it) }
+            to == "spectators" -> on.filter { it.role == "spectator" }
+            to == "actors" -> on.filter { it.role == "actor" }
+            to.startsWith("num:") -> on.filter { it.number == to.substring(4) }
+            to.startsWith("id:") -> on.filter { it.id == to.substring(3) }
+            to.startsWith("grp:") -> on.filter { it.group.isNotEmpty() && it.group == to.substring(4) }
+            else -> emptyList()
+        }
+    }
+
+    private fun peersJson(): JSONObject {
+        val arr = JSONArray()
+        for (q in peers.values) {
+            arr.put(
+                jo(
+                    "id" to q.id, "name" to q.name, "role" to q.role, "number" to q.number, "group" to q.group,
+                    "line" to q.line, "slot" to q.slot, "online" to q.online, "muted" to q.muted, "bat" to q.bat,
+                    "busy" to (q.callId != 0 || q.offhook),
+                    "mon" to (q.callId != 0 && calls[q.callId]?.connected == true)
+                )
+            )
+        }
+        return jo("t" to "peers", "list" to arr, "listen" to allowListen, "click" to clickOnJoin, "peerMsg" to peerMsg)
+    }
+
+    private fun broadcastPeers() {
+        val j = peersJson()
+        for (q in peers.values) if (isStaff(q) && q.online) sendTo(q, j)
+    }
+
+    // ------------------------------------------------------------------ mesaje JSON
+
+    private fun onJson(p: Peer, m: JSONObject) {
+        val reg = p.role == "regie"
+        when (m.optString("t")) {
+            "msg" -> {
+                var to = m.optString("to", "all")
+                if (!isStaff(p) && to == "all") to = "staff"
+                val out = jo(
+                    "t" to "msg", "from" to p.name, "num" to p.number, "role" to p.role,
+                    "text" to m.optString("text").take(500), "to" to to
+                )
+                var list = targets(to, p)
+                if (p.role == "spectator" && !peerMsg) list = list.filter { isStaff(it) }
+                for (r in list) sendTo(r, out)
+            }
+            "cue" -> if (reg) {
+                m.put("from", p.number)
+                for (r in targets(m.optString("to", "all"), p)) sendTo(r, m)
+                logEvent("cue " + m.optString("kind") + " → " + m.optString("to"))
+            }
+            "offhook" -> { offhook(p); broadcastPeers() }
+            "onhook", "hangup" -> { hangup(p); broadcastPeers() }
+            "dial" -> { dial(p, m.optString("number").filter { it.isDigit() }); broadcastPeers() }
+            "answer" -> { answer(p); broadcastPeers() }
+            "intervene" -> if (p.listening) p.talking = m.optBoolean("on")
+            "monitor" -> if (reg) { monitor(p, m.optString("number")); broadcastPeers() }
+            "couple" -> if (reg) couple(m.optString("a"), m.optString("b"))
+            "uncouple" -> if (reg) uncouple(m.optString("id"))
+            "autocouple" -> if (reg) autoCouple()
+            "setnum" -> if (reg) setNum(m.optString("id"), m.optString("number").filter { it.isDigit() })
+            "setgroup" -> if (reg) {
+                val q = peers[m.optString("id")]
+                if (q != null) {
+                    q.group = clean(m.optString("group"), 24)
+                    persist()
+                    broadcastPeers()
+                }
+            }
+            "mute" -> if (reg) {
+                val q = peers[m.optString("id")]
+                if (q != null) {
+                    q.muted = m.optBoolean("on")
+                    persist()
+                    broadcastPeers()
+                }
+            }
+            "forget" -> if (reg) forget(m.optString("id"))
+            "stat" -> {
+                p.bat = m.optInt("bat", -1)
+                broadcastPeers()
+            }
+            "getlog" -> if (reg) for (l in log) sendTo(p, jo("t" to "log", "line" to l))
+            "opt" -> if (reg) {
+                allowListen = m.optBoolean("listen", true)
+                clickOnJoin = m.optBoolean("click", true)
+                peerMsg = m.optBoolean("peerMsg", true)
+                persist()
+                broadcastPeers()
+            }
+            "peers" -> if (isStaff(p)) sendTo(p, peersJson())
+        }
+    }
+
+    // ------------------------------------------------------------------ telefonie
+
+    private fun reset(x: Peer) {
+        x.callId = 0
+        x.listening = false
+        x.talking = false
+        x.silent = false
+        x.offhook = false
+    }
+
+    private fun joinListen(p: Peer, c: Call, silent: Boolean) {
+        p.callId = c.id
+        p.listening = true
+        p.talking = false
+        p.silent = silent
+        p.offhook = true
+        c.listeners.add(p)
+        sendTo(p, jo("t" to "listening"))
+        logEvent((if (silent) "monitor " else "ascultă ") + label(p) + " @ " + label(c.a) + "↔" + label(c.b))
+        if (clickOnJoin && !silent) for (x in c.members()) sendTo(x, jo("t" to "click"))
+    }
+
+    /** Ridicarea receptorului: ton de apel, ocupat, sau — pe linie cuplată — ascultarea convorbirii vecinului. */
+    private fun offhook(p: Peer) {
+        if (p.callId != 0 || p.offhook) return
+        val pa = partnerOf(p)
+        val c = if (pa != null) calls[pa.callId] else null
+        if (pa != null && c != null && c.connected && allowListen && !pa.listening) {
+            joinListen(p, c, false)
+        } else if (pa != null && (pa.callId != 0 || pa.offhook)) {
+            sendTo(p, jo("t" to "busy"))
+        } else {
+            p.offhook = true
+            sendTo(p, jo("t" to "dialtone"))
+        }
+    }
+
+    private fun dial(p: Peer, number: String) {
+        if (number.isEmpty() || number.length > 16 || p.callId != 0) return
+        if (!p.offhook) {
+            offhook(p)
+            if (!p.offhook || p.callId != 0) return
+        }
+        val t = peers.values.firstOrNull { it.number == number }
+        if (t == null || !t.online || t === p) {
+            sendTo(p, jo("t" to "unknown"))
+            return
+        }
+        val tp = partnerOf(t)
+        if (t.callId != 0 || t.offhook || (tp != null && (tp.callId != 0 || tp.offhook))) {
+            sendTo(p, jo("t" to "busy"))
+            return
+        }
+        callSeq++
+        val c = Call(callSeq, p, t)
+        calls[c.id] = c
+        p.callId = c.id
+        t.callId = c.id
+        sendTo(p, jo("t" to "ringback"))
+        sendTo(t, jo("t" to "ring", "num" to p.number, "name" to p.name, "pat" to t.slot, "who" to t.number))
+        // pe linia cuplată sună și telefonul vecinului, cu aceeași cadență (a numărului chemat)
+        if (tp != null && tp.online) {
+            sendTo(tp, jo("t" to "ring", "num" to p.number, "name" to "", "pat" to t.slot, "who" to t.number, "party" to true))
+        }
+        logEvent("apel " + label(p) + " → " + label(t))
+    }
+
+    private fun connect(c: Call, forNum: String) {
+        c.connected = true
+        c.tConn = System.currentTimeMillis()
+        c.a.offhook = true
+        c.b.offhook = true
+        sendTo(c.a, jo("t" to "connected", "peer" to c.b.number, "name" to c.b.name))
+        sendTo(c.b, jo("t" to "connected", "peer" to c.a.number, "name" to c.a.name, "forNum" to forNum))
+        val pb = partnerOf(c.b)
+        if (pb != null && pb.callId == 0) sendTo(pb, jo("t" to "stopring"))
+        logEvent("conectat " + label(c.a) + " ↔ " + label(c.b) + if (forNum.isNotEmpty()) " (răspuns greșit, era pentru $forNum)" else "")
+    }
+
+    private fun answer(p: Peer) {
+        val c = calls[p.callId]
+        if (c != null) {
+            if (c.b === p && !c.connected) connect(c, "")
+            return
+        }
+        if (p.offhook) return
+        // vecinul de pe linia cuplată a ridicat receptorul când suna pentru celălalt abonat
+        val pa = partnerOf(p) ?: return
+        val c2 = calls[pa.callId] ?: return
+        if (c2.b === pa && !c2.connected) {
+            val old = c2.b
+            c2.b = p
+            old.callId = 0
+            p.callId = c2.id
+            sendTo(old, jo("t" to "stopring"))
+            connect(c2, old.number)
+        }
+    }
+
+    private fun endCall(c: Call, by: Peer?, why: String) {
+        calls.remove(c.id)
+        val all = ArrayList<Peer>()
+        all.add(c.a)
+        all.add(c.b)
+        all.addAll(c.listeners)
+        val pb = partnerOf(c.b)
+        for (x in all) {
+            reset(x)
+            sendTo(x, jo("t" to "ended", "why" to why, "by" to (by?.number ?: "")))
+        }
+        if (!c.connected && pb != null) sendTo(pb, jo("t" to "stopring"))
+        val dur = if (c.connected) (System.currentTimeMillis() - c.tConn) / 1000 else 0
+        logEvent("încheiat " + label(c.a) + " ↔ " + label(c.b) + " [" + why + (if (c.connected) ", ${dur}s" else "") + "]")
+    }
+
+    private fun hangup(p: Peer) {
+        val c = calls[p.callId]
+        if (c == null) {
+            reset(p)
+            return
+        }
+        if (p.listening) {
+            c.listeners.remove(p)
+            val wasSilent = p.silent
+            reset(p)
+            sendTo(p, jo("t" to "ended", "why" to "left"))
+            if (clickOnJoin && !wasSilent) for (x in c.members()) sendTo(x, jo("t" to "click"))
+            return
+        }
+        val rejected = !c.connected && p === c.b
+        endCall(c, p, if (rejected) "rejected" else "hangup")
+    }
+
+    private fun sweep() {
+        val now = System.currentTimeMillis()
+        for (c in calls.values.toList()) {
+            if (!c.connected && now - c.t0 > ringTimeoutMs) endCall(c, null, "noanswer")
+        }
+    }
+
+    private fun monitor(p: Peer, number: String) {
+        if (p.callId != 0) return
+        val t = peers.values.firstOrNull { it.number == number } ?: return
+        val c = calls[t.callId] ?: return
+        if (!c.connected) return
+        joinListen(p, c, true)
+    }
+
+    // ------------------------------------------------------------------ cuplaj (linii comune)
+
+    private fun couple(a: String, b: String) {
+        val pa = peers[a] ?: return
+        val pb = peers[b] ?: return
+        if (pa === pb) return
+        detach(pa, false)
+        detach(pb, false)
+        lineSeq++
+        pa.line = lineSeq
+        pa.slot = 0
+        pb.line = lineSeq
+        pb.slot = 1
+        pushLine(pa)
+        pushLine(pb)
+        logEvent("cuplaj " + label(pa) + " ⇄ " + label(pb))
+        persist()
+        broadcastPeers()
+    }
+
+    private fun detach(p: Peer, push: Boolean = true) {
+        val pa = partnerOf(p)
+        p.line = 0
+        p.slot = 0
+        if (pa != null) {
+            pa.line = 0
+            pa.slot = 0
+            pushLine(pa)
+        }
+        if (push) pushLine(p)
+    }
+
+    private fun uncouple(id: String) {
+        val p = peers[id] ?: return
+        detach(p)
+        persist()
+        broadcastPeers()
+    }
+
+    private fun autoCouple() {
+        val sp = peers.values.filter { it.role == "spectator" }
+        for (x in peers.values) {
+            x.line = 0
+            x.slot = 0
+        }
+        var i = 0
+        while (i + 1 < sp.size) {
+            lineSeq++
+            sp[i].line = lineSeq
+            sp[i].slot = 0
+            sp[i + 1].line = lineSeq
+            sp[i + 1].slot = 1
+            i += 2
+        }
+        for (x in peers.values) pushLine(x)
+        logEvent("auto-perechi: " + (sp.size / 2))
+        persist()
+        broadcastPeers()
+    }
+
+    private fun setNum(id: String, number: String) {
+        val p = peers[id] ?: return
+        if (number.isEmpty() || number.length > 12) return
+        if (peers.values.any { it !== p && it.number == number }) return
+        p.number = number
+        sendTo(p, welcome(p))
+        persist()
+        broadcastPeers()
+    }
+
+    private fun forget(id: String) {
+        val p = peers[id] ?: return
+        if (p.role == "regie" && p.online) return
+        hangup(p)
+        val pa = partnerOf(p)
+        if (pa != null) {
+            pa.line = 0
+            pa.slot = 0
+            pushLine(pa)
+        }
+        peers.remove(id)
+        p.conn?.close()
+        logEvent("eliminat " + label(p))
+        persist()
+        broadcastPeers()
+    }
+
+    // ------------------------------------------------------------------ audio
+
+    private fun onAudio(p: Peer, data: ByteArray) {
+        if (p.muted) return
+        val mode = data[0].toInt()
+        val out = ByteArray(data.size)
+        System.arraycopy(data, 1, out, 1, data.size - 1)
+        out[0] = p.src.toByte()
+        val f = Frame(T_AUDIO, out)
+        val dest: List<Peer> = when (mode) {
+            0 -> {
+                val c = calls[p.callId]
+                if (c == null || !c.connected || (p.listening && !p.talking)) emptyList()
+                else (c.members() + c.listeners).filter { it !== p }
+            }
+            1 -> if (isStaff(p)) peers.values.filter { it !== p } else emptyList()
+            2 -> peers.values.filter { it !== p && isStaff(it) }
+            else -> emptyList()
+        }
+        for (d in dest) d.conn?.send(f)
+    }
+}

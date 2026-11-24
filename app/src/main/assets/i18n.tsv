@@ -1,0 +1,179 @@
+# key	en	ro	fr	it	es	pt	de	hu
+tagline	Immersive theatre · the line that binds you	Teatru imersiv · linia care vă leagă	Théâtre immersif · la ligne qui vous relie	Teatro immersivo · la linea che vi lega	Teatro inmersivo · la línea que os une	Teatro imersivo · a linha que vos liga	Immersives Theater · die Leitung, die euch verbindet	Immerzív színház · a vonal, amely összeköt
+name_hint	Your name or your character's	Numele tău sau al personajului	Votre nom ou celui du personnage	Il tuo nome o quello del personaggio	Tu nombre o el del personaje	O teu nome ou o da personagem	Dein Name oder der deiner Figur	A neved vagy a szereplődé
+role	Role	Rolul	Rôle	Ruolo	Rol	Papel	Rolle	Szerep
+role_spectator	Spectator	Spectator	Spectateur	Spettatore	Espectador	Espectador	Zuschauer	Néző
+role_actor	Actor	Actor	Acteur	Attore	Actor	Ator	Schauspieler	Színész
+role_regie	Control	Regie	Régie	Regia	Regiduría	Régie	Regie	Rendezés
+room_hint	Room code (optional)	Cod cameră (opțional)	Code de salle (facultatif)	Codice sala (facoltativo)	Código de sala (opcional)	Código da sala (opcional)	Raumcode (optional)	Teremkód (nem kötelező)
+room_none	none	fără	aucun	nessuno	ninguno	nenhum	keiner	nincs
+regie_explain	This phone becomes the hub (the exchange). The other phones join the same Wi‑Fi network or this phone's hotspot.	Acest telefon devine hubul (centrala). Celelalte telefoane intră în aceeași rețea Wi‑Fi sau în hotspotul acestuia.	Ce téléphone devient le hub (le central). Les autres téléphones rejoignent le même réseau Wi‑Fi ou le point d'accès de celui-ci.	Questo telefono diventa l'hub (la centrale). Gli altri telefoni entrano nella stessa rete Wi‑Fi o nell'hotspot di questo.	Este teléfono se convierte en el hub (la centralita). Los demás teléfonos se unen a la misma red Wi‑Fi o a su punto de acceso.	Este telemóvel passa a ser o hub (a central). Os outros telemóveis entram na mesma rede Wi‑Fi ou no seu hotspot.	Dieses Telefon wird zum Hub (die Vermittlung). Die anderen Telefone treten demselben WLAN oder dessen Hotspot bei.	Ez a telefon lesz a hub (a központ). A többi telefon ugyanahhoz a Wi‑Fi hálózathoz vagy ennek a hotspotjához csatlakozik.
+addresses	Addresses: %1$s	Adrese: %1$s	Adresses : %1$s	Indirizzi: %1$s	Direcciones: %1$s	Endereços: %1$s	Adressen: %1$s	Címek: %1$s
+no_net	(connect to Wi‑Fi or start the hotspot)	(conectați-vă la Wi‑Fi sau porniți hotspotul)	(connectez-vous au Wi‑Fi ou activez le point d'accès)	(collegatevi al Wi‑Fi o attivate l'hotspot)	(conéctate al Wi‑Fi o activa el punto de acceso)	(liga-te ao Wi‑Fi ou ativa o hotspot)	(mit WLAN verbinden oder Hotspot starten)	(csatlakozz Wi‑Fi-hez vagy indítsd el a hotspotot)
+actor_pin	PIN for actors: %1$s	PIN pentru actori: %1$s	PIN des acteurs : %1$s	PIN per gli attori: %1$s	PIN para actores: %1$s	PIN para atores: %1$s	PIN für Schauspieler: %1$s	PIN a színészeknek: %1$s
+btn_refresh	Refresh addresses	Reîmprospătează adresele	Actualiser les adresses	Aggiorna gli indirizzi	Actualizar direcciones	Atualizar endereços	Adressen aktualisieren	Címek frissítése
+hubs_found	Hubs found on the network	Huburi găsite în rețea	Hubs trouvés sur le réseau	Hub trovati nella rete	Hubs encontrados en la red	Hubs encontrados na rede	Im Netzwerk gefundene Hubs	A hálózaton talált hubok
+hubs_none	(none yet — you can type the address by hand)	(niciunul încă — poți scrie adresa manual)	(aucun pour l'instant — vous pouvez saisir l'adresse à la main)	(nessuno per ora — puoi scrivere l'indirizzo a mano)	(ninguno aún — puedes escribir la dirección a mano)	(nenhum ainda — podes escrever o endereço à mão)	(noch keiner — Adresse kann von Hand eingegeben werden)	(még egy sem — a címet kézzel is megadhatod)
+host_hint	Hub address (e.g. 192.168.43.1)	Adresa hubului (ex. 192.168.43.1)	Adresse du hub (ex. 192.168.43.1)	Indirizzo dell'hub (es. 192.168.43.1)	Dirección del hub (p. ej. 192.168.43.1)	Endereço do hub (ex. 192.168.43.1)	Hub-Adresse (z. B. 192.168.43.1)	A hub címe (pl. 192.168.43.1)
+pin_hint	PIN given by the control room	PIN-ul primit de la regie	PIN reçu de la régie	PIN ricevuto dalla regia	PIN recibido de la regiduría	PIN recebido da régie	PIN von der Regie	A rendezőtől kapott PIN
+era_pick	Phone era (the control can change it at any time)	Epoca telefonului (regia o poate schimba oricând)	Époque du téléphone (la régie peut la changer à tout moment)	Epoca del telefono (la regia può cambiarla in ogni momento)	Época del teléfono (la regiduría puede cambiarla en cualquier momento)	Época do telefone (a régie pode mudá-la a qualquer momento)	Epoche des Telefons (die Regie kann sie jederzeit ändern)	A telefon korszaka (a rendezés bármikor módosíthatja)
+era_btn_80	1985 · dial	1985 · disc	1985 · cadran	1985 · disco	1985 · disco	1985 · disco	1985 · Wählscheibe	1985 · tárcsa
+era_btn_90	1995 · keys	1995 · taste	1995 · touches	1995 · tasti	1995 · teclas	1995 · teclas	1995 · Tasten	1995 · gombok
+era_btn_00	2003 · mobile	2003 · mobil	2003 · mobile	2003 · cellulare	2003 · móvil	2003 · telemóvel	2003 · Handy	2003 · mobil
+btn_start_hub	Start the hub	Pornește hubul	Démarrer le hub	Avvia l'hub	Iniciar el hub	Iniciar o hub	Hub starten	Hub indítása
+btn_connect	Connect	Conectează-te	Se connecter	Connettiti	Conectar	Ligar	Verbinden	Csatlakozás
+err_name	Enter a name	Scrie un nume	Saisissez un nom	Scrivi un nome	Escribe un nombre	Escreve um nome	Namen eingeben	Írj be egy nevet
+err_host	Choose or type the hub address	Alege sau scrie adresa hubului	Choisissez ou saisissez l'adresse du hub	Scegli o scrivi l'indirizzo dell'hub	Elige o escribe la dirección del hub	Escolhe ou escreve o endereço do hub	Hub-Adresse wählen oder eingeben	Válaszd ki vagy írd be a hub címét
+err_port	Port 8470 is busy — close the other app	Portul 8470 e ocupat — închide cealaltă aplicație	Le port 8470 est occupé — fermez l'autre application	La porta 8470 è occupata — chiudi l'altra app	El puerto 8470 está ocupado — cierra la otra aplicación	A porta 8470 está ocupada — fecha a outra aplicação	Port 8470 ist belegt — andere App schließen	A 8470-es port foglalt — zárd be a másik alkalmazást
+err_mic	Microphone permission is missing	Lipsește permisiunea pentru microfon	Permission du microphone manquante	Manca il permesso del microfono	Falta el permiso del micrófono	Falta a permissão do microfone	Mikrofonberechtigung fehlt	Hiányzik a mikrofon engedélye
+err_conn	No connection to the hub	Nu ești conectat la hub	Pas de connexion au hub	Nessuna connessione all'hub	Sin conexión con el hub	Sem ligação ao hub	Keine Verbindung zum Hub	Nincs kapcsolat a hubbal
+err_busy_line	Hang up first	Închide mai întâi	Raccrochez d'abord	Riaggancia prima	Cuelga primero	Desliga primeiro	Erst auflegen	Előbb tedd le
+scroll_up	Back to top	Înapoi sus	Retour en haut	Torna su	Volver arriba	Voltar ao topo	Nach oben	Vissza a tetejére
+connected_to	Connected to %1$s	Conectat la %1$s	Connecté à %1$s	Connesso a %1$s	Conectado a %1$s	Ligado a %1$s	Verbunden mit %1$s	Csatlakozva: %1$s
+hdr_num	no. %1$s	nr. %1$s	n° %1$s	n. %1$s	n.º %1$s	n.º %1$s	Nr. %1$s	%1$s. sz.
+denied_bad_room	Wrong room code	Cod de cameră greșit	Code de salle incorrect	Codice sala errato	Código de sala incorrecto	Código da sala errado	Falscher Raumcode	Hibás teremkód
+denied_bad_pin	Wrong PIN	PIN greșit	PIN incorrect	PIN errato	PIN incorrecto	PIN errado	Falsche PIN	Hibás PIN
+denied_dup	This device is already connected	Acest dispozitiv e deja conectat	Cet appareil est déjà connecté	Questo dispositivo è già connesso	Este dispositivo ya está conectado	Este dispositivo já está ligado	Dieses Gerät ist bereits verbunden	Ez az eszköz már csatlakozva van
+denied_full	The exchange is full	Centrala e plină	Le central est plein	La centrale è piena	La centralita está llena	A central está cheia	Die Vermittlung ist voll	A központ megtelt
+denied_other	Connection refused	Conexiune refuzată	Connexion refusée	Connessione rifiutata	Conexión rechazada	Ligação recusada	Verbindung abgelehnt	A kapcsolat elutasítva
+tab_phone	Phone	Telefon	Téléphone	Telefono	Teléfono	Telefone	Telefon	Telefon
+tab_msgs	Messages	Mesaje	Messages	Messaggi	Mensajes	Mensagens	Nachrichten	Üzenetek
+tab_voice	Voice	Voce	Voix	Voce	Voz	Voz	Stimme	Hang
+tab_regie	Control	Regie	Régie	Regia	Regiduría	Régie	Regie	Rendezés
+tab_script	Script	Scenariu	Scénario	Copione	Guion	Guião	Ablauf	Forgatókönyv
+btn_exit	Exit	Ieși	Quitter	Esci	Salir	Sair	Beenden	Kilépés
+confirm_exit	Close the line and leave the show?	Închizi linia și pleci din spectacol?	Fermer la ligne et quitter le spectacle ?	Chiudere la linea e uscire dallo spettacolo?	¿Cerrar la línea y salir del espectáculo?	Fechar a linha e sair do espetáculo?	Leitung schließen und die Vorstellung verlassen?	Bezárod a vonalat és kilépsz az előadásból?
+yes	Yes	Da	Oui	Sì	Sí	Sim	Ja	Igen
+no	No	Nu	Non	No	No	Não	Nein	Nem
+ok	OK	OK	OK	OK	OK	OK	OK	OK
+cancel	Cancel	Anulează	Annuler	Annulla	Cancelar	Cancelar	Abbrechen	Mégse
+answer	Answer	Răspunde	Répondre	Rispondi	Contestar	Atender	Annehmen	Felvesz
+reject	Reject	Respinge	Rejeter	Rifiuta	Rechazar	Rejeitar	Ablehnen	Elutasít
+notif_call	Incoming call	Apel primit	Appel entrant	Chiamata in arrivo	Llamada entrante	Chamada recebida	Eingehender Anruf	Bejövő hívás
+ring_plain	Someone is calling the line	Cineva sună pe linie	Quelqu'un appelle sur la ligne	Qualcuno chiama sulla linea	Alguien llama a la línea	Alguém chama na linha	Jemand ruft auf der Leitung an	Valaki hív a vonalon
+era_title_80	DIAL TELEPHONE · 1985	TELEFON CU DISC · 1985	TÉLÉPHONE À CADRAN · 1985	TELEFONO A DISCO · 1985	TELÉFONO DE DISCO · 1985	TELEFONE DE DISCO · 1985	WÄHLSCHEIBENTELEFON · 1985	TÁRCSÁS TELEFON · 1985
+era_title_90	KEYPAD TELEPHONE · 1995	TELEFON CU TASTE · 1995	TÉLÉPHONE À TOUCHES · 1995	TELEFONO A TASTI · 1995	TELÉFONO DE TECLAS · 1995	TELEFONE DE TECLAS · 1995	TASTENTELEFON · 1995	GOMBOS TELEFON · 1995
+era_title_00	MOBILE · 2003	MOBIL · 2003	MOBILE · 2003	CELLULARE · 2003	MÓVIL · 2003	TELEMÓVEL · 2003	HANDY · 2003	MOBIL · 2003
+agenda_80	NOTEBOOK (numbers to dial)	CARNEȚEL (numere de format)	CARNET (numéros à composer)	RUBRICA (numeri da comporre)	LIBRETA (números para marcar)	CADERNETA (números a marcar)	NOTIZBUCH (Nummern zum Wählen)	JEGYZETFÜZET (tárcsázható számok)
+agenda_90	PHONEBOOK	AGENDĂ	RÉPERTOIRE	RUBRICA	AGENDA	AGENDA	TELEFONBUCH	TELEFONKÖNYV
+agenda_00	CONTACTS	CONTACTE	CONTACTS	CONTATTI	CONTACTOS	CONTACTOS	KONTAKTE	NÉVJEGYEK
+agenda_empty	(empty — the control may add contacts)	(goală — regia poate adăuga contacte)	(vide — la régie peut ajouter des contacts)	(vuota — la regia può aggiungere contatti)	(vacía — la regiduría puede añadir contactos)	(vazia — a régie pode adicionar contactos)	(leer — die Regie kann Kontakte hinzufügen)	(üres — a rendezés hozzáadhat névjegyeket)
+btn_call	Call	Apel	Appeler	Chiama	Llamar	Chamar	Anrufen	Hívás
+btn_end	End	Închide	Raccrocher	Chiudi	Colgar	Desligar	Auflegen	Letesz
+btn_lift	LIFT THE HANDSET	RIDICĂ RECEPTORUL	DÉCROCHER	ALZA LA CORNETTA	DESCOLGAR	LEVANTAR O AUSCULTADOR	HÖRER ABHEBEN	FELVESZED A KAGYLÓT
+btn_hang	HANG UP	ÎNCHIDE	RACCROCHER	RIAGGANCIA	COLGAR	DESLIGAR	AUFLEGEN	LETESZED
+btn_answer_big	ANSWER	RĂSPUNDE	RÉPONDRE	RISPONDI	CONTESTAR	ATENDER	ANNEHMEN	FELVESZED
+btn_inter	Break into the call	Intervin în convorbire	Intervenir dans la conversation	Intervieni nella conversazione	Intervenir en la conversación	Intervir na conversa	In das Gespräch einschalten	Beleszólok a beszélgetésbe
+btn_inter_off	Stop speaking	Nu mai vorbesc	Ne plus parler	Smetto di parlare	Dejar de hablar	Deixar de falar	Nicht mehr sprechen	Nem beszélek tovább
+ph_idle	Handset down	Receptor pus	Combiné raccroché	Cornetta abbassata	Auricular colgado	Auscultador pousado	Hörer aufgelegt	Kagyló letéve
+ph_noline	No line	Fără linie	Pas de ligne	Nessuna linea	Sin línea	Sem linha	Keine Leitung	Nincs vonal
+ph_dialtone	Dial tone — dial the number	Ton de apel — formează numărul	Tonalité — composez le numéro	Segnale libero — componi il numero	Tono de marcar — marca el número	Sinal de marcar — marca o número	Freizeichen — Nummer wählen	Tárcsahang — tárcsázd a számot
+ph_dialing	Dialling: %1$s	Se formează: %1$s	Numérotation : %1$s	Composizione: %1$s	Marcando: %1$s	A marcar: %1$s	Wähle: %1$s	Tárcsázás: %1$s
+ph_ringback	Calling %1$s …	Se sună la %1$s …	Appel de %1$s …	Chiamata a %1$s …	Llamando a %1$s …	A chamar %1$s …	Rufe %1$s an …	Hívás: %1$s …
+ph_ringing	Incoming call\n%1$s	Apel primit\n%1$s	Appel entrant\n%1$s	Chiamata in arrivo\n%1$s	Llamada entrante\n%1$s	Chamada recebida\n%1$s	Eingehender Anruf\n%1$s	Bejövő hívás\n%1$s
+ph_ringing_plain	The line is ringing…	Linia sună…	La ligne sonne…	La linea squilla…	La línea suena…	A linha toca…	Die Leitung klingelt…	A vonal cseng…
+ph_talking	On the line	În convorbire	En ligne	In linea	En línea	Em chamada	Im Gespräch	Beszélgetés
+ph_for	(for %1$s)	(pentru %1$s)	(pour %1$s)	(per %1$s)	(para %1$s)	(para %1$s)	(für %1$s)	(neki: %1$s)
+ph_listening	The line is busy — you are listening in	Linia e ocupată — asculți convorbirea	La ligne est occupée — vous écoutez	La linea è occupata — stai ascoltando	La línea está ocupada — estás escuchando	A linha está ocupada — estás a ouvir	Die Leitung ist besetzt — du hörst mit	A vonal foglalt — hallgatózol
+ph_busy	Busy tone	Ton ocupat	Tonalité occupé	Segnale di occupato	Tono de ocupado	Sinal de ocupado	Besetztton	Foglalt hang
+ph_unknown	Number not in service	Număr inexistent	Numéro inexistant	Numero inesistente	Número inexistente	Número inexistente	Nummer nicht vergeben	Nem létező szám
+msg_title_80	TELEGRAMS	TELEGRAME	TÉLÉGRAMMES	TELEGRAMMI	TELEGRAMAS	TELEGRAMAS	TELEGRAMME	TÁVIRATOK
+msg_title_90	PAGER MESSAGES	MESAJE PE BIP	MESSAGES DE BIPEUR	MESSAGGI DEL CERCAPERSONE	MENSAJES DE BUSCA	MENSAGENS DE PAGER	PAGER-NACHRICHTEN	CSIPOGÓ-ÜZENETEK
+msg_title_00	SMS (max. 160 characters)	SMS (max. 160 caractere)	SMS (160 caractères max.)	SMS (max. 160 caratteri)	SMS (máx. 160 caracteres)	SMS (máx. 160 caracteres)	SMS (max. 160 Zeichen)	SMS (legfeljebb 160 karakter)
+msg_hint	Write a message	Scrie un mesaj	Écrire un message	Scrivi un messaggio	Escribe un mensaje	Escreve uma mensagem	Nachricht schreiben	Írj üzenetet
+btn_send	Send	Trimite	Envoyer	Invia	Enviar	Enviar	Senden	Küldés
+num_hint	Number	Număr	Numéro	Numero	Número	Número	Nummer	Szám
+tgt_all	Everyone	Toți	Tous	Tutti	Todos	Todos	Alle	Mindenki
+tgt_spectators	Spectators	Spectatori	Spectateurs	Spettatori	Espectadores	Espectadores	Zuschauer	Nézők
+tgt_actors	Actors	Actori	Acteurs	Attori	Actores	Atores	Schauspieler	Színészek
+tgt_staff	Crew (control + actors)	Echipa (regie + actori)	Équipe (régie + acteurs)	Squadra (regia + attori)	Equipo (regiduría + actores)	Equipa (régie + atores)	Team (Regie + Schauspieler)	Stáb (rendezés + színészek)
+tgt_staff_sp	The crew	Echipa	L'équipe	La squadra	El equipo	A equipa	Das Team	A stáb
+tgt_selected	Selected devices	Dispozitive selectate	Appareils sélectionnés	Dispositivi selezionati	Dispositivos seleccionados	Dispositivos selecionados	Ausgewählte Geräte	Kijelölt eszközök
+tgt_group	Group	Grup	Groupe	Gruppo	Grupo	Grupo	Gruppe	Csoport
+tgt_number	Number	Număr	Numéro	Numero	Número	Número	Nummer	Szám
+voice_title	Voice	Voce	Voix	Voce	Voz	Voz	Stimme	Hang
+voice_hint_sp	Hold the button to speak to the crew.	Ține apăsat butonul ca să vorbești cu echipa.	Maintenez le bouton pour parler à l'équipe.	Tieni premuto il pulsante per parlare con la squadra.	Mantén pulsado el botón para hablar con el equipo.	Mantém o botão premido para falar com a equipa.	Taste gedrückt halten, um mit dem Team zu sprechen.	Tartsd nyomva a gombot, hogy a stábbal beszélj.
+voice_hint_staff	Hold a button to speak. The first one is heard by all the phones (public address).	Ține apăsat un buton ca să vorbești. Primul e auzit de toate telefoanele (megafon).	Maintenez un bouton pour parler. Le premier est entendu par tous les téléphones (sonorisation).	Tieni premuto un pulsante per parlare. Il primo è sentito da tutti i telefoni (altoparlante).	Mantén pulsado un botón para hablar. El primero lo oyen todos los teléfonos (megafonía).	Mantém um botão premido para falar. O primeiro é ouvido por todos os telefones (megafone).	Eine Taste gedrückt halten, um zu sprechen. Die erste hört jedes Telefon (Durchsage).	Tartsd nyomva valamelyik gombot a beszédhez. Az elsőt minden telefon hallja (hangosbemondó).
+voice_pa_btn	ANNOUNCEMENT\nto all the phones	ANUNȚ\nla toate telefoanele	ANNONCE\nà tous les téléphones	ANNUNCIO\na tutti i telefoni	ANUNCIO\na todos los teléfonos	ANÚNCIO\na todos os telefones	DURCHSAGE\nan alle Telefone	BEMONDÁS\nminden telefonra
+voice_sp_btn	SPEAK TO THE CREW	VORBEȘTI CU ECHIPA	PARLER À L'ÉQUIPE	PARLA CON LA SQUADRA	HABLAR CON EL EQUIPO	FALAR COM A EQUIPA	MIT DEM TEAM SPRECHEN	BESZÉL A STÁBHOZ
+voice_back_btn	TALK TO THE CREW ONLY	DOAR CU ECHIPA	SEULEMENT À L'ÉQUIPE	SOLO ALLA SQUADRA	SOLO AL EQUIPO	SÓ PARA A EQUIPA	NUR ZUM TEAM	CSAK A STÁBNAK
+voice_tx	● TRANSMITTING	● TRANSMIT	● ÉMISSION	● TRASMISSIONE	● TRANSMITIENDO	● A TRANSMITIR	● SENDEN	● ADÁS
+voice_mic	● Microphone on	● Microfon deschis	● Microphone ouvert	● Microfono acceso	● Micrófono abierto	● Microfone ligado	● Mikrofon an	● Mikrofon bekapcsolva
+spk_on	Loudspeaker: ON	Difuzor: PORNIT	Haut-parleur : ACTIVÉ	Altoparlante: ACCESO	Altavoz: ACTIVADO	Altifalante: LIGADO	Lautsprecher: AN	Hangszóró: BE
+spk_off	Loudspeaker: OFF (earpiece)	Difuzor: OPRIT (casca)	Haut-parleur : DÉSACTIVÉ (écouteur)	Altoparlante: SPENTO (auricolare)	Altavoz: DESACTIVADO (auricular)	Altifalante: DESLIGADO (auricular)	Lautsprecher: AUS (Hörmuschel)	Hangszóró: KI (fülhallgató)
+hub_info	Addresses: %1$s · port %2$d · actor PIN: %3$s · room: %4$s	Adrese: %1$s · port %2$d · PIN actori: %3$s · cameră: %4$s	Adresses : %1$s · port %2$d · PIN acteurs : %3$s · salle : %4$s	Indirizzi: %1$s · porta %2$d · PIN attori: %3$s · sala: %4$s	Direcciones: %1$s · puerto %2$d · PIN actores: %3$s · sala: %4$s	Endereços: %1$s · porta %2$d · PIN atores: %3$s · sala: %4$s	Adressen: %1$s · Port %2$d · Schauspieler-PIN: %3$s · Raum: %4$s	Címek: %1$s · port %2$d · színész-PIN: %3$s · terem: %4$s
+sec_devices	DEVICES (tap to select)	DISPOZITIVE (atinge pentru a selecta)	APPAREILS (touchez pour sélectionner)	DISPOSITIVI (tocca per selezionare)	DISPOSITIVOS (toca para seleccionar)	DISPOSITIVOS (toca para selecionar)	GERÄTE (zum Auswählen antippen)	ESZKÖZÖK (érintsd meg a kijelöléshez)
+no_devices	(no devices yet)	(niciun dispozitiv încă)	(aucun appareil pour l'instant)	(nessun dispositivo per ora)	(ningún dispositivo aún)	(nenhum dispositivo ainda)	(noch keine Geräte)	(még nincs eszköz)
+btn_couple	Couple 2	Cuplează 2	Coupler 2	Accoppia 2	Acoplar 2	Acoplar 2	2 koppeln	2 összekapcsol
+btn_uncouple	Uncouple	Decuplează	Découpler	Disaccoppia	Desacoplar	Desacoplar	Entkoppeln	Szétválaszt
+btn_auto	Auto pairs	Perechi automate	Paires auto	Coppie auto	Parejas auto	Pares auto	Auto-Paare	Auto párok
+btn_number	Number	Număr	Numéro	Numero	Número	Número	Nummer	Szám
+btn_group	Group	Grup	Groupe	Gruppo	Grupo	Grupo	Gruppe	Csoport
+btn_call_sel	Call	Sună	Appeler	Chiama	Llamar	Chamar	Anrufen	Hívás
+btn_listen	Listen in	Ascultă	Écouter	Ascolta	Escuchar	Escutar	Mithören	Belehallgat
+btn_mute	Mute	Mut	Muet	Muto	Silenciar	Silenciar	Stumm	Némít
+btn_forget	Forget	Uită	Oublier	Dimentica	Olvidar	Esquecer	Vergessen	Töröl
+btn_journal	Log	Jurnal	Journal	Registro	Registro	Registo	Protokoll	Napló
+opt_listen	Neighbour listening: %1$s	Vecin ascultă: %1$s	Voisin à l'écoute : %1$s	Vicino in ascolto: %1$s	Vecino escucha: %1$s	Vizinho escuta: %1$s	Nachbar hört mit: %1$s	Szomszéd hallgat: %1$s
+opt_click	Click on lift: %1$s	Clic la ridicare: %1$s	Clic au décrochage : %1$s	Clic al sollevamento: %1$s	Clic al descolgar: %1$s	Clique ao levantar: %1$s	Klick beim Abheben: %1$s	Kattanás felvételkor: %1$s
+opt_peermsg	Messages between phones: %1$s	Mesaje între telefoane: %1$s	Messages entre téléphones : %1$s	Messaggi tra telefoni: %1$s	Mensajes entre teléfonos: %1$s	Mensagens entre telefones: %1$s	Nachrichten zwischen Telefonen: %1$s	Üzenetek telefonok között: %1$s
+sec_cues	CUES (to the target below)	INDICII (către ținta de mai jos)	INDICES (vers la cible ci-dessous)	SEGNALI (al bersaglio qui sotto)	SEÑALES (al destino de abajo)	SINAIS (para o alvo abaixo)	SIGNALE (an das Ziel unten)	JELZÉSEK (az alábbi célnak)
+grp_hint	Group name	Numele grupului	Nom du groupe	Nome del gruppo	Nombre del grupo	Nome do grupo	Gruppenname	Csoport neve
+btn_send_cue	Send cue	Trimite indiciul	Envoyer l'indice	Invia il segnale	Enviar la señal	Enviar o sinal	Signal senden	Jelzés küldése
+btn_era	Era %1$s	Epoca %1$s	Époque %1$s	Epoca %1$s	Época %1$s	Época %1$s	Epoche %1$s	%1$s korszak
+sel_one	Select the device(s) first	Selectează mai întâi dispozitivul	Sélectionnez d'abord l'appareil	Seleziona prima il dispositivo	Selecciona primero el dispositivo	Seleciona primeiro o dispositivo	Zuerst Gerät auswählen	Előbb jelölj ki eszközt
+sel_two	Select exactly two devices	Selectează exact două dispozitive	Sélectionnez exactement deux appareils	Seleziona esattamente due dispositivi	Selecciona exactamente dos dispositivos	Seleciona exatamente dois dispositivos	Genau zwei Geräte auswählen	Pontosan két eszközt jelölj ki
+sent	Sent	Trimis	Envoyé	Inviato	Enviado	Enviado	Gesendet	Elküldve
+confirm_auto	Couple all the free phones in pairs?	Cuplezi în perechi toate telefoanele libere?	Coupler par paires tous les téléphones libres ?	Accoppiare a coppie tutti i telefoni liberi?	¿Acoplar por parejas todos los teléfonos libres?	Acoplar em pares todos os telefones livres?	Alle freien Telefone paarweise koppeln?	Párosítod az összes szabad telefont?
+confirm_forget	Forget %1$s device(s)? Their numbers will be freed.	Ștergi %1$s dispozitiv(e)? Numerele lor se eliberează.	Oublier %1$s appareil(s) ? Leurs numéros seront libérés.	Dimenticare %1$s dispositivo/i? I loro numeri saranno liberati.	¿Olvidar %1$s dispositivo(s)? Sus números quedarán libres.	Esquecer %1$s dispositivo(s)? Os números ficam livres.	%1$s Gerät(e) vergessen? Die Nummern werden frei.	Törlöd a(z) %1$s eszközt? A számaik felszabadulnak.
+dlg_number	Number for %1$s	Număr pentru %1$s	Numéro pour %1$s	Numero per %1$s	Número para %1$s	Número para %1$s	Nummer für %1$s	%1$s száma
+dlg_group	Group for %1$s device(s)	Grup pentru %1$s dispozitiv(e)	Groupe pour %1$s appareil(s)	Gruppo per %1$s dispositivo/i	Grupo para %1$s dispositivo(s)	Grupo para %1$s dispositivo(s)	Gruppe für %1$s Gerät(e)	Csoport %1$s eszköznek
+cue_text	Text on screen	Text pe ecran	Texte à l'écran	Testo a schermo	Texto en pantalla	Texto no ecrã	Text auf dem Bildschirm	Szöveg a képernyőn
+cue_vibrate	Vibration	Vibrație	Vibration	Vibrazione	Vibración	Vibração	Vibration	Rezgés
+cue_ring	Ring	Sunet de apel	Sonnerie	Squillo	Timbre	Toque	Klingeln	Csengetés
+cue_flash	Flash	Bliț	Flash	Flash	Flash	Flash	Blitz	Vaku
+cue_speaker	Loudspeaker	Difuzor	Haut-parleur	Altoparlante	Altavoz	Altifalante	Lautsprecher	Hangszóró
+cue_contact	Add contact	Adaugă contact	Ajouter un contact	Aggiungi contatto	Añadir contacto	Adicionar contacto	Kontakt hinzufügen	Névjegy hozzáadása
+cue_era	Change era	Schimbă epoca	Changer d'époque	Cambia epoca	Cambiar época	Mudar de época	Epoche wechseln	Korszakváltás
+cue_say	Spoken voice	Voce vorbită	Voix parlée	Voce parlata	Voz hablada	Voz falada	Gesprochene Stimme	Beszélt hang
+cue_sound	Sound effect	Efect sonor	Effet sonore	Effetto sonoro	Efecto de sonido	Efeito sonoro	Klangeffekt	Hangeffekt
+cue_blackout	Black screen	Ecran negru	Écran noir	Schermo nero	Pantalla negra	Ecrã preto	Schwarzer Bildschirm	Fekete képernyő
+cue_fakecall	Phantom call	Apel fantomă	Appel fantôme	Chiamata fantasma	Llamada fantasma	Chamada fantasma	Geisteranruf	Szellemhívás
+hint_text	Text shown full-screen	Textul afișat pe tot ecranul	Texte affiché en plein écran	Testo mostrato a tutto schermo	Texto mostrado a pantalla completa	Texto mostrado em ecrã inteiro	Text im Vollbild	Teljes képernyős szöveg
+hint_vibrate	Duration in ms (e.g. 800)	Durata în ms (ex. 800)	Durée en ms (ex. 800)	Durata in ms (es. 800)	Duración en ms (p. ej. 800)	Duração em ms (ex. 800)	Dauer in ms (z. B. 800)	Időtartam ms-ban (pl. 800)
+hint_ring	(no text needed)	(nu e nevoie de text)	(aucun texte nécessaire)	(nessun testo necessario)	(no hace falta texto)	(não é preciso texto)	(kein Text nötig)	(nem kell szöveg)
+hint_flash	Duration in ms (e.g. 1500)	Durata în ms (ex. 1500)	Durée en ms (ex. 1500)	Durata in ms (es. 1500)	Duración en ms (p. ej. 1500)	Duração em ms (ex. 1500)	Dauer in ms (z. B. 1500)	Időtartam ms-ban (pl. 1500)
+hint_speaker	1 = on, 0 = off	1 = pornit, 0 = oprit	1 = activé, 0 = désactivé	1 = acceso, 0 = spento	1 = activado, 0 = desactivado	1 = ligado, 0 = desligado	1 = an, 0 = aus	1 = be, 0 = ki
+hint_contact	Name;number (e.g. Mother;204455)	Nume;număr (ex. Mama;204455)	Nom;numéro (ex. Maman;204455)	Nome;numero (es. Mamma;204455)	Nombre;número (p. ej. Mamá;204455)	Nome;número (ex. Mãe;204455)	Name;Nummer (z. B. Mutter;204455)	Név;szám (pl. Anya;204455)
+hint_era	1985, 1995 or 2003	1985, 1995 sau 2003	1985, 1995 ou 2003	1985, 1995 o 2003	1985, 1995 o 2003	1985, 1995 ou 2003	1985, 1995 oder 2003	1985, 1995 vagy 2003
+hint_say	Text to be spoken	Textul de rostit	Texte à prononcer	Testo da pronunciare	Texto a pronunciar	Texto a dizer	Zu sprechender Text	Felolvasandó szöveg
+hint_sound	bell, siren, knock, static	bell, siren, knock, static (clopot, sirenă, ciocănit, statică)	bell, siren, knock, static (cloche, sirène, coups, parasites)	bell, siren, knock, static (campana, sirena, bussare, disturbo)	bell, siren, knock, static (campana, sirena, golpes, estática)	bell, siren, knock, static (sino, sirene, batida, estática)	bell, siren, knock, static (Glocke, Sirene, Klopfen, Rauschen)	bell, siren, knock, static (csengő, sziréna, kopogás, zaj)
+hint_blackout	1;text or 0	1;text sau 0	1;texte ou 0	1;testo oppure 0	1;texto o 0	1;texto ou 0	1;Text oder 0	1;szöveg vagy 0
+hint_fakecall	Name;number;spoken words	Nume;număr;cuvinte rostite	Nom;numéro;paroles prononcées	Nome;numero;parole pronunciate	Nombre;número;palabras habladas	Nome;número;palavras ditas	Name;Nummer;gesprochener Text	Név;szám;felolvasott szöveg
+hint_msg	Message text	Textul mesajului	Texte du message	Testo del messaggio	Texto del mensaje	Texto da mensagem	Nachrichtentext	Az üzenet szövege
+kind_msg	Message	Mesaj	Message	Messaggio	Mensaje	Mensagem	Nachricht	Üzenet
+sec_script	SCRIPT (the show's cue list)	SCENARIU (lista de indicii a spectacolului)	SCÉNARIO (la liste d'indices du spectacle)	COPIONE (la lista dei segnali dello spettacolo)	GUION (la lista de señales del espectáculo)	GUIÃO (a lista de sinais do espetáculo)	ABLAUF (die Signalliste der Vorstellung)	FORGATÓKÖNYV (az előadás jelzéslistája)
+script_help	GO sends the next step. PLAY runs the steps automatically with their delays, starting from the selected one.	GO trimite pasul următor. PLAY rulează pașii automat, cu pauzele lor, începând cu cel selectat.	GO envoie l'étape suivante. PLAY enchaîne les étapes avec leurs délais, à partir de celle sélectionnée.	GO invia il passo successivo. PLAY esegue i passi in automatico con le loro pause, a partire da quello selezionato.	GO envía el paso siguiente. PLAY ejecuta los pasos automáticamente con sus pausas, desde el seleccionado.	GO envia o passo seguinte. PLAY executa os passos automaticamente com as suas pausas, a partir do selecionado.	GO sendet den nächsten Schritt. PLAY führt die Schritte automatisch mit ihren Pausen aus, ab dem ausgewählten.	A GO a következő lépést küldi. A PLAY automatikusan lejátssza a lépéseket a késleltetéseikkel, a kijelöltől kezdve.
+script_empty	(no steps yet — add some below)	(niciun pas încă — adaugă mai jos)	(aucune étape — ajoutez-en ci-dessous)	(nessun passo — aggiungine sotto)	(ningún paso — añade abajo)	(nenhum passo — adiciona abaixo)	(noch keine Schritte — unten hinzufügen)	(még nincs lépés — adj hozzá lent)
+sec_newstep	NEW STEP	PAS NOU	NOUVELLE ÉTAPE	NUOVO PASSO	NUEVO PASO	NOVO PASSO	NEUER SCHRITT	ÚJ LÉPÉS
+step_name_hint	Step name	Numele pasului	Nom de l'étape	Nome del passo	Nombre del paso	Nome do passo	Name des Schritts	A lépés neve
+grp_or_num_hint	Group name or number (if the target needs it)	Numele grupului sau numărul (dacă ținta o cere)	Nom du groupe ou numéro (si la cible l'exige)	Nome del gruppo o numero (se il bersaglio lo richiede)	Nombre del grupo o número (si el destino lo pide)	Nome do grupo ou número (se o alvo o pedir)	Gruppenname oder Nummer (falls das Ziel es braucht)	Csoport neve vagy szám (ha a cél kéri)
+step_delay_hint	Delay before this step, in seconds	Pauza înainte de acest pas, în secunde	Délai avant cette étape, en secondes	Pausa prima di questo passo, in secondi	Pausa antes de este paso, en segundos	Pausa antes deste passo, em segundos	Pause vor diesem Schritt, in Sekunden	Késleltetés e lépés előtt, másodpercben
+btn_add_step	Add step	Adaugă pasul	Ajouter l'étape	Aggiungi passo	Añadir paso	Adicionar passo	Schritt hinzufügen	Lépés hozzáadása
+btn_export	Export	Exportă	Exporter	Esporta	Exportar	Exportar	Exportieren	Exportálás
+btn_import	Import	Importă	Importer	Importa	Importar	Importar	Importieren	Importálás
+script_imported	Script imported	Scenariu importat	Scénario importé	Copione importato	Guion importado	Guião importado	Ablauf importiert	Forgatókönyv importálva
+script_bad	Invalid script	Scenariu invalid	Scénario invalide	Copione non valido	Guion no válido	Guião inválido	Ungültiger Ablauf	Érvénytelen forgatókönyv
+btn_go	GO ▶	GO ▶	GO ▶	GO ▶	GO ▶	GO ▶	GO ▶	GO ▶
+btn_play	PLAY	PLAY	PLAY	PLAY	PLAY	PLAY	PLAY	PLAY
+btn_stop	STOP	STOP	STOP	STOP	STOP	STOP	STOP	STOP
+btn_rewind	⏮ Start	⏮ Început	⏮ Début	⏮ Inizio	⏮ Inicio	⏮ Início	⏮ Anfang	⏮ Eleje
+btn_del	Delete	Șterge	Supprimer	Elimina	Borrar	Apagar	Löschen	Törlés
+set_lang	LANGUAGE	LIMBA	LANGUE	LINGUA	IDIOMA	IDIOMA	SPRACHE	NYELV
+set_scale	TEXT SIZE	MĂRIMEA TEXTULUI	TAILLE DU TEXTE	DIMENSIONE DEL TESTO	TAMAÑO DEL TEXTO	TAMANHO DO TEXTO	TEXTGRÖSSE	SZÖVEGMÉRET
+set_battery	Keep the app alive (battery optimisation)	Păstrează aplicația activă (optimizare baterie)	Garder l'app active (optimisation batterie)	Mantieni l'app attiva (ottimizzazione batteria)	Mantener la app activa (optimización de batería)	Manter a app ativa (otimização da bateria)	App aktiv halten (Akkuoptimierung)	Az app maradjon aktív (akkumulátor-optimalizálás)
+battery_ok	Already exempt from battery optimisation	Deja exceptată de la optimizarea bateriei	Déjà exemptée de l'optimisation de la batterie	Già esclusa dall'ottimizzazione della batteria	Ya exenta de la optimización de batería	Já isenta da otimização da bateria	Bereits von der Akkuoptimierung ausgenommen	Már mentesítve van az akkumulátor-optimalizálás alól
+set_reset_hub	Reset the hub's memory (numbers, couplings)	Resetează memoria hubului (numere, cuplaje)	Réinitialiser la mémoire du hub (numéros, couplages)	Azzera la memoria dell'hub (numeri, accoppiamenti)	Restablecer la memoria del hub (números, acoplamientos)	Repor a memória do hub (números, acoplamentos)	Hub-Gedächtnis zurücksetzen (Nummern, Kopplungen)	A hub memóriájának törlése (számok, párosítások)
+confirm_reset_hub	Erase all numbers, couplings and groups remembered by this hub?	Ștergi toate numerele, cuplajele și grupurile ținute minte de acest hub?	Effacer tous les numéros, couplages et groupes mémorisés par ce hub ?	Cancellare tutti i numeri, gli accoppiamenti e i gruppi memorizzati da questo hub?	¿Borrar todos los números, acoplamientos y grupos que recuerda este hub?	Apagar todos os números, acoplamentos e grupos memorizados por este hub?	Alle vom Hub gemerkten Nummern, Kopplungen und Gruppen löschen?	Törlöd az összes számot, párosítást és csoportot, amit ez a hub megjegyzett?
+set_about	About CUPLAJ	Despre CUPLAJ	À propos de CUPLAJ	Informazioni su CUPLAJ	Acerca de CUPLAJ	Sobre o CUPLAJ	Über CUPLAJ	A CUPLAJ-ról
+about_text	CUPLAJ %1$s (%2$s)\nParty-line telephony for immersive theatre.\n\nMIT licence · © Alexandru-Ionuț Chiuță (Alexio)\nNo ads, no tracking, no cloud: everything stays on your Wi‑Fi.	CUPLAJ %1$s (%2$s)\nTelefonie cu cuplaj pentru teatru imersiv.\n\nLicență MIT · © Alexandru-Ionuț Chiuță (Alexio)\nFără reclame, fără urmărire, fără cloud: totul rămâne în Wi‑Fi-ul vostru.	CUPLAJ %1$s (%2$s)\nTéléphonie à ligne partagée pour le théâtre immersif.\n\nLicence MIT · © Alexandru-Ionuț Chiuță (Alexio)\nSans publicité, sans pistage, sans cloud : tout reste sur votre Wi‑Fi.	CUPLAJ %1$s (%2$s)\nTelefonia a linea condivisa per il teatro immersivo.\n\nLicenza MIT · © Alexandru-Ionuț Chiuță (Alexio)\nNiente pubblicità, niente tracciamento, niente cloud: tutto resta sul vostro Wi‑Fi.	CUPLAJ %1$s (%2$s)\nTelefonía de línea compartida para teatro inmersivo.\n\nLicencia MIT · © Alexandru-Ionuț Chiuță (Alexio)\nSin publicidad, sin rastreo, sin nube: todo se queda en vuestro Wi‑Fi.	CUPLAJ %1$s (%2$s)\nTelefonia de linha partilhada para teatro imersivo.\n\nLicença MIT · © Alexandru-Ionuț Chiuță (Alexio)\nSem publicidade, sem rastreio, sem nuvem: tudo fica no vosso Wi‑Fi.	CUPLAJ %1$s (%2$s)\nGemeinschaftsanschluss-Telefonie für immersives Theater.\n\nMIT-Lizenz · © Alexandru-Ionuț Chiuță (Alexio)\nKeine Werbung, kein Tracking, keine Cloud: alles bleibt in eurem WLAN.	CUPLAJ %1$s (%2$s)\nKözös vonalas telefonálás immerzív színházhoz.\n\nMIT licenc · © Alexandru-Ionuț Chiuță (Alexio)\nNincs reklám, nincs követés, nincs felhő: minden a ti Wi‑Fi-tökön marad.
