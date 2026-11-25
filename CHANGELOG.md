@@ -2,6 +2,10 @@
 
 Documentation language: English only.
 
+## Unreleased
+- iOS client + Hub (Swift core, SwiftUI app, macOS CI); see `ios/README.md` for what is not ported and that it is untested on real devices.
+- `docs/REVIEW.md`: honest comparison with similar apps.
+
 ## 1.8.0 — 2026‑11‑24
 
 * **Art‑Net / DMX out** (cue kind *dmx*, `universe;1=255,2-4=128;fadeMs`, linear fades, 25 Hz while fading, 1 Hz otherwise) and **MIDI out** (cue kind *midi*: note, off, cc, pc, MMC; Android MidiManager, first USB/Bluetooth device). Both run on the control phone only and do not pass through the hub.
