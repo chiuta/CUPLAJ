@@ -1,0 +1,46 @@
+name: iOS unsigned IPA
+# Builds an UNSIGNED .ipa for sideloading (AltStore, Sideloadly, Xcode "Devices" re-sign).
+# It is not installable as-is: iOS requires a signature. Free Apple ID signing lasts 7 days.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Existing release version to attach to, e.g. 1.9.0 (empty = only keep as workflow artifact)"
+        required: false
+permissions:
+  contents: write
+jobs:
+  ipa:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - run: brew install xcodegen
+      - name: Generate project
+        working-directory: ios
+        run: xcodegen generate
+      - name: Build for device, unsigned
+        working-directory: ios
+        run: |
+          xcodebuild -project Cuplaj.xcodeproj -scheme Cuplaj -sdk iphoneos -configuration Release \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build 2>&1 | tail -n 100
+          exit ${PIPESTATUS[0]}
+      - name: Package
+        working-directory: ios
+        run: |
+          APP=$(find build/Build/Products -name "*.app" -maxdepth 3 | head -1)
+          echo "app: $APP"
+          rm -rf Payload && mkdir Payload && cp -R "$APP" Payload/
+          zip -qry "CUPLAJ-unsigned.ipa" Payload
+          ls -l CUPLAJ-unsigned.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CUPLAJ-unsigned-ipa
+          path: ios/CUPLAJ-unsigned.ipa
+      - name: Attach to release
+        if: ${{ inputs.version != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp ios/CUPLAJ-unsigned.ipa "CUPLAJ-${{ inputs.version }}-ios-unsigned.ipa"
+          gh release upload "v${{ inputs.version }}" "CUPLAJ-${{ inputs.version }}-ios-unsigned.ipa" --clobber
