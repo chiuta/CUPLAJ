@@ -333,8 +333,8 @@ final class AppModel: ObservableObject {
             audio.playout.effect(Fx.beep(1000, 90)); haptics.buzz(ms: 200)
         case "cue": cueTimed(m)
         case "p2p":
-            if let l = p2pLink, let k = m.optString("key") as String?, k.count == 32, let arr = m.optArray("cand") {
-                l.begin(key: unhex(k), candidates: arr.compactMap { $0 as? String }, initiator: m.optBool("init"))
+            if let l = p2pLink, case let k = m.optString("key"), k.count == 32, let kd = unhex(k), let arr = m.optArray("cand") {
+                l.begin(key: kd, candidates: arr.compactMap { $0 as? String }, initiator: m.optBool("init"))
                 for d in [1.5, 3.5] { _ = after(d) { [weak self] in self?.p2pOn = l.up } }
             }
         case "p2pstop": stopP2p(false)
