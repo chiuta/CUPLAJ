@@ -15,14 +15,16 @@ final class CoreTests: XCTestCase {
         XCTAssertEqual(hex(Sec.session(master: k, serverNonce: sn, clientNonce: cn)), "e1e7e6d79d3dee337c37bca0a830000e")
     }
 
-    func testAesGcmMatchesReferenceAndRoundTrips() {
-        let s = unhex("e1e7e6d79d3dee337c37bca0a830000e")!
+    func testAesGcmMatchesReferenceAndRoundTrips() throws {
+        let s = try XCTUnwrap(unhex("e1e7e6d79d3dee337c37bca0a830000e"), "key hex")
+        XCTAssertEqual(s.count, 16)
         let nonce = Data([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
         let pt = Data("{\"t\":\"ping\"}".utf8)
-        let ct = Sec.encrypt(key: s, nonce: nonce, plain: pt)!
+        let ct = try XCTUnwrap(Sec.encrypt(key: s, nonce: nonce, plain: pt), "encrypt returned nil")
         XCTAssertEqual(hex(ct), "8a3d40298e90ee83c503e7707b4325fb24a8a12bf8d0a02e21f82ab9")
         XCTAssertEqual(Sec.decrypt(key: s, nonce: nonce, cipher: ct), pt)
-        var bad = ct; bad[0] ^= 1
+        var bad = Data(ct)
+        bad[bad.startIndex] ^= 1
         XCTAssertNil(Sec.decrypt(key: s, nonce: nonce, cipher: bad))
     }
 
