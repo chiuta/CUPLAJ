@@ -250,7 +250,14 @@ struct PeerRow: View {
     @EnvironmentObject var m: AppModel
     let p: PeerInfo
     let onSelect: () -> Void
-    @State private var coupleWith = false
+    var detail: String {
+        var parts: [String] = [p.role]
+        if p.line > 0 { parts.append("line \(p.line)") }
+        if p.muted { parts.append("muted") }
+        if p.busy { parts.append("busy") }
+        if !p.fx.isEmpty { parts.append("fx " + p.fx) }
+        return parts.joined(separator: " · ")
+    }
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
@@ -261,7 +268,7 @@ struct PeerRow: View {
                 Spacer()
                 if p.bat >= 0 { Text("\(p.bat)%").font(.caption).foregroundColor(p.bat < 20 ? .red : .secondary) }
             }
-            Text(p.role + (p.line > 0 ? " · line \(p.line)" : "") + (p.muted ? " · muted" : "") + (p.busy ? " · busy" : "") + (p.fx.isEmpty ? "" : " · fx " + p.fx)).font(.caption).foregroundColor(.secondary)
+            Text(detail).font(.caption).foregroundColor(.secondary)
         }
         .contentShape(Rectangle()).onTapGesture(perform: onSelect)
         .contextMenu {
