@@ -156,6 +156,8 @@ def readme(l):
     d = D[l]
     s = ["# CUPLAJ", "", bar("README", l, ".md"), "", "<p align=\"center\"><img src=\"docs/logo.svg\" width=\"160\" alt=\"CUPLAJ\"></p>", "",
          "> **%s**" % d["tag"], "", "_%s_" % (d["ver"] % (VERSION, DATE)), "", d["intro"], "",
+         "**[%s](%s/releases/download/v%s/CUPLAJ-%s.apk) · [%s](%s/releases/download/v%s/CUPLAJ-%s-ios-unsigned.ipa) · [%s](%s/releases)**" % (
+             d["site"]["get"], REPO, VERSION, VERSION, d["site"]["get_ios"], REPO, VERSION, VERSION, d["site"]["all_rel"], REPO), "",
          "## " + d["h_feat"], ""]
     s += ["- " + x for x in d["feat"]]
     s += ["", "## " + d["h_quick"], ""]

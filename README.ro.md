@@ -10,6 +10,8 @@ _Versiune: 1.9.0 · Ultima actualizare: 2026-11-25_
 
 CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală telefonică privată pentru teatrul imersiv. Organizatorii și actorii vorbesc cu spectatorii (și între ei) prin Wi‑Fi-ul local al locației — fără cloud, fără conturi, fără reclame. Funcția lui de bază este *cuplajul*: **linia comună** a telefoanelor fixe din anii '80 până pe la 2006, în care doi abonați împărțeau aceeași linie, sunau cu cadențe diferite și se puteau auzi unul pe altul.
 
+**[Descarcă APK-ul](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.0/CUPLAJ-1.9.0.apk) · [Descarcă pentru iPhone/iPad (.ipa)](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.0/CUPLAJ-1.9.0-ios-unsigned.ipa) · [Toate versiunile](https://github.com/chiuta/CUPLAJ/releases)**
+
 ## Funcții
 
 - **Trei epoci de telefon** — 1985 disc rotativ (impulsuri audibile), 1995 taste (tonuri DTMF), 2003 mobil (SMS, 160 de caractere). Regia poate schimba epoca în direct.

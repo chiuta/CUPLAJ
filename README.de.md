@@ -10,6 +10,8 @@ _Version: 1.9.0 · Letzte Aktualisierung: 2026-11-25_
 
 CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Telefonanlage für immersives Theater. Organisatoren und Schauspieler sprechen über das lokale WLAN des Veranstaltungsorts mit den Zuschauern (und untereinander) — ohne Cloud, ohne Konten, ohne Werbung. Das Kernmerkmal ist der *Cuplaj*: der **Gemeinschaftsanschluss** der Festnetztelefone von den 1980er-Jahren bis etwa 2006, bei dem sich zwei Teilnehmer eine Leitung teilten, mit unterschiedlichem Rhythmus klingelten und einander mithören konnten.
 
+**[APK herunterladen](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.0/CUPLAJ-1.9.0.apk) · [Für iPhone/iPad herunterladen (.ipa)](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.0/CUPLAJ-1.9.0-ios-unsigned.ipa) · [Alle Versionen](https://github.com/chiuta/CUPLAJ/releases)**
+
 ## Funktionen
 
 - **Drei Telefon-Epochen** — 1985 Wählscheibe (hörbare Impulse), 1995 Tastatur (DTMF-Töne), 2003 Handy (SMS, 160 Zeichen). Die Regie kann die Epoche live wechseln.
