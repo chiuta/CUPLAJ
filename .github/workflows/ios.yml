@@ -5,19 +5,25 @@ on:
   pull_request:
     paths: ["ios/**"]
   workflow_dispatch:
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Swift version
         run: swift --version && xcodebuild -version
       - name: Core tests - P2P
+        timeout-minutes: 4
         working-directory: ios
-        run: timeout 180 swift test --filter P2pTests
+        run: swift test --filter P2pTests
       - name: Core tests - rest
+        timeout-minutes: 8
         working-directory: ios
-        run: timeout 600 swift test --skip P2pTests
+        run: swift test --skip P2pTests
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate project
