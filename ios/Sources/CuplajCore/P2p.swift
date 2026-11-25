@@ -67,6 +67,7 @@ public final class P2pLink {
     private let onPcm: (Data) -> Void
     private let lock = NSLock()
     private var run = true
+    private var alive = 2
     private var hubAddr: sockaddr_in?
     private var punch = Data()
     private var key: Data?
@@ -110,7 +111,9 @@ public final class P2pLink {
     }
 
     public func end() { lock.lock(); key = nil; _peer = nil; cands = []; lock.unlock() }
-    public func close() { lock.lock(); run = false; lock.unlock(); sock.close() }
+    public func close() { lock.lock(); run = false; lock.unlock() }
+
+    private func loopDone() { lock.lock(); alive -= 1; let last = alive == 0; lock.unlock(); if last { sock.close() } }
 
     private func pack(_ type: UInt8, _ data: Data) -> Data? {
         lock.lock(); defer { lock.unlock() }
@@ -136,6 +139,7 @@ public final class P2pLink {
     private func isRunning() -> Bool { lock.lock(); defer { lock.unlock() }; return run }
 
     private func txLoop() {
+        defer { loopDone() }
         var tick = 0
         while isRunning() {
             Thread.sleep(forTimeInterval: 0.2)
@@ -147,6 +151,7 @@ public final class P2pLink {
     }
 
     private func rxLoop() {
+        defer { loopDone() }
         while isRunning() {
             guard let (buf, from) = sock.receive() else { continue }
             if buf.count == 10, String(data: buf, encoding: .utf8) == "CUPLAJP-OK" { lock.lock(); hubSeen = true; lock.unlock(); continue }

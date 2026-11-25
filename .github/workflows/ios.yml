@@ -23,7 +23,7 @@ jobs:
       - name: Core tests - rest
         timeout-minutes: 8
         working-directory: ios
-        run: swift test --skip P2pTests
+        run: swift test --parallel --skip P2pTests
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate project

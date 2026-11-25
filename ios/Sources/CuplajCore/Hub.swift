@@ -167,7 +167,6 @@ public final class Hub {
         running = false
         let fd = listenFd
         listenFd = -1
-        rdv?.close(); rdv = nil
         let cs = peers.values.compactMap { $0.conn }
         lock.unlock()
         if fd >= 0 { Darwin.close(fd) }
@@ -1002,12 +1001,10 @@ public final class Hub {
         logEvent("SMS → \(to) (" + label(p) + ")")
     }
 
-    private var rdv: UdpPort?
-
     /// UDP rendezvous: a client sends "CUPLAJP|id|tok"; the hub records the address it sees (after NAT) and answers CUPLAJP-OK.
     private func rendezvousLoop() {
-        guard let d = UdpPort(bind: port + 2, reuse: true) else { return }
-        lock.lock(); rdv = d; lock.unlock()
+        guard port > 0, port + 2 < 65536, let d = UdpPort(bind: port + 2, reuse: true) else { return }
+        defer { d.close() }   // the loop owns the descriptor; it wakes every 300 ms
         while isRunning() {
             guard let (data, from) = d.receive() else { continue }
             let t = (String(data: data, encoding: .utf8) ?? "").components(separatedBy: "|")
