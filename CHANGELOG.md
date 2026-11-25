@@ -3,7 +3,7 @@
 Documentation language: English only.
 
 ## Unreleased
-- iOS client + Hub (Swift core, SwiftUI app, macOS CI); see `ios/README.md` for what is not ported and that it is untested on real devices.
+- iOS client + Hub (Swift core, SwiftUI app, macOS CI) with direct P2P audio, SIP gateway, CUPLAJ-AIR and background audio session; see `ios/README.md` for what cannot be ported (Bluetooth RFCOMM, Wi-Fi Direct, silent SMS/calls) and that it is untested on real devices.
 - `docs/REVIEW.md`: honest comparison with similar apps.
 
 ## 1.8.0 — 2026‑11‑24

@@ -86,4 +86,4 @@ CUPLAJ is free and trade‑free. If it helps your show, you can buy the author a
 MIT © Alexandru‑Ionuț Chiuță (Alexio).
 
 ## iOS
-An iPhone/iPad client and Hub live in [`ios/`](ios/README.md) (simulator build + core tests in CI; untested on real devices, no AIR/SIP/SMS gateway). An honest comparison with similar apps: [`docs/REVIEW.md`](docs/REVIEW.md).
+An iPhone/iPad client and Hub live in [`ios/`](ios/README.md) (simulator build + core tests in CI; untested on real devices; no Bluetooth, Wi-Fi Direct or silent SMS/call gateway because iOS has no API for them). An honest comparison with similar apps: [`docs/REVIEW.md`](docs/REVIEW.md).
