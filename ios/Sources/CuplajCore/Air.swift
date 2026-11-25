@@ -38,7 +38,7 @@ public enum Air {
         if len > 90 || b.count != 3 + len + macLen { return nil }
         let body = Data(b[0..<(3 + len)])
         let tag = Data(b[(3 + len)...])
-        if !Sec.same(tag, mac(key, body, macLen)) { return nil }
+        if !Sec.same(hex(tag), hex(mac(key, body, macLen))) { return nil }
         return AirPacket(type: Int(b[0] & 0xF), seq: Int(b[1]), data: Data(b[3..<(3 + len)]))
     }
 
