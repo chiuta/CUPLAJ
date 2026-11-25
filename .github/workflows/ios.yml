@@ -1,0 +1,28 @@
+name: iOS
+on:
+  push:
+    paths: ["ios/**", "app/src/main/assets/i18n.tsv", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["ios/**"]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version && xcodebuild -version
+      - name: Core tests (protocol, crypto, hub)
+        working-directory: ios
+        run: swift test 2>&1 | tail -n 200
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        working-directory: ios
+        run: xcodegen generate
+      - name: Build app for simulator
+        working-directory: ios
+        run: |
+          xcodebuild -project Cuplaj.xcodeproj -scheme Cuplaj -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build 2>&1 | tail -n 150
+          exit ${PIPESTATUS[0]}

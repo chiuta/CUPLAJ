@@ -1,0 +1,28 @@
+name: Cuplaj
+options:
+  bundleIdPrefix: ro.trom
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  CuplajCore:
+    path: .
+targets:
+  Cuplaj:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+        excludes: ["Info.plist"]
+      - path: ../app/src/main/assets/i18n.tsv
+        buildPhase: resources
+    dependencies:
+      - package: CuplajCore
+    info:
+      path: App/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ro.trom.cuplaj
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGNING_ALLOWED: NO
+        GENERATE_INFOPLIST_FILE: NO
