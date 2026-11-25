@@ -242,12 +242,39 @@ final class AudioIO {
     }
 
     func setSpeaker(_ on: Bool) {
+        wantSpeaker = on
         try? AVAudioSession.sharedInstance().overrideOutputAudioPort(on ? .speaker : .none)
+    }
+
+    private var observers = [NSObjectProtocol]()
+    private var wantSpeaker = false
+
+    /// Keeps the show alive in the background: the audio session stays active (UIBackgroundModes=audio) and the engine is restarted
+    /// after calls, Siri, route changes or a media-services reset.
+    private func watchSession() {
+        if !observers.isEmpty { return }
+        let nc = NotificationCenter.default
+        let s = AVAudioSession.sharedInstance()
+        func revive() { DispatchQueue.main.async { [weak self] in self?.revive() } }
+        observers.append(nc.addObserver(forName: AVAudioSession.interruptionNotification, object: s, queue: nil) { n in
+            if let v = n.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt, AVAudioSession.InterruptionType(rawValue: v) == .ended { revive() }
+        })
+        observers.append(nc.addObserver(forName: AVAudioSession.mediaServicesWereResetNotification, object: s, queue: nil) { _ in revive() })
+        observers.append(nc.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: nil) { _ in revive() })
+    }
+
+    private func revive() {
+        lock.lock(); defer { lock.unlock() }
+        if !started { return }
+        configureSession(speaker: wantSpeaker)
+        if !engine.isRunning { try? engine.start() }
     }
 
     func start(speaker: Bool) {
         lock.lock(); defer { lock.unlock() }
         if started { return }
+        wantSpeaker = speaker
+        watchSession()
         configureSession(speaker: speaker)
         let fmt = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: Double(RATE), channels: 1, interleaved: false)!
         let po = playout
@@ -274,6 +301,8 @@ final class AudioIO {
         if let n = src { engine.detach(n); src = nil }
         engine.detach(ringNode)
         started = false
+        for o in observers { NotificationCenter.default.removeObserver(o) }
+        observers.removeAll()
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 

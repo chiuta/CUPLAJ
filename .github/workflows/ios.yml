@@ -20,11 +20,6 @@ jobs:
         timeout-minutes: 4
         working-directory: ios
         run: swift test --filter P2pTests
-      - name: Diag AES
-        continue-on-error: true
-        timeout-minutes: 3
-        working-directory: ios
-        run: swift test --filter testAesGcm 2>&1; ls ~/Library/Logs/DiagnosticReports 2>/dev/null | tail -3
       - name: Core tests - rest
         timeout-minutes: 8
         working-directory: ios
