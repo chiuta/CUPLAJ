@@ -101,7 +101,7 @@ public final class P2pLink {
         lock.lock()
         key = k; dir = initiator ? 1 : 2; prefix[0] = UInt8(dir)
         cands = candidates.compactMap { s in
-            let (h, p) = parseHostPort(s, -1)
+            let (h, p) = parseHostPort(s, defPort: -1)
             return p > 0 && !h.isEmpty ? UdpPort.resolve(h, p) : nil
         }
         _peer = nil; rx = 0

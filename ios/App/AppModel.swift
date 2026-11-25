@@ -238,7 +238,7 @@ final class AppModel: ObservableObject {
             p2pLink = P2pLink { [weak self] pcm in self?.audio.playout.feed(src: 255, data: Data([255]) + pcm) }
         }
         guard let l = p2pLink else { return }
-        let (h, p) = parseHostPort(curTarget, PORT)
+        let (h, p) = parseHostPort(curTarget)
         DispatchQueue.global().async { [weak self] in
             l.registerAt(host: h, port: p + 2, id: self?.deviceId ?? "", tok: tok)
             let lan = l.lanCandidate(Hub.localAddresses())
