@@ -21,7 +21,20 @@ jobs:
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v6
       - name: Build APK
-        run: ./gradlew assembleRelease --no-daemon
+        env:
+          KS_B64: ${{ secrets.CUPLAJ_KEYSTORE_BASE64 }}
+          CUPLAJ_KEYSTORE_PASSWORD: ${{ secrets.CUPLAJ_KEYSTORE_PASSWORD }}
+          CUPLAJ_KEY_ALIAS: ${{ secrets.CUPLAJ_KEY_ALIAS }}
+          CUPLAJ_KEY_PASSWORD: ${{ secrets.CUPLAJ_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/cuplaj.jks"
+            export CUPLAJ_KEYSTORE="$RUNNER_TEMP/cuplaj.jks"
+            echo "Signing with the release keystore"
+          else
+            echo "::warning::No keystore secret: signing with the debug key (Play Protect will warn)"
+          fi
+          ./gradlew assembleRelease --no-daemon
       - name: Draft pre-release
         env:
           GH_TOKEN: ${{ github.token }}
