@@ -1,10 +1,14 @@
 # Changelog
 
-Documentation language: English only.
+Documentation: this changelog, PROTOCOL, AUDIT, COMPARISON and REVIEW are English only; README, the user guide and the presentation page are in 8 languages.
 
-## Unreleased
+## 1.9.0 — 2026‑11‑25
+
 - iOS client + Hub (Swift core, SwiftUI app, macOS CI) with direct P2P audio, SIP gateway, CUPLAJ-AIR and background audio session; see `ios/README.md` for what cannot be ported (Bluetooth RFCOMM, Wi-Fi Direct, silent SMS/calls) and that it is untested on real devices.
 - `docs/REVIEW.md`: honest comparison with similar apps.
+- README, user guide and presentation page (8 languages) describe iOS, the honest limits and the review; new `ios_note` string. CI: the iOS workflow now fails when tests fail (an earlier `| tail` hid the exit code), with step timeouts.
+- Found while porting: the iOS `safeNumber` test expectation was wrong (the Kotlin behaviour is kept), and AES‑GCM open now copies `Data` slices first.
+- Android behaviour is unchanged; the version is raised so both platforms report 1.9.0.
 
 ## 1.8.0 — 2026‑11‑24
 

@@ -126,7 +126,7 @@ struct Overlays: View {
                 }
                 if let t = m.toast { Text(t).font(.footnote).padding(10).background(Color(white: 0.2)).cornerRadius(8).padding(.bottom, 8) }
             }
-            if m.blackoutOn || m.colorNow != nil { VStack { Spacer(); HStack { Spacer(); Button(L.or("panic_btn", "✕")) { m.panic() }.padding().foregroundColor(.white.opacity(0.25)) } } }
+            if m.blackoutOn || m.colorNow != nil { VStack { Spacer(); HStack { Spacer(); Button("✕") { m.panic() }.padding().foregroundColor(.white.opacity(0.25)) } } }
         }
         .allowsHitTesting(m.blackoutOn || m.colorNow != nil || m.mediaShow != nil || m.bigText != nil)
     }

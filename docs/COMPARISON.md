@@ -2,10 +2,10 @@
 
 Written 2026‑11‑24 from the public store listings and articles named below. These products solve neighbouring problems, so the table shows what each one is for, not a ranking. Competitor facts come only from those pages and may have changed since; cells marked *Not checked* or *Not stated* were not verified.
 
-| | CUPLAJ 1.8 | Unity Intercom | Zello | Augmented Theatre | QLab Remote / SOLOstudio / MiX16 | Livecube |
+| | CUPLAJ 1.9 | Unity Intercom | Zello | Augmented Theatre | QLab Remote / SOLOstudio / MiX16 | Livecube |
 |---|---|---|---|---|---|---|
 | Main purpose | Immersive theatre: party‑line phones + cues, on the audience's own phones | Production intercom over IP | Push‑to‑talk | Audience phones as stage design | Show‑control cue lists | Audience participation |
-| Needs a server / dashboard | Control phone is the hub (Android) | Unity Intercom Server | Not checked | Dashboard for Mac / iPad | QLab on a Mac / the app itself | Local Wi‑Fi and a web address |
+| Needs a server / dashboard | Control phone is the hub (Android or iPhone) | Unity Intercom Server | Not checked | Dashboard for Mac / iPad | QLab on a Mac / the app itself | Local Wi‑Fi and a web address |
 | Account needed | No | Not stated | Not checked | No (per its listing) | Not stated | No (web address) |
 | Works with no Wi‑Fi router | Yes: hotspot, Bluetooth, Wi‑Fi Direct, Wi‑Fi Aware; even torch, sound or vibration (AIR) | Needs an IP network | Not checked | Not stated | Needs the Mac on the network | Local Wi‑Fi |
 | Simulated telephone line, ringing, dial, coupled lines | Yes (core feature) | No | No | No | No | No |
@@ -22,7 +22,7 @@ Written 2026‑11‑24 from the public store listings and articles named below. 
 | External PTT button | Headset button / volume key (1.5) | Bluetooth PTT button | Bluetooth devices | n/a | n/a | n/a |
 | Phone calls / SMS / SIP bridge | SIP gateway, SMS gateway | External com system bridge | No | No | No | No |
 | Audience games: whispering game, split secret, ghost tape, post‑show report (1.8) | Yes (not tested on phones) | Not stated | No | Not stated | No | Not stated |
-| Platforms | Android | iOS (and server) | Android, iOS, PC, Mac | iOS | iOS, Mac | Web |
+| Platforms | Android; iPhone/iPad from source (1.9, untested on devices) | iOS (and server) | Android, iOS, PC, Mac | iOS | iOS, Mac | Web |
 | Licence | MIT, free | Free app, paid server tiers | Not checked | Free app | Free + in‑app purchases | Not checked |
 
 ## What CUPLAJ does that the others do not
@@ -31,7 +31,7 @@ Fake party‑line telephony as theatre (coupled lines, distinct ringing, eavesdr
 
 ## What others do that CUPLAJ does not (yet)
 
-* **iOS.** CUPLAJ is Android only.
+* **A ready iOS app.** CUPLAJ has an iPhone/iPad client and hub since 1.9, but only as source code built with Xcode (no App Store or TestFlight build), never run on a real iPhone, and without Bluetooth, Wi‑Fi Direct or silent SMS/call gateways (iOS has no API for them).
 * **Proven lighting and MIDI integration** (MiX16, SOLOstudio Pro, QLab): CUPLAJ sends Art‑Net / DMX and MIDI since 1.8, but only the packet formats are tested, not real desks or MIDI devices.
 * **Program feed, many channels, tally from video switchers** (Unity Intercom: up to 128 channels, 63 users by default); CUPLAJ has groups, not independent channels.
 * **Media that reaches phones joining late, and synchronised video playback** (Augmented Theatre); in CUPLAJ a file goes only to phones online when it is sent, and video starts when the cue arrives (use `@seconds;` for a shared start).

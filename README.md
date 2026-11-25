@@ -6,7 +6,7 @@
 
 > **Party-line telephony for immersive theatre**
 
-_Version: 1.8.0 · Last update: 2026-11-24_
+_Version: 1.9.0 · Last update: 2026-11-25_
 
 CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchange for immersive theatre. Organisers and actors talk to spectators (and to each other) over the venue's local Wi‑Fi — no cloud, no accounts, no ads. Its signature feature is the *cuplaj*: the shared **party line** of fixed telephones from the 1980s to about 2006, where two subscribers shared one line, rang with different cadences, and could overhear each other.
 
@@ -31,6 +31,7 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 - **Everything from the comparison that fits an Android‑only, offline app (1.6)** — PA priority (ducking), OSC in and out for lighting and sound desks, and image, video and audio‑clip cues sent through the hub.
 - **Smart show (1.7)** — zones that follow the audience by sound, rules ("when someone enters zone 3, send them…"), a crowd meter, voice effects, captions, multilingual and personalised text, story branching.
 - **Stage tools (1.8)** — Art‑Net/DMX lights, MIDI, cue waves, whispering game, split secret, ghost tape, house‑lights safety cue, Morse by vibration, post‑show report.
+- **iPhone and iPad** — a full client and host (Control) in Swift, same protocol as Android, so both mix freely in one show; build from source with Xcode (`ios/`).
 
 ## Quick start
 
@@ -63,11 +64,12 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 - [Protocol](docs/PROTOCOL.md) *(English)*
 - [Adversarial audit](docs/AUDIT.md) *(English)*
 - [Changelog](CHANGELOG.md) *(English)*
+- [Honest review and comparison](docs/REVIEW.md) *(English)*
 - [Presentation site](https://chiuta.github.io/CUPLAJ/)
 
 ## Honest status
 
-The hub logic (calls, party line, permissions, limits, persistence) is covered by more than 250 automated checks that run on a JVM. The Android user interface and audio path have been type‑checked against the Android 14 SDK but **not yet tested on physical devices**; the APK is built by GitHub Actions. Test with a handful of phones before a show. Traffic on the local network is not encrypted (the PIN and room code keep honest strangers out, they are not cryptography). Version 1.1 networking (encryption, P2P, SIP, SMS) is covered by hub tests against a simulated SIP server, but has **not** been tried on real operators, NATs or SIM cards. Bluetooth, Wi‑Fi Direct and mDNS links (1.2) share the same transport layer, tested on the JVM with simulated channels, but have **not** been tried on real devices; behaviour differs between phone makers. Plug and play (auto‑join, invitations, Wi‑Fi Aware, 1.3) is **not** tested on devices; the invitation format is covered by JVM tests. The 1.4 audit fixes and the AIR codecs are covered by JVM tests (simulated noise, clock drift, wrong key, interference); the torch, camera, microphone, speaker, motor and accelerometer code is **not** tested on real phones, and real‑world range and speed will differ. The 1.5 features are covered by JVM tests (clock estimation, delays, poll rules, photosensitive limits); the screen overlays, headset‑button handling and real clock accuracy on phones are **not** tested on devices. The 1.6 features are covered by JVM tests (ducking curve, OSC parser fuzzing and flooding, file transfer integrity and path safety, hub relay); playing images, video and clips, the file picker and the settings dialogs are **not** tested on devices. Zones, rules, meter, voice effects and languages are covered by JVM tests (rule engine, hub rules, meter aggregation, voice filters measured by frequency); real sound beacons indoors, the microphone and accelerometer measurements and the voice quality on phones are **not** tested on devices. A recorded beacon can be replayed once per sequence number, so zones are for atmosphere, not for security. Art‑Net packets, DMX fades, MIDI messages, Morse patterns, the report and the hub logic for waves, whispering game, split secret and report are covered by JVM tests; the ghost tape, real lighting desks and MIDI devices, and everything on real phones are not tested.
+The hub logic (calls, party line, permissions, limits, persistence) is covered by more than 250 automated checks that run on a JVM. The Android user interface and audio path have been type‑checked against the Android 14 SDK but **not yet tested on physical devices**; the APK is built by GitHub Actions. Test with a handful of phones before a show. Traffic on the local network is not encrypted (the PIN and room code keep honest strangers out, they are not cryptography). Version 1.1 networking (encryption, P2P, SIP, SMS) is covered by hub tests against a simulated SIP server, but has **not** been tried on real operators, NATs or SIM cards. Bluetooth, Wi‑Fi Direct and mDNS links (1.2) share the same transport layer, tested on the JVM with simulated channels, but have **not** been tried on real devices; behaviour differs between phone makers. Plug and play (auto‑join, invitations, Wi‑Fi Aware, 1.3) is **not** tested on devices; the invitation format is covered by JVM tests. The 1.4 audit fixes and the AIR codecs are covered by JVM tests (simulated noise, clock drift, wrong key, interference); the torch, camera, microphone, speaker, motor and accelerometer code is **not** tested on real phones, and real‑world range and speed will differ. The 1.5 features are covered by JVM tests (clock estimation, delays, poll rules, photosensitive limits); the screen overlays, headset‑button handling and real clock accuracy on phones are **not** tested on devices. The 1.6 features are covered by JVM tests (ducking curve, OSC parser fuzzing and flooding, file transfer integrity and path safety, hub relay); playing images, video and clips, the file picker and the settings dialogs are **not** tested on devices. Zones, rules, meter, voice effects and languages are covered by JVM tests (rule engine, hub rules, meter aggregation, voice filters measured by frequency); real sound beacons indoors, the microphone and accelerometer measurements and the voice quality on phones are **not** tested on devices. A recorded beacon can be replayed once per sequence number, so zones are for atmosphere, not for security. Art‑Net packets, DMX fades, MIDI messages, Morse patterns, the report and the hub logic for waves, whispering game, split secret and report are covered by JVM tests; the ghost tape, real lighting desks and MIDI devices, and everything on real phones are not tested. **iOS:** the Swift core is tested on macOS in CI and the app builds for the simulator, but it has **not been tried on real iPhones or against a real SIP provider**.
 
 ## Build
 
@@ -84,6 +86,3 @@ CUPLAJ is free and trade‑free. If it helps your show, you can buy the author a
 ## Licence
 
 MIT © Alexandru‑Ionuț Chiuță (Alexio).
-
-## iOS
-An iPhone/iPad client and Hub live in [`ios/`](ios/README.md) (simulator build + core tests in CI; untested on real devices; no Bluetooth, Wi-Fi Direct or silent SMS/call gateway because iOS has no API for them). An honest comparison with similar apps: [`docs/REVIEW.md`](docs/REVIEW.md).

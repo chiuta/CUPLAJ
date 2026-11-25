@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.8.0 · Ultimo aggiornamento: 2026-11-24_
+_Versione: 1.9.0 · Ultimo aggiornamento: 2026-11-25_
 
 ## 1. Prima dello spettacolo
 
@@ -152,6 +152,14 @@ _Versione: 1.8.0 · Ultimo aggiornamento: 2026-11-24_
 - **Copione** — `Aggiungi passo` · `GO ▶` · `⏮ Inizio` · `Elimina` · `Esporta` · `Importa`
 - **Impostazioni (menu Aa)** — `DIMENSIONE DEL TESTO` · `Mantieni l'app attiva (ottimizzazione batteria)` · `🔍 Trova e unisciti automaticamente` · `Cerca via Bluetooth` · `Cerca Wi‑Fi Direct` · `Rendi visibile via Bluetooth (5 min)` · `Condividi invito per spettatori` · `Condividi invito per attori` · `Linea VoIP / SIP…` · `Collegamenti via aria: luce, suono, vibrazioni` · `Segnale di zona (questo telefono, altoparlante): …` · `OSC: mixer luci / audio, QLab…` · `Uscita Art‑Net / DMX (luci)` · `Regole: zona, sondaggio, pubblico → cue` · `Priorità PA: gli altri suoni si abbassano quando parla la regia` · `Tasto PTT hardware: attivo (tasto auricolare, volume +)` · `Di’ la frase segreta` · `Azzera la memoria dell'hub (numeri, accoppiamenti)` · `Informazioni su CUPLAJ` · `Esci`
 - Impostazioni e opzioni della regia mostrano anche lo stato (attivo/spento).
+
+## 18. iPhone e iPad (iOS)
+
+- L'app iOS è un client completo e può anche ospitare lo spettacolo (regia). Parla lo stesso protocollo: telefoni Android e iOS si mescolano liberamente.
+- Compilazione: apri `ios/` (XcodeGen: `cd ios && xcodegen generate`), scegli il team di firma in Xcode ed esegui. Non esiste ancora una versione App Store o TestFlight.
+- Incluso: chiamate e linea condivisa, cue, copione, sondaggi, regole, contatore, media, impianto voce (PA), Art‑Net, MIDI, OSC, audio P2P diretto, gateway SIP, CUPLAJ‑AIR (luce, suono, vibrazione) e audio in background.
+- Impossibile su iOS (nessuna API pubblica): Bluetooth RFCOMM, Wi‑Fi Direct, gateway silenzioso di SMS e chiamate. Usa l'hotspot dell'iPhone o un Wi‑Fi comune; il cue *chiamata reale* apre il tastierino.
+- Tieni l'app aperta con lo schermo acceso e il telefono di regia in carica. Finora sono girati solo build per simulatore e test automatici — **non ancora provata su iPhone reali**.
 
 ---
 

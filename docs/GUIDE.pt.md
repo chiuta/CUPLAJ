@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · **Português** · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versão: 1.8.0 · Última atualização: 2026-11-24_
+_Versão: 1.9.0 · Última atualização: 2026-11-25_
 
 ## 1. Antes do espetáculo
 
@@ -152,6 +152,14 @@ _Versão: 1.8.0 · Última atualização: 2026-11-24_
 - **Guião** — `Adicionar passo` · `GO ▶` · `⏮ Início` · `Apagar` · `Exportar` · `Importar`
 - **Definições (menu Aa)** — `TAMANHO DO TEXTO` · `Manter a app ativa (otimização da bateria)` · `🔍 Encontrar e juntar‑me automaticamente` · `Procurar por Bluetooth` · `Procurar Wi‑Fi Direct` · `Tornar visível por Bluetooth (5 min)` · `Partilhar convite para espectadores` · `Partilhar convite para atores` · `Linha VoIP / SIP…` · `Ligações pelo ar: luz, som, vibração` · `Baliza de zona (este telemóvel, altifalante): …` · `OSC: mesas de luz / som, QLab…` · `Saída Art‑Net / DMX (luzes)` · `Regras: zona, sondagem, público → sinal` · `Prioridade PA: os outros sons baixam quando a Regia fala` · `Tecla PTT física: ativada (botão do auricular, volume +)` · `Dizer a frase secreta` · `Repor a memória do hub (números, acoplamentos)` · `Sobre o CUPLAJ` · `Sair`
 - As definições e opções da Regia mostram também o estado (ligado/desligado).
+
+## 18. iPhone e iPad (iOS)
+
+- A app iOS é um cliente completo e também pode alojar o espetáculo (régie). Fala o mesmo protocolo: telemóveis Android e iOS misturam‑se livremente.
+- Compilação: abre `ios/` (XcodeGen: `cd ios && xcodegen generate`), escolhe a tua equipa de assinatura no Xcode e executa. Ainda não existe versão na App Store nem no TestFlight.
+- Inclui: chamadas e linha partilhada, sinais, guião, sondagens, regras, contador, multimédia, sonorização (PA), Art‑Net, MIDI, OSC, áudio P2P direto, gateway SIP, CUPLAJ‑AIR (luz, som, vibração) e áudio em segundo plano.
+- Impossível no iOS (sem API pública): Bluetooth RFCOMM, Wi‑Fi Direct, gateway silencioso de SMS e chamadas. Usa o hotspot do iPhone ou um Wi‑Fi comum; o sinal *chamada real* abre o marcador.
+- Mantém a app aberta com o ecrã ligado e o telemóvel da régie ligado ao carregador. Até agora só correram compilações para simulador e testes automáticos — **ainda não foi testada em iPhones reais**.
 
 ---
 

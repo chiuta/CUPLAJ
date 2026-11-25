@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from docs_src import D, LANGS, NAMES
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION, DATE = "1.8.0", "2026-11-24"
+VERSION, DATE = "1.9.0", "2026-11-25"
 REPO = "https://github.com/chiuta/CUPLAJ"
 
 # ---- generated: full cue reference from the app's own strings (always matches the app)
@@ -52,6 +52,89 @@ for _l in LANGS:
         _items.append("**%s** — %s" % (_h, " · ".join(_lab(k) for k in _keys)))
     _items.append(_UI_T[_l][2])
     D[_l]["g"] = D[_l]["g"] + [(_UI_T[_l][0], _items)]
+
+# ---- iPhone / iPad (added in 1.9.0)
+_IOS = {
+ "en": ("**iPhone and iPad** — a full client and host (Control) in Swift, same protocol as Android, so both mix freely in one show; build from source with Xcode (`ios/`).",
+  "iPhone and iPad (iOS)",
+  ["The iOS app is a full client and can also host the show (Control). It speaks the same protocol, so Android and iOS phones mix freely.",
+   "Build: open `ios/` (XcodeGen: `cd ios && xcodegen generate`), set your signing team in Xcode and run. There is no App Store or TestFlight build yet.",
+   "Included: calls and party line, cues, script, polls, rules, meter, media, public address, Art‑Net, MIDI, OSC, direct P2P audio, SIP gateway, CUPLAJ‑AIR (light, sound, vibration) and background audio.",
+   "Not possible on iOS (no public API): Bluetooth RFCOMM, Wi‑Fi Direct, silent SMS and phone‑call gateway. Use the iPhone hotspot or a shared Wi‑Fi; the *real call* cue opens the dialler.",
+   "Keep the app open with the screen on, and the control phone plugged in. Only simulator builds and automated tests have run so far — **not yet tried on real iPhones**."],
+  " **iOS:** the Swift core is tested on macOS in CI and the app builds for the simulator, but it has **not been tried on real iPhones or against a real SIP provider**.",
+  "Android app (APK) · iPhone/iPad app built from source with Xcode — same protocol, they mix in one show."),
+ "ro": ("**iPhone și iPad** — client complet și gazdă (Regie) în Swift, același protocol ca pe Android, deci se amestecă liber în același spectacol; se construiește din sursă cu Xcode (`ios/`).",
+  "iPhone și iPad (iOS)",
+  ["Aplicația iOS este un client complet și poate găzdui spectacolul (Regie). Vorbește același protocol, deci telefoanele Android și iOS se amestecă liber.",
+   "Construire: deschide `ios/` (XcodeGen: `cd ios && xcodegen generate`), alege echipa de semnare în Xcode și rulează. Încă nu există versiune în App Store sau TestFlight.",
+   "Include: apeluri și linie comună, cue‑uri, scenariu, sondaje, reguli, contor, media, anunțuri (PA), Art‑Net, MIDI, OSC, audio P2P direct, gateway SIP, CUPLAJ‑AIR (lumină, sunet, vibrații) și audio în fundal.",
+   "Imposibil pe iOS (fără API public): Bluetooth RFCOMM, Wi‑Fi Direct, gateway silențios de SMS și apeluri. Folosește hotspotul iPhone‑ului sau un Wi‑Fi comun; cue‑ul *apel real* deschide aplicația de apelare.",
+   "Ține aplicația deschisă, cu ecranul pornit, iar telefonul Regie la încărcător. Până acum au rulat doar build‑uri pentru simulator și teste automate — **nu a fost încă încercată pe iPhone‑uri reale**."],
+  " **iOS:** nucleul Swift este testat pe macOS în CI, iar aplicația se construiește pentru simulator, dar **nu a fost încercată pe iPhone‑uri reale sau cu un furnizor SIP real**.",
+  "Aplicație Android (APK) · aplicație iPhone/iPad construită din sursă cu Xcode — același protocol, se amestecă în același spectacol."),
+ "fr": ("**iPhone et iPad** — client complet et hôte (régie) en Swift, même protocole qu'Android : les deux se mélangent librement dans un même spectacle ; compilation depuis les sources avec Xcode (`ios/`).",
+  "iPhone et iPad (iOS)",
+  ["L'application iOS est un client complet et peut aussi héberger le spectacle (régie). Elle parle le même protocole : téléphones Android et iOS se mélangent librement.",
+   "Compilation : ouvrez `ios/` (XcodeGen : `cd ios && xcodegen generate`), choisissez votre équipe de signature dans Xcode et lancez. Il n'y a pas encore de version App Store ni TestFlight.",
+   "Inclus : appels et ligne partagée, signaux, scénario, sondages, règles, compteur, médias, sonorisation (PA), Art‑Net, MIDI, OSC, audio P2P direct, passerelle SIP, CUPLAJ‑AIR (lumière, son, vibration) et audio en arrière‑plan.",
+   "Impossible sur iOS (pas d'API publique) : Bluetooth RFCOMM, Wi‑Fi Direct, passerelle silencieuse de SMS et d'appels. Utilisez le point d'accès de l'iPhone ou un Wi‑Fi commun ; le signal *appel réel* ouvre le composeur.",
+   "Gardez l'application ouverte, écran allumé, et le téléphone de régie branché. Seuls des builds pour simulateur et des tests automatiques ont tourné — **pas encore essayée sur de vrais iPhone**."],
+  " **iOS :** le cœur Swift est testé sur macOS en CI et l'application se compile pour le simulateur, mais elle **n'a pas été essayée sur de vrais iPhone ni avec un vrai fournisseur SIP**.",
+  "Application Android (APK) · application iPhone/iPad compilée depuis les sources avec Xcode — même protocole, mélange possible dans un même spectacle."),
+ "it": ("**iPhone e iPad** — client completo e host (regia) in Swift, stesso protocollo di Android: i due si mescolano liberamente nello stesso spettacolo; si compila dai sorgenti con Xcode (`ios/`).",
+  "iPhone e iPad (iOS)",
+  ["L'app iOS è un client completo e può anche ospitare lo spettacolo (regia). Parla lo stesso protocollo: telefoni Android e iOS si mescolano liberamente.",
+   "Compilazione: apri `ios/` (XcodeGen: `cd ios && xcodegen generate`), scegli il team di firma in Xcode ed esegui. Non esiste ancora una versione App Store o TestFlight.",
+   "Incluso: chiamate e linea condivisa, cue, copione, sondaggi, regole, contatore, media, impianto voce (PA), Art‑Net, MIDI, OSC, audio P2P diretto, gateway SIP, CUPLAJ‑AIR (luce, suono, vibrazione) e audio in background.",
+   "Impossibile su iOS (nessuna API pubblica): Bluetooth RFCOMM, Wi‑Fi Direct, gateway silenzioso di SMS e chiamate. Usa l'hotspot dell'iPhone o un Wi‑Fi comune; il cue *chiamata reale* apre il tastierino.",
+   "Tieni l'app aperta con lo schermo acceso e il telefono di regia in carica. Finora sono girati solo build per simulatore e test automatici — **non ancora provata su iPhone reali**."],
+  " **iOS:** il nucleo Swift è testato su macOS in CI e l'app compila per il simulatore, ma **non è stata provata su iPhone reali né con un vero provider SIP**.",
+  "App Android (APK) · app iPhone/iPad compilata dai sorgenti con Xcode — stesso protocollo, si mescolano nello stesso spettacolo."),
+ "es": ("**iPhone y iPad** — cliente completo y anfitrión (regiduría) en Swift, mismo protocolo que Android: ambos se mezclan libremente en una misma función; se compila desde el código con Xcode (`ios/`).",
+  "iPhone e iPad (iOS)",
+  ["La app de iOS es un cliente completo y también puede alojar la función (regiduría). Habla el mismo protocolo: teléfonos Android e iOS se mezclan libremente.",
+   "Compilación: abre `ios/` (XcodeGen: `cd ios && xcodegen generate`), elige tu equipo de firma en Xcode y ejecuta. Aún no hay versión en App Store ni TestFlight.",
+   "Incluye: llamadas y línea compartida, señales, guion, encuestas, reglas, contador, medios, megafonía (PA), Art‑Net, MIDI, OSC, audio P2P directo, pasarela SIP, CUPLAJ‑AIR (luz, sonido, vibración) y audio en segundo plano.",
+   "Imposible en iOS (sin API pública): Bluetooth RFCOMM, Wi‑Fi Direct, pasarela silenciosa de SMS y llamadas. Usa el punto de acceso del iPhone o un Wi‑Fi común; la señal *llamada real* abre el marcador.",
+   "Mantén la app abierta con la pantalla encendida y el teléfono de regiduría enchufado. Hasta ahora solo se han ejecutado compilaciones para simulador y pruebas automáticas — **aún no se ha probado en iPhone reales**."],
+  " **iOS:** el núcleo Swift se prueba en macOS en CI y la app compila para el simulador, pero **no se ha probado en iPhone reales ni con un proveedor SIP real**.",
+  "App Android (APK) · app de iPhone/iPad compilada desde el código con Xcode — mismo protocolo, se mezclan en una misma función."),
+ "pt": ("**iPhone e iPad** — cliente completo e anfitrião (régie) em Swift, mesmo protocolo do Android: os dois misturam‑se livremente no mesmo espetáculo; compila‑se a partir do código com o Xcode (`ios/`).",
+  "iPhone e iPad (iOS)",
+  ["A app iOS é um cliente completo e também pode alojar o espetáculo (régie). Fala o mesmo protocolo: telemóveis Android e iOS misturam‑se livremente.",
+   "Compilação: abre `ios/` (XcodeGen: `cd ios && xcodegen generate`), escolhe a tua equipa de assinatura no Xcode e executa. Ainda não existe versão na App Store nem no TestFlight.",
+   "Inclui: chamadas e linha partilhada, sinais, guião, sondagens, regras, contador, multimédia, sonorização (PA), Art‑Net, MIDI, OSC, áudio P2P direto, gateway SIP, CUPLAJ‑AIR (luz, som, vibração) e áudio em segundo plano.",
+   "Impossível no iOS (sem API pública): Bluetooth RFCOMM, Wi‑Fi Direct, gateway silencioso de SMS e chamadas. Usa o hotspot do iPhone ou um Wi‑Fi comum; o sinal *chamada real* abre o marcador.",
+   "Mantém a app aberta com o ecrã ligado e o telemóvel da régie ligado ao carregador. Até agora só correram compilações para simulador e testes automáticos — **ainda não foi testada em iPhones reais**."],
+  " **iOS:** o núcleo Swift é testado em macOS na CI e a app compila para o simulador, mas **não foi testada em iPhones reais nem com um fornecedor SIP real**.",
+  "App Android (APK) · app iPhone/iPad compilada a partir do código com o Xcode — mesmo protocolo, misturam‑se no mesmo espetáculo."),
+ "de": ("**iPhone und iPad** — vollständiger Client und Host (Regie) in Swift, gleiches Protokoll wie Android: beide lassen sich in einer Vorstellung frei mischen; Build aus dem Quellcode mit Xcode (`ios/`).",
+  "iPhone und iPad (iOS)",
+  ["Die iOS‑App ist ein vollständiger Client und kann auch die Vorstellung hosten (Regie). Sie spricht dasselbe Protokoll: Android‑ und iOS‑Telefone lassen sich frei mischen.",
+   "Build: `ios/` öffnen (XcodeGen: `cd ios && xcodegen generate`), in Xcode das Signing‑Team wählen und starten. Es gibt noch keinen App‑Store‑ oder TestFlight‑Build.",
+   "Enthalten: Gespräche und Gemeinschaftsanschluss, Cues, Ablauf, Umfragen, Regeln, Zähler, Medien, Durchsagen (PA), Art‑Net, MIDI, OSC, direktes P2P‑Audio, SIP‑Gateway, CUPLAJ‑AIR (Licht, Schall, Vibration) und Audio im Hintergrund.",
+   "Unter iOS nicht möglich (keine öffentliche API): Bluetooth RFCOMM, Wi‑Fi Direct, stilles SMS‑ und Anruf‑Gateway. Den iPhone‑Hotspot oder ein gemeinsames WLAN nutzen; der Cue *echter Anruf* öffnet die Wähl‑App.",
+   "App geöffnet und Bildschirm an lassen, das Regie‑Telefon am Ladegerät. Bisher liefen nur Simulator‑Builds und automatische Tests — **noch nicht auf echten iPhones ausprobiert**."],
+  " **iOS:** Der Swift‑Kern wird in der CI auf macOS getestet und die App baut für den Simulator, wurde aber **weder auf echten iPhones noch mit einem echten SIP‑Anbieter ausprobiert**.",
+  "Android‑App (APK) · iPhone/iPad‑App aus dem Quellcode mit Xcode gebaut — gleiches Protokoll, in einer Vorstellung mischbar."),
+ "hu": ("**iPhone és iPad** — teljes kliens és házigazda (rendezői) Swiftben, ugyanaz a protokoll, mint Androidon: egy előadáson belül szabadon keverhetők; forrásból építhető Xcode‑dal (`ios/`).",
+  "iPhone és iPad (iOS)",
+  ["Az iOS‑app teljes kliens, és az előadást is képes házigazdaként vezetni (rendezői). Ugyanazt a protokollt beszéli, így az Android‑ és iOS‑telefonok szabadon keverhetők.",
+   "Építés: nyisd meg az `ios/` mappát (XcodeGen: `cd ios && xcodegen generate`), válaszd ki az aláírási csapatot Xcode‑ban, és futtasd. App Store‑os vagy TestFlight‑verzió még nincs.",
+   "Tartalma: hívások és közös vonal, jelzések, forgatókönyv, szavazások, szabályok, számláló, média, hangosítás (PA), Art‑Net, MIDI, OSC, közvetlen P2P hang, SIP‑átjáró, CUPLAJ‑AIR (fény, hang, rezgés) és háttérben futó hang.",
+   "iOS‑en nem lehetséges (nincs nyilvános API): Bluetooth RFCOMM, Wi‑Fi Direct, néma SMS‑ és hívásátjáró. Használd az iPhone hotspotját vagy közös Wi‑Fit; a *valódi hívás* jelzés a tárcsázót nyitja meg.",
+   "Tartsd nyitva az appot bekapcsolt képernyővel, a rendezői telefont pedig töltőn. Eddig csak szimulátoros buildek és automatikus tesztek futottak — **valódi iPhone‑on még nem próbálták ki**."],
+  " **iOS:** a Swift‑mag tesztelése macOS‑en, CI‑ben történik, az app szimulátorra lefordul, de **valódi iPhone‑on és valódi SIP‑szolgáltatóval még nem próbálták ki**.",
+  "Android‑app (APK) · forrásból Xcode‑dal épített iPhone/iPad‑app — ugyanaz a protokoll, egy előadáson belül keverhetők."),
+}
+for _l in LANGS:
+    _f, _gt, _gi, _st, _pl = _IOS[_l]
+    D[_l]["feat"] = D[_l]["feat"] + [_f]
+    D[_l]["g"] = D[_l]["g"] + [(_gt, _gi)]
+    D[_l]["status"] = D[_l]["status"] + _st
+    D[_l]["site"]["plat"] = _pl
+
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
 
 def bar(prefix, cur, ext_en):
@@ -61,6 +144,9 @@ def bar(prefix, cur, ext_en):
         fn = (prefix + (ext_en if l == "en" else "." + l + ".md")) if prefix != "README" else ("README.md" if l == "en" else "README.%s.md" % l)
         out.append("**%s**" % name if l == cur else "[%s](%s)" % (name, fn))
     return " · ".join(out)
+
+_REV = {"en": "Honest review and comparison", "ro": "Recenzie onestă și comparație", "fr": "Revue honnête et comparaison", "it": "Recensione onesta e confronto",
+        "es": "Reseña honesta y comparación", "pt": "Revisão honesta e comparação", "de": "Ehrliche Bewertung und Vergleich", "hu": "Őszinte értékelés és összehasonlítás"}
 
 def readme(l):
     d = D[l]
@@ -79,6 +165,7 @@ def readme(l):
           "- [%s](docs/PROTOCOL.md) *(English)*" % d["docs"]["protocol"],
           "- [%s](docs/AUDIT.md) *(English)*" % d["docs"]["audit"],
           "- [%s](CHANGELOG.md) *(English)*" % d["docs"]["changelog"],
+          "- [%s](docs/REVIEW.md) *(English)*" % _REV[l],
           "- [%s](https://chiuta.github.io/CUPLAJ/)" % d["docs"]["site"]]
     s += ["", "## " + d["h_status"], "", d["status"], "", "## " + d["h_build"], "", d["build"], "",
           "## " + d["h_priv"], "", d["priv"], "", "## " + d["h_support"], "", d["support"], "",

@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.8.0 · Last update: 2026-11-24_
+_Version: 1.9.0 · Last update: 2026-11-25_
 
 ## 1. Before the show
 
@@ -152,6 +152,14 @@ _Version: 1.8.0 · Last update: 2026-11-24_
 - **Script** — `Add step` · `GO ▶` · `⏮ Start` · `Delete` · `Export` · `Import`
 - **Settings (Aa menu)** — `TEXT SIZE` · `Keep the app alive (battery optimisation)` · `🔍 Find and join automatically` · `Find via Bluetooth` · `Find Wi‑Fi Direct` · `Make visible by Bluetooth (5 min)` · `Share invitation for spectators` · `Share invitation for actors` · `VoIP / SIP line…` · `Air links: light, sound, vibration` · `Zone beacon (this phone, speaker): …` · `OSC: lighting / sound desks, QLab…` · `Art‑Net / DMX output (lights)` · `Rules: zone, poll, crowd → cue` · `PA priority: other sounds duck while the control phone speaks` · `Hardware PTT key: on (headset button, volume up)` · `Say the secret phrase` · `Reset the hub's memory (numbers, couplings)` · `About CUPLAJ` · `Exit`
 - Settings and Control options also show their state (on/off).
+
+## 18. iPhone and iPad (iOS)
+
+- The iOS app is a full client and can also host the show (Control). It speaks the same protocol, so Android and iOS phones mix freely.
+- Build: open `ios/` (XcodeGen: `cd ios && xcodegen generate`), set your signing team in Xcode and run. There is no App Store or TestFlight build yet.
+- Included: calls and party line, cues, script, polls, rules, meter, media, public address, Art‑Net, MIDI, OSC, direct P2P audio, SIP gateway, CUPLAJ‑AIR (light, sound, vibration) and background audio.
+- Not possible on iOS (no public API): Bluetooth RFCOMM, Wi‑Fi Direct, silent SMS and phone‑call gateway. Use the iPhone hotspot or a shared Wi‑Fi; the *real call* cue opens the dialler.
+- Keep the app open with the screen on, and the control phone plugged in. Only simulator builds and automated tests have run so far — **not yet tried on real iPhones**.
 
 ---
 

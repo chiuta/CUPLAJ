@@ -14,7 +14,7 @@ struct MainView: View {
                 RegieTab().tabItem { Label(L.t("tab_regie"), systemImage: "slider.horizontal.3") }.tag(3)
                 ScriptTab().tabItem { Label(L.t("tab_script"), systemImage: "list.number") }.tag(4)
             }
-            SettingsTab().tabItem { Label(L.or("tab_settings", "⚙︎"), systemImage: "gearshape") }.tag(5)
+            SettingsTab().tabItem { Label("⚙︎", systemImage: "gearshape") }.tag(5)
         }
         .accentColor(gold)
         .sheet(item: Binding(get: { m.pollCur.map { PollBox(m: $0) } }, set: { if $0 == nil { m.pollCur = nil } })) { PollSheet(box: $0) }
@@ -407,14 +407,15 @@ struct SettingsTab: View {
                         Stepper(L.t("osc_in_port") + ": \(m.oscInPort)", value: $m.oscInPort, in: 1024...65535)
                         Button(L.t("btn_send")) { m.saveOsc() }
                     }
-                    Section(header: Text(L.or("set_sip", "SIP / VoIP"))) {
-                        Toggle(L.or("sip_on", "SIP gateway (dial 0 + number)"), isOn: $m.sipOn)
-                        TextField(L.or("sip_host", "SIP server"), text: $m.sipHost).autocapitalization(.none).disableAutocorrection(true)
+                    Section(header: Text(L.t("btn_sip"))) {
+                        Text(L.t("sip_help")).font(.caption)
+                        Toggle(L.t(m.sipOn ? "sip_on" : "sip_off"), isOn: $m.sipOn)
+                        TextField(L.t("sip_server"), text: $m.sipHost).autocapitalization(.none).disableAutocorrection(true)
                         Stepper("Port: \(m.sipPort)", value: $m.sipPort, in: 1...65535)
-                        TextField(L.or("sip_user", "User"), text: $m.sipUser).autocapitalization(.none).disableAutocorrection(true)
-                        SecureField(L.or("sip_pass", "Password"), text: $m.sipPass)
-                        TextField(L.or("sip_domain", "Domain (optional)"), text: $m.sipDomain).autocapitalization(.none)
-                        TextField(L.or("sip_inbound", "Incoming rings number"), text: $m.sipInbound).keyboardType(.numberPad)
+                        TextField(L.t("sip_user"), text: $m.sipUser).autocapitalization(.none).disableAutocorrection(true)
+                        SecureField(L.t("sip_pass"), text: $m.sipPass)
+                        TextField(L.t("sip_domain"), text: $m.sipDomain).autocapitalization(.none)
+                        TextField(L.t("sip_inbound"), text: $m.sipInbound).keyboardType(.numberPad)
                         Button(L.t("btn_send")) { m.saveSip() }
                         if m.sipOn { Text(m.sipRegistered ? "✓ registered" : "…").font(.caption) }
                     }
@@ -425,19 +426,19 @@ struct SettingsTab: View {
                         Button(L.t("btn_send")) { m.saveDmx() }
                     }
                 }
-                Section(header: Text(L.or("air_title", "AIR: light, sound, vibration"))) {
-                    Text(L.or("air_hint", "Receive cues without a network.")).font(.caption)
-                    Toggle(L.or("air_rx_light", "Receive: light (camera)"), isOn: $m.airRxLight).onChange(of: m.airRxLight) { _ in m.airApply() }
-                    Toggle(L.or("air_rx_sound", "Receive: sound (microphone)"), isOn: $m.airRxSound).onChange(of: m.airRxSound) { _ in m.airApply() }
-                    Toggle(L.or("air_rx_vibe", "Receive: vibration (accelerometer)"), isOn: $m.airRxVibe).onChange(of: m.airRxVibe) { _ in m.airApply() }
-                    Toggle(L.or("air_ultra", "Near-ultrasonic sound"), isOn: $m.airUltra).onChange(of: m.airUltra) { _ in m.airApply() }
-                    Stepper(L.t("beacon_btn", m.beaconZone == 0 ? L.or("air_off", "off") : String(m.beaconZone)), value: Binding(get: { m.beaconZone }, set: { m.setBeacon($0) }), in: 0...9)
+                Section(header: Text(L.t("air_title"))) {
+                    Text(L.t("air_hint")).font(.caption)
+                    Toggle(L.t("air_rx_light"), isOn: $m.airRxLight).onChange(of: m.airRxLight) { _ in m.airApply() }
+                    Toggle(L.t("air_rx_sound"), isOn: $m.airRxSound).onChange(of: m.airRxSound) { _ in m.airApply() }
+                    Toggle(L.t("air_rx_vibe"), isOn: $m.airRxVibe).onChange(of: m.airRxVibe) { _ in m.airApply() }
+                    Toggle(L.t("air_ultra"), isOn: $m.airUltra).onChange(of: m.airUltra) { _ in m.airApply() }
+                    Stepper(L.t("beacon_btn", m.beaconZone == 0 ? L.t("air_off") : String(m.beaconZone)), value: Binding(get: { m.beaconZone }, set: { m.setBeacon($0) }), in: 0...9)
                     if m.role == "regie" {
                         ForEach(["light", "sound", "vibe"], id: \.self) { mode in
                             Button(L.or("air_" + mode, mode)) { m.showToast(m.airSendCue(mode, kind: "vibrate", text: "800") ? L.t("air_sending") : L.t("air_unavailable", mode)) }
                         }
                         ForEach(["light", "sound"], id: \.self) { mode in
-                            Button(L.or("air_send_invite", "Invite") + " · " + mode) { m.showToast(m.airSendInvite(mode) ? L.t("air_sending") : L.t("air_unavailable", mode)) }
+                            Button(L.t("air_send_invite") + " · " + mode) { m.showToast(m.airSendInvite(mode) ? L.t("air_sending") : L.t("air_unavailable", mode)) }
                         }
                     }
                 }

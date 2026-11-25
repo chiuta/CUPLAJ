@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.8.0 · Ultima actualizare: 2026-11-24_
+_Versiune: 1.9.0 · Ultima actualizare: 2026-11-25_
 
 ## 1. Înainte de spectacol
 
@@ -152,6 +152,14 @@ _Versiune: 1.8.0 · Ultima actualizare: 2026-11-24_
 - **Scenariu** — `Adaugă pasul` · `GO ▶` · `⏮ Început` · `Șterge` · `Exportă` · `Importă`
 - **Setări (meniul Aa)** — `MĂRIMEA TEXTULUI` · `Păstrează aplicația activă (optimizare baterie)` · `🔍 Găsește și alătură‑mă automat` · `Caută prin Bluetooth` · `Caută Wi‑Fi Direct` · `Fă telefonul vizibil prin Bluetooth (5 min)` · `Trimite invitație pentru spectatori` · `Trimite invitație pentru actori` · `Linie VoIP / SIP…` · `Legături prin aer: lumină, sunet, vibrații` · `Semnal de zonă (acest telefon, difuzor): …` · `OSC: pupitre de lumini / sunet, QLab…` · `Ieșire Art‑Net / DMX (lumini)` · `Reguli: zonă, sondaj, public → replică` · `Prioritate PA: restul sunetelor coboară cât vorbește Regia` · `Buton PTT hardware: pornit (buton căști, volum +)` · `Spune fraza secretă` · `Resetează memoria hubului (numere, cuplaje)` · `Despre CUPLAJ` · `Ieși`
 - Setările și opțiunile Regiei arată și starea (pornit/oprit).
+
+## 18. iPhone și iPad (iOS)
+
+- Aplicația iOS este un client complet și poate găzdui spectacolul (Regie). Vorbește același protocol, deci telefoanele Android și iOS se amestecă liber.
+- Construire: deschide `ios/` (XcodeGen: `cd ios && xcodegen generate`), alege echipa de semnare în Xcode și rulează. Încă nu există versiune în App Store sau TestFlight.
+- Include: apeluri și linie comună, cue‑uri, scenariu, sondaje, reguli, contor, media, anunțuri (PA), Art‑Net, MIDI, OSC, audio P2P direct, gateway SIP, CUPLAJ‑AIR (lumină, sunet, vibrații) și audio în fundal.
+- Imposibil pe iOS (fără API public): Bluetooth RFCOMM, Wi‑Fi Direct, gateway silențios de SMS și apeluri. Folosește hotspotul iPhone‑ului sau un Wi‑Fi comun; cue‑ul *apel real* deschide aplicația de apelare.
+- Ține aplicația deschisă, cu ecranul pornit, iar telefonul Regie la încărcător. Până acum au rulat doar build‑uri pentru simulator și teste automate — **nu a fost încă încercată pe iPhone‑uri reale**.
 
 ---
 

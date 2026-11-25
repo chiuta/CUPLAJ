@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · **Français** · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version : 1.8.0 · Dernière mise à jour : 2026-11-24_
+_Version : 1.9.0 · Dernière mise à jour : 2026-11-25_
 
 ## 1. Avant le spectacle
 
@@ -152,6 +152,14 @@ _Version : 1.8.0 · Dernière mise à jour : 2026-11-24_
 - **Scénario** — `Ajouter l'étape` · `GO ▶` · `⏮ Début` · `Supprimer` · `Exporter` · `Importer`
 - **Réglages (menu Aa)** — `TAILLE DU TEXTE` · `Garder l'app active (optimisation batterie)` · `🔍 Trouver et rejoindre automatiquement` · `Chercher par Bluetooth` · `Chercher Wi‑Fi Direct` · `Rendre visible par Bluetooth (5 min)` · `Partager l'invitation pour spectateurs` · `Partager l'invitation pour acteurs` · `Ligne VoIP / SIP…` · `Liaisons par l'air : lumière, son, vibrations` · `Balise de zone (ce téléphone, haut‑parleur) : …` · `OSC : pupitres lumière / son, QLab…` · `Sortie Art‑Net / DMX (lumières)` · `Règles : zone, sondage, public → indice` · `Priorité PA : les autres sons baissent quand la régie parle` · `Touche PTT matérielle : activée (bouton casque, volume +)` · `Dire la phrase secrète` · `Réinitialiser la mémoire du hub (numéros, couplages)` · `À propos de CUPLAJ` · `Quitter`
 - Les réglages et options de la régie indiquent aussi leur état (activé/désactivé).
+
+## 18. iPhone et iPad (iOS)
+
+- L'application iOS est un client complet et peut aussi héberger le spectacle (régie). Elle parle le même protocole : téléphones Android et iOS se mélangent librement.
+- Compilation : ouvrez `ios/` (XcodeGen : `cd ios && xcodegen generate`), choisissez votre équipe de signature dans Xcode et lancez. Il n'y a pas encore de version App Store ni TestFlight.
+- Inclus : appels et ligne partagée, signaux, scénario, sondages, règles, compteur, médias, sonorisation (PA), Art‑Net, MIDI, OSC, audio P2P direct, passerelle SIP, CUPLAJ‑AIR (lumière, son, vibration) et audio en arrière‑plan.
+- Impossible sur iOS (pas d'API publique) : Bluetooth RFCOMM, Wi‑Fi Direct, passerelle silencieuse de SMS et d'appels. Utilisez le point d'accès de l'iPhone ou un Wi‑Fi commun ; le signal *appel réel* ouvre le composeur.
+- Gardez l'application ouverte, écran allumé, et le téléphone de régie branché. Seuls des builds pour simulateur et des tests automatiques ont tourné — **pas encore essayée sur de vrais iPhone**.
 
 ---
 

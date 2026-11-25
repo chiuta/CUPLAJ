@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.8.0 · Letzte Aktualisierung: 2026-11-24_
+_Version: 1.9.0 · Letzte Aktualisierung: 2026-11-25_
 
 ## 1. Vor der Vorstellung
 
@@ -152,6 +152,14 @@ _Version: 1.8.0 · Letzte Aktualisierung: 2026-11-24_
 - **Ablauf** — `Schritt hinzufügen` · `GO ▶` · `⏮ Anfang` · `Löschen` · `Exportieren` · `Importieren`
 - **Einstellungen (Menü Aa)** — `TEXTGRÖSSE` · `App aktiv halten (Akkuoptimierung)` · `🔍 Automatisch finden und beitreten` · `Per Bluetooth suchen` · `Wi‑Fi Direct suchen` · `Per Bluetooth sichtbar machen (5 Min.)` · `Einladung für Zuschauer teilen` · `Einladung für Schauspieler teilen` · `VoIP-/SIP-Leitung…` · `Luftverbindungen: Licht, Schall, Vibration` · `Zonen‑Bake (dieses Telefon, Lautsprecher): …` · `OSC: Licht‑/Tonpulte, QLab…` · `Art‑Net / DMX‑Ausgang (Licht)` · `Regeln: Zone, Umfrage, Publikum → Cue` · `PA‑Vorrang: andere Töne werden leiser, wenn die Regie spricht` · `Hardware‑PTT‑Taste: an (Headset‑Taste, Lauter)` · `Geheimen Satz sagen` · `Hub-Gedächtnis zurücksetzen (Nummern, Kopplungen)` · `Über CUPLAJ` · `Beenden`
 - Einstellungen und Regie‑Optionen zeigen auch ihren Zustand (an/aus).
+
+## 18. iPhone und iPad (iOS)
+
+- Die iOS‑App ist ein vollständiger Client und kann auch die Vorstellung hosten (Regie). Sie spricht dasselbe Protokoll: Android‑ und iOS‑Telefone lassen sich frei mischen.
+- Build: `ios/` öffnen (XcodeGen: `cd ios && xcodegen generate`), in Xcode das Signing‑Team wählen und starten. Es gibt noch keinen App‑Store‑ oder TestFlight‑Build.
+- Enthalten: Gespräche und Gemeinschaftsanschluss, Cues, Ablauf, Umfragen, Regeln, Zähler, Medien, Durchsagen (PA), Art‑Net, MIDI, OSC, direktes P2P‑Audio, SIP‑Gateway, CUPLAJ‑AIR (Licht, Schall, Vibration) und Audio im Hintergrund.
+- Unter iOS nicht möglich (keine öffentliche API): Bluetooth RFCOMM, Wi‑Fi Direct, stilles SMS‑ und Anruf‑Gateway. Den iPhone‑Hotspot oder ein gemeinsames WLAN nutzen; der Cue *echter Anruf* öffnet die Wähl‑App.
+- App geöffnet und Bildschirm an lassen, das Regie‑Telefon am Ladegerät. Bisher liefen nur Simulator‑Builds und automatische Tests — **noch nicht auf echten iPhones ausprobiert**.
 
 ---
 

@@ -8,7 +8,7 @@ Written 2026‑11‑25 by the same assistant that wrote most of the code, so rea
 * **Engineering on paper: solid.** About 9,300 lines of Kotlin, an encrypted session (AES‑128‑GCM, PBKDF2 100 000, PIN), a hub with limits, more than 250 automated JVM checks, green CI.
 * **Evidence on real hardware: none.** Not one feature has been run on a fleet of real phones. Audio latency, battery, Wi‑Fi Direct, Bluetooth, camera/torch, MIDI and Art‑Net with a real desk are all unproven.
 * **Versus professional show control: not a replacement.** QLab, MiX16, SOLOstudio and Unity Intercom are mature, field‑proven and (mostly) iOS/Mac. CUPLAJ complements them (OSC, MIDI, Art‑Net out) rather than competing.
-* **Biggest practical risks:** Android only; the hub is one phone (a single point of failure); no field test; translations unreviewed; feature count has outrun testing.
+* **Biggest practical risks:** Android is the tested platform and iOS (added in 1.9) has never run on a real iPhone; the hub is one phone (a single point of failure); no field test; translations unreviewed; feature count has outrun testing.
 
 ## What it is compared with
 
@@ -38,7 +38,7 @@ Legend: ✅ clearly better or unique · ➖ comparable · ❌ clearly weaker or 
 | Security | PIN + PBKDF2 + AES‑GCM, size limits | n/a | ➖ sensible for a closed event; AES‑128 and a 6‑digit PIN are fine for a venue, not for hostile networks. Not independently audited |
 | Accessibility / captions | Per‑language captions, haptic and light cues | Little found elsewhere | ✅ good intent, ❓ not tested with real users |
 | Audience games (whisper chain, split secret, ghost tape, report) | Present | Not found elsewhere | ✅ original, ❓ untested on phones; the "tape" and "chain" are the likeliest to show bugs |
-| Platforms | Android only | Most competitors: iOS and/or Mac | ❌ large practical gap; many audiences are iPhone‑heavy |
+| Platforms | Android (APK); iPhone/iPad app from source since 1.9, simulator and unit tests only, no App Store/TestFlight build | Most competitors: iOS and/or Mac | ⚠️ gap narrowed but not closed: iOS is untested on devices, cannot do Bluetooth, Wi‑Fi Direct or silent SMS/call gateways, and is not installable without Xcode and an Apple account |
 | Onboarding | Invitation by light, sound, QR, link | Store apps with one tap install | ❌ a sideloaded APK is a real barrier for an audience; no Play Store listing |
 | Licence / cost | MIT, free, no accounts | Mostly paid or in‑app purchases | ✅ |
 | Documentation | 8 languages, guides, protocol spec, audit | Varies | ✅ unusually thorough; ❓ translations unreviewed by native speakers |
@@ -66,7 +66,7 @@ Legend: ✅ clearly better or unique · ➖ comparable · ❌ clearly weaker or 
 2. Test **one real desk** over Art‑Net and one MIDI device.
 3. Put the control UI in front of **one stage manager** and watch.
 4. Decide a **small default cue set** and hide the rest behind "advanced".
-5. Native‑speaker review of the translations; consider an iOS companion or a web client for audience phones.
+5. Native‑speaker review of the translations; get the iOS app onto real iPhones (TestFlight needs an Apple developer account) and test it against Android phones in one show; consider a web client for audience phones.
 
 ## Sources
 

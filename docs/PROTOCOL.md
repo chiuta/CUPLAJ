@@ -1,4 +1,4 @@
-# CUPLAJ protocol (v1.8)
+# CUPLAJ protocol (v1.9)
 
 Documentation language: English only (the app UI, README and user guide are available in 8 languages).
 

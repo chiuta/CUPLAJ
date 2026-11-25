@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.8.0 · Última actualización: 2026-11-24_
+_Versión: 1.9.0 · Última actualización: 2026-11-25_
 
 ## 1. Antes de la función
 
@@ -152,6 +152,14 @@ _Versión: 1.8.0 · Última actualización: 2026-11-24_
 - **Guion** — `Añadir paso` · `GO ▶` · `⏮ Inicio` · `Borrar` · `Exportar` · `Importar`
 - **Ajustes (menú Aa)** — `TAMAÑO DEL TEXTO` · `Mantener la app activa (optimización de batería)` · `🔍 Buscar y unirme automáticamente` · `Buscar por Bluetooth` · `Buscar Wi‑Fi Direct` · `Hacer visible por Bluetooth (5 min)` · `Compartir invitación para espectadores` · `Compartir invitación para actores` · `Línea VoIP / SIP…` · `Enlaces por aire: luz, sonido, vibración` · `Baliza de zona (este teléfono, altavoz): …` · `OSC: mesas de luces / sonido, QLab…` · `Salida Art‑Net / DMX (luces)` · `Reglas: zona, encuesta, público → señal` · `Prioridad PA: los demás sonidos bajan cuando habla regiduría` · `Tecla PTT física: activada (botón de auricular, volumen +)` · `Decir la frase secreta` · `Restablecer la memoria del hub (números, acoplamientos)` · `Acerca de CUPLAJ` · `Salir`
 - Los ajustes y opciones de regiduría muestran también su estado (activado/desactivado).
+
+## 18. iPhone e iPad (iOS)
+
+- La app de iOS es un cliente completo y también puede alojar la función (regiduría). Habla el mismo protocolo: teléfonos Android e iOS se mezclan libremente.
+- Compilación: abre `ios/` (XcodeGen: `cd ios && xcodegen generate`), elige tu equipo de firma en Xcode y ejecuta. Aún no hay versión en App Store ni TestFlight.
+- Incluye: llamadas y línea compartida, señales, guion, encuestas, reglas, contador, medios, megafonía (PA), Art‑Net, MIDI, OSC, audio P2P directo, pasarela SIP, CUPLAJ‑AIR (luz, sonido, vibración) y audio en segundo plano.
+- Imposible en iOS (sin API pública): Bluetooth RFCOMM, Wi‑Fi Direct, pasarela silenciosa de SMS y llamadas. Usa el punto de acceso del iPhone o un Wi‑Fi común; la señal *llamada real* abre el marcador.
+- Mantén la app abierta con la pantalla encendida y el teléfono de regiduría enchufado. Hasta ahora solo se han ejecutado compilaciones para simulador y pruebas automáticas — **aún no se ha probado en iPhone reales**.
 
 ---
 

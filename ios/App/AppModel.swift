@@ -993,7 +993,7 @@ final class AppModel: ObservableObject {
                             domain: sipDomain.trimmingCharacters(in: .whitespaces), inbound: sipInbound.trimmingCharacters(in: .whitespaces).isEmpty ? "100" : sipInbound.trimmingCharacters(in: .whitespaces),
                             hubPort: PORT, hubPin: hubPin, hubKey: keyStr, hubRoom: room)
         let g = SipGateway(cfg, log: { [weak self] s in DispatchQueue.main.async { self?.log.append("SIP: " + s) } })
-        if !g.start() { showToast(L.t("err_sip")); return }
+        if !g.start() { showToast(L.t("sip_err")); return }
         sipGw = g
         // show the registration state after a few seconds
         _ = after(4) { [weak self] in self?.sipRegistered = self?.sipGw?.registered ?? false }

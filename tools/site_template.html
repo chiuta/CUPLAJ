@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CUPLAJ</title>
-<meta name="description" content="Party-line telephony for immersive theatre — Android, offline, 8 languages.">
+<meta name="description" content="Party-line telephony for immersive theatre — Android and iPhone, offline, 8 languages.">
 <link rel="icon" href="logo.svg">
 <style>
 :root{--bg:#14110f;--card:#1e1915;--ink:#e8d9b8;--dim:#a39883;--acc:#b5452f;--ok:#2e7d4f;--red:#a33a32;--fs:1}
@@ -115,6 +115,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,#3a0f0e 0%,#14110f 60%)
  <p id="tag" style="font-style:italic"></p>
  <div class="cta"><a id="get" href="__REPO__/releases"></a><a id="repo" class="alt" href="__REPO__"></a></div>
  <small id="ver" style="color:var(--dim)"></small>
+ <p id="plat" style="color:var(--dim);font-size:.95rem;margin:.6rem auto 0;max-width:42rem"></p>
  <div class="stats" id="stats"></div>
 </div>
 <section class="who" aria-labelledby="h_who">
@@ -234,7 +235,7 @@ function render(){
  const d=DATA[lang],s=d.s;
  document.documentElement.lang=lang;document.title='CUPLAJ — '+d.tag;
  $('hero').textContent=s.hero;$('sub').textContent=s.sub;$('tag').textContent=d.tag;$('ver').textContent=d.ver;
- $('get').textContent=s.get;$('repo').textContent=s.repo;$('intro').innerHTML=md(d.intro);
+ $('plat').textContent=s.plat;$('get').textContent=s.get;$('repo').textContent=s.repo;$('intro').innerHTML=md(d.intro);
  $('h_demo').textContent=s.demo;$('demo_hint').textContent=s.demo_hint;$('h_log').textContent=s.log;$('reset').textContent=s.reset;
  $('h_feat').textContent=d.h_feat;$('h_eras').textContent=d.h_eras;$('h_party').textContent=d.h_party;$('h_quick').textContent=d.h_quick;
  $('h_status').textContent=d.h_status;$('h_priv').textContent=d.h_priv;$('h_docs').textContent=d.h_docs;$('h_support').textContent=d.h_support;

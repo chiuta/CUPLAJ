@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.8.0 · Utolsó frissítés: 2026-11-24_
+_Verzió: 1.9.0 · Utolsó frissítés: 2026-11-25_
 
 ## 1. Az előadás előtt
 
@@ -152,6 +152,14 @@ _Verzió: 1.8.0 · Utolsó frissítés: 2026-11-24_
 - **Forgatókönyv** — `Lépés hozzáadása` · `GO ▶` · `⏮ Eleje` · `Törlés` · `Exportálás` · `Importálás`
 - **Beállítások (Aa menü)** — `SZÖVEGMÉRET` · `Az app maradjon aktív (akkumulátor-optimalizálás)` · `🔍 Automatikus keresés és csatlakozás` · `Keresés Bluetoothon` · `Wi‑Fi Direct keresése` · `Láthatóvá tétel Bluetoothon (5 perc)` · `Meghívó küldése nézőknek` · `Meghívó küldése színészeknek` · `VoIP / SIP vonal…` · `Légi kapcsolatok: fény, hang, rezgés` · `Zónajelző (ez a telefon, hangszóró): …` · `OSC: fény‑/hangpultok, QLab…` · `Art‑Net / DMX kimenet (fények)` · `Szabályok: zóna, szavazás, közönség → jelzés` · `PA elsőbbség: a többi hang halkul, amikor a rendező beszél` · `Hardveres PTT gomb: be (headset gomb, hangerő +)` · `Mondd a titkos mondatot` · `A hub memóriájának törlése (számok, párosítások)` · `A CUPLAJ-ról` · `Kilépés`
 - A beállítások és a rendezői opciók az állapotukat (be/ki) is mutatják.
+
+## 18. iPhone és iPad (iOS)
+
+- Az iOS‑app teljes kliens, és az előadást is képes házigazdaként vezetni (rendezői). Ugyanazt a protokollt beszéli, így az Android‑ és iOS‑telefonok szabadon keverhetők.
+- Építés: nyisd meg az `ios/` mappát (XcodeGen: `cd ios && xcodegen generate`), válaszd ki az aláírási csapatot Xcode‑ban, és futtasd. App Store‑os vagy TestFlight‑verzió még nincs.
+- Tartalma: hívások és közös vonal, jelzések, forgatókönyv, szavazások, szabályok, számláló, média, hangosítás (PA), Art‑Net, MIDI, OSC, közvetlen P2P hang, SIP‑átjáró, CUPLAJ‑AIR (fény, hang, rezgés) és háttérben futó hang.
+- iOS‑en nem lehetséges (nincs nyilvános API): Bluetooth RFCOMM, Wi‑Fi Direct, néma SMS‑ és hívásátjáró. Használd az iPhone hotspotját vagy közös Wi‑Fit; a *valódi hívás* jelzés a tárcsázót nyitja meg.
+- Tartsd nyitva az appot bekapcsolt képernyővel, a rendezői telefont pedig töltőn. Eddig csak szimulátoros buildek és automatikus tesztek futottak — **valódi iPhone‑on még nem próbálták ki**.
 
 ---
 
