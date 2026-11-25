@@ -49,21 +49,29 @@ final class AirTests: XCTestCase {
         }
     }
 
-    func testTactusRoundTrip() throws {
-        let p = AirPacket(type: 1, seq: 4, data: Data([2, 65]))
-        let raw = try XCTUnwrap(Air.pack(p, key: key, macLen: 2))
-        let d = Tactus.encode(raw)
-        var s = [ASample](); var t = 0.0
-        let total = d.reduce(0, +) + 1500
-        // 100 Hz accelerometer; vibration = 25 Hz oscillation of 1 m/s^2 on top of gravity
-        var phases = [(Double, Double)](); var at = 400.0
-        for (i, x) in d.enumerated() { if i % 2 == 0 { phases.append((at, at + Double(x))) }; at += Double(x) }
-        while t < Double(total) {
-            let vib = phases.contains { t >= $0.0 && t < $0.1 }
-            let z = 9.81 + (vib ? 1.2 * sin(2 * Double.pi * 25 * t / 1000) : 0)
-            s.append(ASample(t: t, x: 0, y: 0, z: z))
-            t += 10
+    /// Same model as the Kotlin test: a ~170 Hz motor sampled by a 100 Hz accelerometer (aliased), gravity and noise.
+    func tactusSim(_ packet: Data, hz: Double, noise: Double, amp: Double) -> [ASample] {
+        let d = Tactus.encode(packet)
+        var segs = [(Double, Double, Bool)](); var t = 800.0
+        for (i, ms) in d.enumerated() { segs.append((t, t + Double(ms), i % 2 == 0)); t += Double(ms) }
+        let total = t + 800
+        var seed: UInt64 = 99
+        func rnd() -> Double { seed = seed &* 6364136223846793005 &+ 1442695040888963407; return Double(seed >> 11) / Double(1 << 53) - 0.5 }
+        var out = [ASample](); var tt = 0.0
+        while tt < total {
+            var a = 0.0
+            for sg in segs where sg.2 && tt >= sg.0 + 25 && tt < sg.1 + 15 { a = amp * sin(2 * Double.pi * 170.0 * tt / 1000) }
+            out.append(ASample(t: tt, x: rnd() * noise, y: rnd() * noise, z: 9.81 + a + rnd() * noise))
+            tt += 1000.0 / hz + rnd() * 0.8
         }
-        XCTAssertEqual(Tactus.decode(s, key: key, macLen: 2, maxLen: 6), p)
+        return out
+    }
+
+    func testTactusRoundTrip() throws {
+        let p = AirPacket(type: 1, seq: 4, data: Data([2]))
+        let raw = try XCTUnwrap(Air.pack(p, key: key, macLen: 2))
+        XCTAssertEqual(Tactus.decode(tactusSim(raw, hz: 100, noise: 0.05, amp: 1.5), key: key, macLen: 2, maxLen: 6), p)
+        XCTAssertEqual(Tactus.decode(tactusSim(raw, hz: 200, noise: 0.04, amp: 1.5), key: key, macLen: 2, maxLen: 6), p)
+        XCTAssertNil(Tactus.decode(tactusSim(raw, hz: 200, noise: 0.04, amp: 1.5), key: Sec.deriveKey("zzzz-zzzz-zzzz-zzzz"), macLen: 2, maxLen: 6))
     }
 }
