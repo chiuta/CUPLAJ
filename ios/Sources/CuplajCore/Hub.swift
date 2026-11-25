@@ -28,6 +28,7 @@ public final class Peer {
     public var nZones = 0
     public var fx = ""
     public var p2p = false
+    public var udp: sockaddr_in?
     public var local = false
     public var smsgw = false
     public var lan = ""
@@ -56,6 +57,7 @@ final class Call {
     let t0 = nowMs()
     var tConn: Int64 = 0
     var listeners = [Peer]()
+    var p2pKey: Data?
     init(id: Int, a: Peer, b: Peer) { self.id = id; self.a = a; self.b = b }
     func members() -> [Peer] { [a, b] }
 }
@@ -85,8 +87,8 @@ private final class Secret {
 }
 
 /// The hub runs on the Regie phone. It is the exchange: numbers, calls, party lines, messages, cues, audio routing.
-/// All state changes happen under one recursive lock. (Direct P2P audio between phones is not offered by the iOS hub;
-/// calls are always relayed, which every client already supports as the fallback.)
+/// All state changes happen under one recursive lock. (Direct P2P audio is negotiated by the hub;
+/// relayed audio is the fallback when the direct path cannot be established.)
 public final class Hub {
     private let key: Data?
     public var idleTimeoutMs = 60000
@@ -149,6 +151,7 @@ public final class Hub {
         running = true
         spawn { [self] in acceptLoop() }
         spawn { [self] in beaconLoop() }
+        spawn { [self] in rendezvousLoop() }
         spawn { [self] in
             while isRunning() {
                 Thread.sleep(forTimeInterval: 1)
@@ -164,6 +167,7 @@ public final class Hub {
         running = false
         let fd = listenFd
         listenFd = -1
+        rdv?.close(); rdv = nil
         let cs = peers.values.compactMap { $0.conn }
         lock.unlock()
         if fd >= 0 { Darwin.close(fd) }
@@ -458,7 +462,7 @@ public final class Hub {
                 if qq.tok.isEmpty { qq.tok = newToken() }
                 let nm = cleanText(m.optString("name", "?"), 40)
                 qq.name = nm.isEmpty ? "?" : nm
-                qq.p2p = false
+                qq.p2p = m.optBool("p2p") && role != "regie"
                 qq.smsgw = role == "regie" && m.optBool("smsgw")
                 qq.local = local || (loop && (role == "regie" || role == "gateway"))
                 qq.lan = ""
@@ -906,7 +910,9 @@ public final class Hub {
         case "opt":
             if reg {
                 allowListen = m.optBool("listen", true)
-                p2pMode = min(max(m.optInt("p2p", p2pMode), 0), 2)
+                let pm = min(max(m.optInt("p2p", p2pMode), 0), 2)
+                if pm == 0 && p2pMode != 0 { for c in calls.values { stopP2p(c) } }
+                p2pMode = pm
                 clickOnJoin = m.optBool("click", true)
                 peerMsg = m.optBool("peerMsg", true)
                 persist(); broadcastPeers()
@@ -996,6 +1002,55 @@ public final class Hub {
         logEvent("SMS → \(to) (" + label(p) + ")")
     }
 
+    private var rdv: UdpPort?
+
+    /// UDP rendezvous: a client sends "CUPLAJP|id|tok"; the hub records the address it sees (after NAT) and answers CUPLAJP-OK.
+    private func rendezvousLoop() {
+        guard let d = UdpPort(bind: port + 2, reuse: true) else { return }
+        lock.lock(); rdv = d; lock.unlock()
+        while isRunning() {
+            guard let (data, from) = d.receive() else { continue }
+            let t = (String(data: data, encoding: .utf8) ?? "").components(separatedBy: "|")
+            if t.count == 3 && t[0] == "CUPLAJP" {
+                var ok = false
+                lock.lock()
+                if let q = peers[t[1]], q.online, !q.tok.isEmpty, q.tok == t[2] { q.udp = from; ok = true }
+                lock.unlock()
+                if ok { d.send(Data("CUPLAJP-OK".utf8), to: from) }
+            }
+        }
+    }
+
+    private func sameNet(_ a: sockaddr_in, _ b: sockaddr_in) -> Bool {
+        let x = addrString(a).0, y = addrString(b).0
+        return x == y || (isPrivateHost(x) && isPrivateHost(y))
+    }
+
+    private func tryP2p(_ c: Call) {
+        if p2pMode == 0 || !c.listeners.isEmpty || c.p2pKey != nil { return }
+        let a = c.a, b = c.b
+        if !a.p2p || !b.p2p || a.local || b.local || a.muted || b.muted { return }
+        guard let ua = a.udp, let ub = b.udp else { return }
+        if p2pMode == 1 && !sameNet(ua, ub) { return }
+        let key = Sec.randomBytes(16)
+        c.p2pKey = key
+        func cands(_ p: Peer, _ u: sockaddr_in) -> [String] {
+            let (h, pt) = addrString(u)
+            return (p.lan.isEmpty ? [] : [p.lan]) + ["\(h):\(pt)"]
+        }
+        sendTo(a, jo(["t": "p2p", "key": hex(key), "cand": cands(b, ub), "init": true]))
+        sendTo(b, jo(["t": "p2p", "key": hex(key), "cand": cands(a, ua), "init": false]))
+        logEvent("P2P " + label(a) + " ↔ " + label(b))
+    }
+
+    private func stopP2p(_ c: Call) {
+        if c.p2pKey == nil { return }
+        c.p2pKey = nil
+        sendTo(c.a, jo(["t": "p2pstop"]))
+        sendTo(c.b, jo(["t": "p2pstop"]))
+        logEvent("P2P oprit " + label(c.a) + " ↔ " + label(c.b))
+    }
+
     private func connect(_ c: Call, _ forNum: String) {
         c.connected = true
         c.tConn = nowMs()
@@ -1004,6 +1059,7 @@ public final class Hub {
         sendTo(c.a, jo(["t": "connected", "peer": c.b.number, "name": c.b.name]))
         sendTo(c.b, jo(["t": "connected", "peer": c.a.number, "name": c.a.name, "forNum": forNum]))
         if let pb = partnerOf(c.b), pb.callId == 0 { sendTo(pb, jo(["t": "stopring"])) }
+        tryP2p(c)
         logEvent("conectat " + label(c.a) + " ↔ " + label(c.b) + (forNum.isEmpty ? "" : " (răspuns greșit, era pentru \(forNum))"))
     }
 
@@ -1025,6 +1081,7 @@ public final class Hub {
     }
 
     private func endCall(_ c: Call, _ by: Peer?, _ why: String) {
+        stopP2p(c)
         calls[c.id] = nil
         var all = [c.a, c.b]
         all.append(contentsOf: c.listeners)
@@ -1060,6 +1117,7 @@ public final class Hub {
     private func monitor(_ p: Peer, _ number: String) {
         if p.callId != 0 { return }
         guard let t = plist().first(where: { $0.number == number }), let c = calls[t.callId], c.connected else { return }
+        stopP2p(c)
         joinListen(p, c, true)
     }
 

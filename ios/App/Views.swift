@@ -391,6 +391,8 @@ struct SettingsTab: View {
                         Toggle(L.t("opt_listen"), isOn: $m.optListen).onChange(of: m.optListen) { _ in m.sendOpts() }
                         Toggle(L.t("opt_click"), isOn: $m.optClick).onChange(of: m.optClick) { _ in m.sendOpts() }
                         Toggle(L.t("opt_peermsg"), isOn: $m.optPeerMsg).onChange(of: m.optPeerMsg) { _ in m.sendOpts() }
+                        Picker("P2P", selection: $m.optP2p) { Text("off").tag(0); Text("LAN").tag(1); Text("any").tag(2) }
+                            .pickerStyle(.segmented).onChange(of: m.optP2p) { _ in m.sendOpts() }
                     }
                     Section(header: Text(L.t("set_rules"))) {
                         Text(L.t("rules_hint")).font(.caption)

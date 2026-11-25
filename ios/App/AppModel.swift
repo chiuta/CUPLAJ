@@ -79,6 +79,7 @@ final class AppModel: ObservableObject {
     @Published var chainSummary = ""
     @Published var reportMd = ""
     @Published var contacts = [(String, String)]()
+    @Published var p2pOn = false
 
     // ---- regie
     @Published var script = [Step]()
@@ -100,6 +101,7 @@ final class AppModel: ObservableObject {
 
     // ---- internals
     private var net: Net?
+    private var p2pLink: P2pLink?
     private var hub: Hub?
     private let bonjour = Bonjour()
     private let beacons = BeaconListener()
@@ -218,19 +220,40 @@ final class AppModel: ObservableObject {
                              guard let s = self else { return }
                              if code == "connecting" { s.status = L.t("net_connecting", arg) }
                              else {
-                                 s.status = L.t("net_lost"); s.connected = false
+                                 s.status = L.t("net_lost"); s.connected = false; s.stopP2p(false)
                                  if s.ph != "idle" { s.resetPhone() }
                              }
                          }
                      })
         net = nt
         inSession = true
-        nt.start(host: target, hello: jo(["t": "hello", "id": deviceId, "name": n, "role": role, "pin": role == "regie" ? hubPin : pin, "room": room, "tok": tok, "p2p": false, "smsgw": false]),
+        nt.start(host: target, hello: jo(["t": "hello", "id": deviceId, "name": n, "role": role, "pin": role == "regie" ? hubPin : pin, "room": room, "tok": tok, "p2p": role != "regie", "smsgw": false]),
                  key: Sec.deriveKey(keyStr))
         UIDevice.current.isBatteryMonitoringEnabled = true
     }
 
+    private func setupP2p(_ tok: String) {
+        if role == "regie" || tok.isEmpty { return }
+        if p2pLink == nil {
+            p2pLink = P2pLink { [weak self] pcm in self?.audio.playout.feed(src: 255, data: Data([255]) + pcm) }
+        }
+        guard let l = p2pLink else { return }
+        let (h, p) = parseHostPort(curTarget, PORT)
+        DispatchQueue.global().async { [weak self] in
+            l.registerAt(host: h, port: p + 2, id: self?.deviceId ?? "", tok: tok)
+            let lan = l.lanCandidate(Hub.localAddresses())
+            DispatchQueue.main.async { self?.send(jo(["t": "udp", "lan": lan])) }
+        }
+    }
+
+    func stopP2p(_ close: Bool) {
+        p2pOn = false
+        p2pLink?.end()
+        if close { p2pLink?.close(); p2pLink = nil }
+    }
+
     func stopSession() {
+        stopP2p(true)
         statTimer?.invalidate(); syncTimer?.invalidate()
         stopScript()
         net?.stop(); net = nil
@@ -282,6 +305,7 @@ final class AppModel: ObservableObject {
             status = L.t("connected_to", m.optString("hub"))
             let tk = m.optString("tok")
             if !tk.isEmpty { ud.set(tk, forKey: "tok_" + curTarget) }
+            setupP2p(tk.isEmpty ? (ud.string(forKey: "tok_" + curTarget) ?? "") : tk)
             statTimer?.invalidate()
             statTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in self?.sendStat() }
             _ = after(1.5) { [weak self] in self?.sendStat() }
@@ -308,6 +332,12 @@ final class AppModel: ObservableObject {
             msgs.append(Msg(from: m.optString("from"), num: m.optString("num"), text: m.optString("text"), mine: false, to: m.optString("to")))
             audio.playout.effect(Fx.beep(1000, 90)); haptics.buzz(ms: 200)
         case "cue": cueTimed(m)
+        case "p2p":
+            if let l = p2pLink, let k = m.optString("key") as String?, k.count == 32, let arr = m.optArray("cand") {
+                l.begin(key: unhex(k), candidates: arr.compactMap { $0 as? String }, initiator: m.optBool("init"))
+                for d in [1.5, 3.5] { _ = after(d) { [weak self] in self?.p2pOn = l.up } }
+            }
+        case "p2pstop": stopP2p(false)
         case "pong": break
         case "sync": clock.add(t0: m.optLong("c"), hub: m.optLong("s"), t1: nowMs())
         case "cueack": showToast(L.t("cue_sent_n", m.optInt("sent"), m.optInt("online")))
@@ -437,6 +467,7 @@ final class AppModel: ObservableObject {
 
     private func micFrame(_ d: Data) {
         let out = myFx?.processBytes(d) ?? d
+        if micMode == 0, p2pOn, let l = p2pLink, l.sendPcm(out) { return }
         net?.sendAudio(mode: micMode, pcm: out)
     }
 
