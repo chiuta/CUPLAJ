@@ -12,9 +12,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Swift version
         run: swift --version && xcodebuild -version
-      - name: Core tests (protocol, crypto, hub)
+      - name: Core tests - P2P
         working-directory: ios
-        run: swift test 2>&1 | tail -n 200
+        run: timeout 180 swift test --filter P2pTests
+      - name: Core tests - rest
+        working-directory: ios
+        run: timeout 600 swift test --skip P2pTests
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate project
