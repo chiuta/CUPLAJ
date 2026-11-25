@@ -106,6 +106,12 @@ for l in LANGS:
                    h_quick=d["h_quick"], quick=d["quick"], h_eras=d["h_eras"], eras=d["eras"], h_party=d["h_party"], party=d["party"],
                    h_docs=d["h_docs"], docs=d["docs"], h_status=d["h_status"], status=d["status"], h_priv=d["h_priv"], priv=d["priv"],
                    h_support=d["h_support"], h_lic=d["h_lic"], lic=d["lic"], g_title=d["g_title"], s=d["site"])
+sys.path.insert(0, os.path.dirname(__file__))
+import site_roles
+_checks = len(re.findall(r"\bcheck\(", open(os.path.join(ROOT, "app/src/test/kotlin/ro/trom/cuplaj/HubTest.kt"), encoding="utf-8").read()))
+for l in LANGS:
+    site[l]["roles"] = site_roles.R[l]; site[l]["rs"] = site_roles.S[l]
+    site[l]["kinds"] = len(_kinds); site[l]["checks"] = (_checks // 50) * 50
 tpl = open(os.path.join(os.path.dirname(__file__), "site_template.html"), encoding="utf8").read()
 html = tpl.replace("/*__DATA__*/", "const DATA=" + json.dumps(site, ensure_ascii=False) + ";").replace("__VERSION__", VERSION).replace("__REPO__", REPO)
 open(os.path.join(ROOT, "docs", "index.html"), "w", encoding="utf8").write(html)

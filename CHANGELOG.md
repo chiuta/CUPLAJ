@@ -13,6 +13,7 @@ Documentation language: English only.
 * **Post‑show report** (`report`): Markdown with totals, per‑phone calls, messages, zone entries, battery, and the timeline; shared through the system share sheet.
 * Adversarial audit of 1.8: ghost‑tape playback was sent as JSON frames instead of audio (fixed, test added, one playback at a time); Art‑Net no longer sends all‑zero frames when switched on (it waits for the first *dmx* cue, up to 8 universes); waves capped at 20 s and 4 at once; whispering‑game holders that do not answer in 90 s are skipped; split secrets need ≥ 4 Latin letters/digits; Morse capped at 45 s; *dmx*/*midi* rejected as rule actions; MIDI message queued until the device is open; report building tolerates concurrent log writes.
 * CI: the *Pages* workflow runs only by hand (the site is already published from `docs/` by GitHub's own *pages-build-deployment*; the duplicate deployment raced with it and failed); actions bumped to checkout/setup-java/setup-node/upload-artifact v5.
+* New presentation page (docs/index.html, 8 languages): theatre‑curtain hero, key figures, and six audience tabs — spectators, actors, host/admin, technical crew, organisers & venues, developers — each with a phone mock‑up, a four‑step night and what you get. Texts are in `tools/site_roles.py`; the figures are computed from the code.
 * Not tested: ghost tape, real lighting desks, MIDI devices, everything on real phones. Not done: iOS, field test on real phones, program feed.
 
 ## 1.7.0 — 2026‑11‑24

@@ -49,6 +49,56 @@ ol,ul{padding-left:1.3rem}
 footer{text-align:center;color:var(--dim);padding:2rem 1rem 4rem}
 #up{position:fixed;right:14px;bottom:14px;width:48px;height:48px;border-radius:50%;display:none;font-size:1.3rem}
 .langbar{display:flex;gap:.3rem;flex-wrap:wrap}
+
+/* ---- v1.8 presentation ---- */
+:root{--gold:#e7b866;--wine:#6e1f1b;--wine2:#3a0f0e}
+body{background:radial-gradient(1200px 600px at 50% -10%,#3a0f0e 0%,#14110f 60%) fixed,#14110f}
+.hero{position:relative;overflow:hidden;max-width:none;padding:6.5rem 1rem 3rem}
+.hero>*{position:relative;z-index:1}
+.curtain{position:absolute;top:0;bottom:0;width:18%;z-index:0;opacity:.9;background:repeating-linear-gradient(90deg,#5a1713 0 14px,#7c2620 14px 30px,#4a110e 30px 44px);filter:saturate(1.1)}
+.curtain.l{left:0;border-radius:0 0 90% 0/0 0 40% 0;box-shadow:inset -30px 0 40px #0008}
+.curtain.r{right:0;border-radius:0 0 0 90%/0 0 0 40%;box-shadow:inset 30px 0 40px #0008}
+@media(max-width:700px){.curtain{width:9%}}
+.ringer{position:relative;width:150px;height:150px;margin:0 auto}
+.ringer img{position:relative;z-index:2;width:150px;height:150px;animation:shake 2.4s infinite}
+.ringer i{position:absolute;inset:0;border:2px solid var(--gold);border-radius:50%;opacity:0;animation:ring 2.4s infinite}
+.ringer i:nth-child(2){animation-delay:.4s}.ringer i:nth-child(3){animation-delay:.8s}
+@keyframes ring{0%{transform:scale(.7);opacity:.7}100%{transform:scale(2.2);opacity:0}}
+@keyframes shake{0%,40%,100%{transform:rotate(0)}5%,15%,25%,35%{transform:rotate(-6deg)}10%,20%,30%{transform:rotate(6deg)}}
+@media(prefers-reduced-motion:reduce){.ringer i,.ringer img{animation:none}}
+.hero h1{background:linear-gradient(90deg,#f6dca0,#e7b866,#f6dca0);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
+.cta a{box-shadow:0 6px 24px #b5452f55;transition:transform .15s}.cta a:hover{transform:translateY(-2px)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:1rem;max-width:56rem;margin:2rem auto 0;text-align:center}
+.stat b{display:block;font-size:2.4rem;color:var(--gold);line-height:1}
+.stat span{color:var(--dim);font-size:.9rem}
+.who{max-width:64rem;margin:0 auto;padding:1rem}
+.who h2{border:0;text-align:center;font-size:clamp(1.6rem,4vw,2.4rem);margin:2rem 0 .2rem}
+.who>p.sub{text-align:center;color:var(--dim);margin:0 0 1.2rem}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.6rem;margin-bottom:1rem}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.8rem .4rem;border-radius:14px;background:#211a16;border:1px solid #3a2f28;font-size:.95rem;transition:all .15s}
+.tabs button .ic{font-size:1.8rem}
+.tabs button[aria-selected=true]{background:linear-gradient(160deg,var(--wine),var(--wine2));border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.panel{display:grid;grid-template-columns:minmax(14rem,18rem) 1fr;gap:1.6rem;align-items:start;background:linear-gradient(160deg,#241b17,#17120f);border:1px solid #3a2f28;border-radius:18px;padding:1.6rem}
+@media(max-width:760px){.panel{grid-template-columns:1fr}}
+.mock{margin:0 auto;width:15rem;border-radius:2rem;padding:.7rem;background:#0b0908;border:2px solid #4a3d33;box-shadow:0 20px 50px #000a}
+.mock .scr{border-radius:1.4rem;min-height:23rem;padding:1.1rem .9rem;background:linear-gradient(180deg,#2a1d18,#120d0b);display:flex;flex-direction:column;gap:.7rem;text-align:center;color:var(--ink)}
+.mock .bar{display:flex;justify-content:space-between;font-size:.7rem;color:var(--dim)}
+.mock .big{margin:auto 0;font-size:1.25rem;line-height:1.3;color:#fff;text-shadow:0 0 18px var(--gold)}
+.mock .chip2{display:inline-block;background:#2b2f36;border-radius:999px;padding:.2rem .7rem;font-size:.75rem}
+.mock .btn2{background:var(--acc);border-radius:999px;padding:.55rem;font-size:.9rem;color:#fff}
+.mock.code .big{font-family:monospace;font-size:.95rem;color:var(--gold);word-break:break-all}
+.pitch h3{margin:.1rem 0;font-size:1.7rem;color:var(--gold)}
+.pitch .tag{font-style:italic;color:var(--dim);margin:0 0 .6rem}
+.pitch h4{margin:1.1rem 0 .4rem;color:var(--dim);font-weight:normal;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem}
+.steps{list-style:none;padding:0;counter-reset:s;display:grid;gap:.5rem}
+.steps li{counter-increment:s;position:relative;padding-left:2.2rem}
+.steps li:before{content:counter(s);position:absolute;left:0;top:.05rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--wine);border:1px solid var(--gold);display:grid;place-items:center;font-size:.8rem;color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chips span{background:#2b2218;border:1px solid #5a4630;color:var(--gold);padding:.25rem .8rem;border-radius:999px;font-size:.9rem}
+.honest{max-width:48rem;margin:1.2rem auto 0;text-align:center;color:var(--dim);font-size:.9rem}
+.glink{display:inline-block;margin-top:1rem}
+@media(max-width:700px){header.top{position:static}}
+@media print{.curtain,.ringer i,#up,header.top{display:none}body{background:#fff;color:#000}}
 </style>
 </head>
 <body>
@@ -58,13 +108,21 @@ footer{text-align:center;color:var(--dim);padding:2rem 1rem 4rem}
  <span role="group" aria-label="Aa"><button id="fm" aria-label="A−">A−</button><button id="fp" aria-label="A+">A+</button></span>
 </header>
 <div class="hero">
- <img src="logo.svg" alt="CUPLAJ">
+ <div class="curtain l" aria-hidden="true"></div><div class="curtain r" aria-hidden="true"></div>
+ <div class="ringer" aria-hidden="true"><i></i><i></i><i></i><img src="logo.svg" alt=""></div>
  <h1 id="hero"></h1>
  <p id="sub"></p>
  <p id="tag" style="font-style:italic"></p>
  <div class="cta"><a id="get" href="__REPO__/releases"></a><a id="repo" class="alt" href="__REPO__"></a></div>
  <small id="ver" style="color:var(--dim)"></small>
+ <div class="stats" id="stats"></div>
 </div>
+<section class="who" aria-labelledby="h_who">
+ <h2 id="h_who"></h2><p class="sub" id="who_sub"></p>
+ <div class="tabs" role="tablist" id="tabs"></div>
+ <div class="panel" role="tabpanel" id="panel"></div>
+ <p class="honest" id="honest"></p>
+</section>
 <main>
  <p id="intro"></p>
  <h2 id="h_demo"></h2>
@@ -150,6 +208,27 @@ function drawDemo(){
 }
 function drawLog(){const l=$('log');l.textContent=logs.join('\n');l.scrollTop=l.scrollHeight;}
 $('reset').onclick=()=>{reset();drawDemo();drawLog();};
+
+/* ---- audiences ---- */
+let role=0;
+function drawRoles(){
+ const d=DATA[lang],R=d.roles,s=d.rs;
+ $('h_who').textContent=s.who;$('who_sub').textContent=s.who_sub;$('honest').textContent=s.honest;
+ const st=[8,d.kinds,0,d.checks+'+'];
+ $('stats').innerHTML=st.map((n,i)=>'<div class="stat"><b>'+n+'</b><span>'+esc(s.stats[i])+'</span></div>').join('');
+ const tb=$('tabs');tb.innerHTML='';
+ R.forEach((r,i)=>{const b=document.createElement('button');b.setAttribute('role','tab');b.setAttribute('aria-selected',i===role);b.id='tab'+i;
+  b.innerHTML='<span class="ic" aria-hidden="true">'+r[0]+'</span><span>'+esc(r[1])+'</span>';
+  b.onclick=()=>{role=i;drawRoles();};
+  b.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){role=(role+(e.key==='ArrowRight'?1:R.length-1))%R.length;drawRoles();$('tab'+role).focus();}};
+  tb.appendChild(b);});
+ const r=R[role],code=role===3||role===5;
+ const g=lang==='en'?'GUIDE.md':'GUIDE.'+lang+'.md';
+ $('panel').setAttribute('aria-labelledby','tab'+role);
+ $('panel').innerHTML='<div class="mock'+(code?' code':'')+'" aria-hidden="true"><div class="scr"><div class="bar"><span>'+r[0]+' '+esc(r[1])+'</span><span>▮▮▮</span></div><div class="big">'+esc(r[6])+'</div>'+
+  (role===0?'<span class="chip2">📞 211 ⇄ 6-digit</span>':role===1?'<div class="btn2">🎙 PTT</div>':role===2?'<div class="btn2">GO ▶</div>':'')+'</div></div>'+
+  '<div class="pitch"><h3>'+esc(r[1])+'</h3><p class="tag">'+esc(r[2])+'</p><p>'+md(r[3])+'</p><h4>'+esc(s.step)+'</h4><ol class="steps">'+r[4].map(x=>'<li>'+md(x)+'</li>').join('')+'</ol><h4>'+esc(s.gets)+'</h4><div class="chips">'+r[5].map(x=>'<span>'+esc(x)+'</span>').join('')+'</div><a class="glink" href="__REPO__/blob/main/docs/'+(role===5?'PROTOCOL.md':g)+'">'+esc(s.guide)+' →</a></div>';
+}
 /* ---- render ---- */
 function render(){
  const d=DATA[lang],s=d.s;
@@ -168,7 +247,7 @@ function render(){
  $('docs').innerHTML='<li><a href="'+R+'docs/'+g+'">'+esc(d.docs.guide)+'</a></li><li><a href="'+R+'docs/PROTOCOL.md">'+esc(d.docs.protocol)+' (EN)</a></li><li><a href="'+R+'docs/AUDIT.md">'+esc(d.docs.audit)+' (EN)</a></li><li><a href="'+R+'CHANGELOG.md">'+esc(d.docs.changelog)+' (EN)</a></li>';
  $('coffee').textContent=s.coffee+' ☕';
  [...bar.children].forEach(b=>b.style.borderColor=b.textContent.toLowerCase()===lang?'#b5452f':'');
- drawDemo();drawLog();
+ drawDemo();drawLog();drawRoles();
 }
 const up=$('up');up.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 addEventListener('scroll',()=>{up.style.display=scrollY>400?'block':'none';});
