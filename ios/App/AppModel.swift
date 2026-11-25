@@ -98,9 +98,18 @@ final class AppModel: ObservableObject {
     @Published var hubPin = ""
     @Published var duckOn = true { didSet { audio.playout.duckOn = duckOn } }
     @Published var invite = ""
+    @Published var sipOn = false
+    @Published var sipHost = ""
+    @Published var sipPort = 5060
+    @Published var sipUser = ""
+    @Published var sipPass = ""
+    @Published var sipDomain = ""
+    @Published var sipInbound = "100"
+    @Published var sipRegistered = false
 
     // ---- internals
     private var net: Net?
+    private var sipGw: SipGateway?
     private var p2pLink: P2pLink?
     private var hub: Hub?
     private let bonjour = Bonjour()
@@ -156,6 +165,9 @@ final class AppModel: ObservableObject {
         encOn = d.object(forKey: "encon") as? Bool ?? true
         netKey = d.string(forKey: "netkey") ?? ""
         if netKey.isEmpty { netKey = Sec.newPassphrase(); d.set(netKey, forKey: "netkey") }
+        sipOn = d.bool(forKey: "sipon"); sipHost = d.string(forKey: "siph") ?? ""; sipPort = d.object(forKey: "sipp") as? Int ?? 5060
+        sipUser = d.string(forKey: "sipu") ?? ""; sipPass = d.string(forKey: "sipw") ?? ""; sipDomain = d.string(forKey: "sipd") ?? ""
+        sipInbound = d.string(forKey: "sipi") ?? "100"
         hubPin = d.string(forKey: "hubpin") ?? ""
         if hubPin.isEmpty { hubPin = Sec.pin(6); d.set(hubPin, forKey: "hubpin") }
         deviceId = d.string(forKey: "devid") ?? ""
@@ -208,6 +220,7 @@ final class AppModel: ObservableObject {
             }
             target = "127.0.0.1"
             loadDmx()
+            startSip(keyStr)
             startOsc()
             invite = makeInvite(role: "spectator")
         }
@@ -260,6 +273,7 @@ final class AppModel: ObservableObject {
         hub?.stop(); hub = nil
         bonjour.stop()
         stopOsc()
+        stopSip()
         dmx?.close(); dmx = nil
         resetPhone()
         audio.stop()
@@ -838,6 +852,26 @@ final class AppModel: ObservableObject {
         default: break
         }
     }
+
+    func saveSip() {
+        ud.set(sipOn, forKey: "sipon"); ud.set(sipHost, forKey: "siph"); ud.set(sipPort, forKey: "sipp"); ud.set(sipUser, forKey: "sipu")
+        ud.set(sipPass, forKey: "sipw"); ud.set(sipDomain, forKey: "sipd"); ud.set(sipInbound, forKey: "sipi")
+        if inSession && role == "regie" { stopSip(); startSip(encOn ? netKey : "") }
+    }
+
+    private func startSip(_ keyStr: String) {
+        if !sipOn || sipHost.trimmingCharacters(in: .whitespaces).isEmpty { return }
+        let cfg = SipConfig(server: sipHost.trimmingCharacters(in: .whitespaces), port: sipPort, user: sipUser.trimmingCharacters(in: .whitespaces), pass: sipPass,
+                            domain: sipDomain.trimmingCharacters(in: .whitespaces), inbound: sipInbound.trimmingCharacters(in: .whitespaces).isEmpty ? "100" : sipInbound.trimmingCharacters(in: .whitespaces),
+                            hubPort: PORT, hubPin: hubPin, hubKey: keyStr, hubRoom: room)
+        let g = SipGateway(cfg, log: { [weak self] s in DispatchQueue.main.async { self?.log.append("SIP: " + s) } })
+        if !g.start() { showToast(L.t("err_sip")); return }
+        sipGw = g
+        // show the registration state after a few seconds
+        _ = after(4) { [weak self] in self?.sipRegistered = self?.sipGw?.registered ?? false }
+    }
+
+    private func stopSip() { sipGw?.stop(); sipGw = nil; sipRegistered = false }
 
     func saveDmx() {
         ud.set(dmxHost, forKey: "dmxh"); ud.set(dmxOn, forKey: "dmxon")

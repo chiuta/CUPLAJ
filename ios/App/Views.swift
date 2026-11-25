@@ -407,6 +407,17 @@ struct SettingsTab: View {
                         Stepper(L.t("osc_in_port") + ": \(m.oscInPort)", value: $m.oscInPort, in: 1024...65535)
                         Button(L.t("btn_send")) { m.saveOsc() }
                     }
+                    Section(header: Text(L.or("set_sip", "SIP / VoIP"))) {
+                        Toggle(L.or("sip_on", "SIP gateway (dial 0 + number)"), isOn: $m.sipOn)
+                        TextField(L.or("sip_host", "SIP server"), text: $m.sipHost).autocapitalization(.none).disableAutocorrection(true)
+                        Stepper("Port: \(m.sipPort)", value: $m.sipPort, in: 1...65535)
+                        TextField(L.or("sip_user", "User"), text: $m.sipUser).autocapitalization(.none).disableAutocorrection(true)
+                        SecureField(L.or("sip_pass", "Password"), text: $m.sipPass)
+                        TextField(L.or("sip_domain", "Domain (optional)"), text: $m.sipDomain).autocapitalization(.none)
+                        TextField(L.or("sip_inbound", "Incoming rings number"), text: $m.sipInbound).keyboardType(.numberPad)
+                        Button(L.t("btn_send")) { m.saveSip() }
+                        if m.sipOn { Text(m.sipRegistered ? "✓ registered" : "…").font(.caption) }
+                    }
                     Section(header: Text(L.t("set_dmx"))) {
                         Text(L.t("dmx_hint")).font(.caption)
                         TextField(L.t("dmx_host"), text: $m.dmxHost).autocapitalization(.none)
