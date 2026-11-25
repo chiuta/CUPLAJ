@@ -425,6 +425,22 @@ struct SettingsTab: View {
                         Button(L.t("btn_send")) { m.saveDmx() }
                     }
                 }
+                Section(header: Text(L.or("air_title", "AIR: light, sound, vibration"))) {
+                    Text(L.or("air_hint", "Receive cues without a network.")).font(.caption)
+                    Toggle(L.or("air_rx_light", "Receive: light (camera)"), isOn: $m.airRxLight).onChange(of: m.airRxLight) { _ in m.airApply() }
+                    Toggle(L.or("air_rx_sound", "Receive: sound (microphone)"), isOn: $m.airRxSound).onChange(of: m.airRxSound) { _ in m.airApply() }
+                    Toggle(L.or("air_rx_vibe", "Receive: vibration (accelerometer)"), isOn: $m.airRxVibe).onChange(of: m.airRxVibe) { _ in m.airApply() }
+                    Toggle(L.or("air_ultra", "Near-ultrasonic sound"), isOn: $m.airUltra).onChange(of: m.airUltra) { _ in m.airApply() }
+                    Stepper(L.t("beacon_btn", m.beaconZone == 0 ? L.or("air_off", "off") : String(m.beaconZone)), value: Binding(get: { m.beaconZone }, set: { m.setBeacon($0) }), in: 0...9)
+                    if m.role == "regie" {
+                        ForEach(["light", "sound", "vibe"], id: \.self) { mode in
+                            Button(L.or("air_" + mode, mode)) { m.showToast(m.airSendCue(mode, kind: "vibrate", text: "800") ? L.t("air_sending") : L.t("air_unavailable", mode)) }
+                        }
+                        ForEach(["light", "sound"], id: \.self) { mode in
+                            Button(L.or("air_send_invite", "Invite") + " · " + mode) { m.showToast(m.airSendInvite(mode) ? L.t("air_sending") : L.t("air_unavailable", mode)) }
+                        }
+                    }
+                }
                 Section(header: Text(L.t("set_about"))) {
                     Text(L.t("about_text")).font(.footnote)
                     Text("CUPLAJ iOS · protocol " + VERSION).font(.caption).foregroundColor(.secondary)

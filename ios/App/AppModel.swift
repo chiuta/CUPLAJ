@@ -80,6 +80,13 @@ final class AppModel: ObservableObject {
     @Published var reportMd = ""
     @Published var contacts = [(String, String)]()
     @Published var p2pOn = false
+    @Published var airRxLight = false
+    @Published var airRxSound = false
+    @Published var airRxVibe = false
+    @Published var airUltra = true
+    @Published var airBusy = false
+    @Published var beaconZone = 0
+    @Published var curZone = 0
 
     // ---- regie
     @Published var script = [Step]()
@@ -109,6 +116,13 @@ final class AppModel: ObservableObject {
 
     // ---- internals
     private var net: Net?
+    private var lightRx: AirIo.LightRx?
+    private var soundRx: AirIo.SoundRx?
+    private var vibeRx: AirIo.VibeRx?
+    private let airGuard = AirGuard()
+    private var airSeq = Int(nowMs() & 0x7F)
+    private var beaconTimer: Timer?
+    private var lastZoneAt = Date.distantPast
     private var sipGw: SipGateway?
     private var p2pLink: P2pLink?
     private var hub: Hub?
@@ -267,6 +281,7 @@ final class AppModel: ObservableObject {
 
     func stopSession() {
         stopP2p(true)
+        airStopAll()
         statTimer?.invalidate(); syncTimer?.invalidate()
         stopScript()
         net?.stop(); net = nil
@@ -418,6 +433,119 @@ final class AppModel: ObservableObject {
             enter((why == "rejected" || why == "noanswer") && ph == "ringback" ? "busy" : "idle")
         case "click": audio.playout.effect(Fx.click(0.35))
         default: break
+        }
+    }
+
+    // ====================================================================== AIR (light / sound / vibration)
+
+    private func airKey() -> Data? {
+        let k = role == "regie" ? (encOn ? netKey : "") : joinKey.trimmingCharacters(in: .whitespaces)
+        return k.isEmpty ? nil : Sec.deriveKey(k)
+    }
+    private func nextAirSeq() -> Int { airSeq = (airSeq + 1) & 0xFF; return airSeq }
+
+    func airApply() {
+        lightRx?.stop(); lightRx = nil; soundRx?.stop(); soundRx = nil; vibeRx?.stop(); vibeRx = nil
+        let k = airKey()
+        let got: (AirPacket) -> Void = { [weak self] p in DispatchQueue.main.async { self?.airGot(p) } }
+        var failed = [String]()
+        if airRxLight { let r = AirIo.LightRx(key: k, onPacket: got); if r.start() { lightRx = r } else { failed.append("light"); airRxLight = false } }
+        if airRxSound { let r = AirIo.SoundRx(ultra: airUltra, key: k, onPacket: got); if r.start() { soundRx = r } else { failed.append("sound"); airRxSound = false } }
+        if airRxVibe { let r = AirIo.VibeRx(key: k, onPacket: got); if r.start() { vibeRx = r } else { failed.append("vibe"); airRxVibe = false } }
+        if !failed.isEmpty { showToast(L.t("air_unavailable", failed.joined(separator: ", "))) }
+    }
+
+    func airStopAll() {
+        airRxLight = false; airRxSound = false; airRxVibe = false
+        airApply()
+        beaconTimer?.invalidate(); beaconTimer = nil; beaconZone = 0
+    }
+
+    private func airTransmit(_ mode: String, _ raw: Data) -> Bool {
+        if airBusy { return false }
+        airBusy = true
+        let done: () -> Void = { [weak self] in DispatchQueue.main.async { self?.airBusy = false } }
+        var ok = false
+        switch mode {
+        case "light": ok = AirIo.sendLight(raw, done: done)
+        case "sound": AirIo.sendSound(raw, ultra: airUltra, done: done); ok = true
+        case "vibe":
+            let ms = AirIo.sendVibe(raw, haptics: haptics)
+            ok = ms > 0
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(ms + 500) / 1000) { done() }
+        default: break
+        }
+        if !ok { airBusy = false }
+        return ok
+    }
+
+    /// Short cue (<= 11 bytes of text) over light, sound or vibration.
+    func airSendCue(_ mode: String, kind: String, text: String) -> Bool {
+        guard let ix = CUE_KINDS.firstIndex(of: kind), !airBusy else { return false }
+        var data = Air.cue(ix, text)
+        if data.count > 12 { data = data.prefix(12) }
+        if mode == "vibe" && data.count > 6 { data = data.prefix(6) }
+        guard let raw = Air.pack(AirPacket(type: Air.T_CUE, seq: nextAirSeq(), data: Data(data)), key: airKey(), macLen: mode == "sound" ? 4 : 2) else { return false }
+        return airTransmit(mode, raw)
+    }
+
+    /// Compact invitation: IPv4 (4 bytes) + 6-digit PIN (3 bytes). No key: the new phone does not have it yet.
+    func airSendInvite(_ mode: String) -> Bool {
+        if airBusy || mode == "vibe" { return false }
+        guard let ip = Hub.localAddresses().first(where: { $0.contains(".") }), let pin = Int(hubPin) else { return false }
+        let o = ip.split(separator: ".").compactMap { UInt8($0) }
+        if o.count != 4 { return false }
+        let d = Data(o + [UInt8((pin >> 16) & 0xFF), UInt8((pin >> 8) & 0xFF), UInt8(pin & 0xFF)])
+        guard let raw = Air.pack(AirPacket(type: Air.T_INVITE, seq: nextAirSeq(), data: d), key: nil, macLen: mode == "sound" ? 4 : 2) else { return false }
+        return airTransmit(mode, raw)
+    }
+
+    /// Positioning beacon: a phone placed in the room periodically emits its zone id (sound), HMAC-tagged.
+    func setBeacon(_ z: Int) {
+        beaconZone = min(max(z, 0), 99)
+        beaconTimer?.invalidate(); beaconTimer = nil
+        if beaconZone == 0 { return }
+        let fire: () -> Void = { [weak self] in
+            guard let s = self, s.beaconZone != 0, !s.airBusy else { return }
+            if let raw = Air.pack(AirPacket(type: Air.T_ZONE, seq: s.nextAirSeq(), data: Data([UInt8(s.beaconZone)])), key: s.airKey(), macLen: 4) { _ = s.airTransmit("sound", raw) }
+        }
+        fire()
+        beaconTimer = Timer.scheduledTimer(withTimeInterval: 7, repeats: true) { _ in fire() }
+    }
+
+    private func airGot(_ p: AirPacket) {
+        if !airGuard.accept(p) { return }
+        switch p.type {
+        case Air.T_CUE:
+            guard let f = p.data.first, CUE_KINDS.indices.contains(Int(f)) else { return }
+            let kind = CUE_KINDS[Int(f)]
+            // only harmless local effects over the air; fake/real calls and era changes stay on the network
+            if !["text", "vibrate", "ring", "flash", "blackout", "sound", "panic", "color", "caption"].contains(kind) { return }
+            cue(jo(["kind": kind, "text": String(data: p.data.dropFirst(), encoding: .utf8) ?? "", "from": L.t("role_regie")]))
+        case Air.T_ZONE:
+            if p.data.count == 1 && role != "regie" { zoneHeard(Int(p.data[p.data.startIndex])) }
+        case Air.T_INVITE:
+            if p.data.count != 7 || role == "regie" { return }
+            let b = [UInt8](p.data)
+            let ip = b[0..<4].map { String($0) }.joined(separator: ".")
+            let pinV = (Int(b[4]) << 16) | (Int(b[5]) << 8) | Int(b[6])
+            if pinV > 999999 { return }
+            host = ip; pin = String(format: "%06d", pinV)
+            saveProfile()
+            showToast(L.t("air_invite_q", ip))
+        default: break
+        }
+    }
+
+    /// A show zone was heard: reported on change; after 30 s of silence the zone is left.
+    private func zoneHeard(_ z: Int) {
+        lastZoneAt = Date()
+        if z != curZone { curZone = z; send(jo(["t": "zone", "z": z])) }
+        if curZone != 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                guard let s = self, s.curZone != 0 else { return }
+                if Date().timeIntervalSince(s.lastZoneAt) > 30 { s.curZone = 0; s.send(jo(["t": "zone", "z": 0])) } else { s.zoneHeard(s.curZone) }
+            }
         }
     }
 
