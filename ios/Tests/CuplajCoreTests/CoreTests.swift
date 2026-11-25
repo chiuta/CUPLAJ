@@ -42,7 +42,8 @@ final class CoreTests: XCTestCase {
         XCTAssertTrue(parseHostPort("[::1]:8471") == ("::1", 8471))
         XCTAssertTrue(privateCand("192.168.1.5:5000"))
         XCTAssertFalse(privateCand("8.8.8.8:5000"))
-        XCTAssertEqual(safeNumber("*21*+40 721 #"), "+40721")
+        XCTAssertEqual(safeNumber("*21*+40 721 #"), "2140721")   // same as the Kotlin test: no USSD/forwarding codes survive as such
+        XCTAssertEqual(safeNumber("+40 721-000.111"), "+40721000111")
     }
 
     func testParseAtAndColor() {

@@ -47,8 +47,9 @@ public enum Sec {
 
     public static func decrypt(key: Data, nonce: Data, cipher: Data) -> Data? {
         guard cipher.count >= 16, let n = try? AES.GCM.Nonce(data: nonce) else { return nil }
-        let ct = cipher.prefix(cipher.count - 16)
-        let tag = cipher.suffix(16)
+        let all = Data(cipher)
+        let ct = Data(all.prefix(all.count - 16))
+        let tag = Data(all.suffix(16))
         guard let box = try? AES.GCM.SealedBox(nonce: n, ciphertext: ct, tag: tag) else { return nil }
         return try? AES.GCM.open(box, using: SymmetricKey(data: key))
     }
