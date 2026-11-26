@@ -330,7 +330,7 @@ final class Bonjour {
 
 
 /// Shake the phone to answer or hang up (2045 wearables era). Two strong jolts within 700 ms.
-final class ShakeDetector {
+final class ShakeDetector: ObservableObject {
     private let mm = CMMotionManager()
     private var last = Date.distantPast
     var onShake: () -> Void = {}
