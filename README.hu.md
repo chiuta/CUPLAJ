@@ -43,11 +43,14 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 4. A többin válaszd a **Néző** vagy **Színész** szerepet, jelöld ki a hubot a listában (vagy írd be a címét), és csatlakozz.
 5. Minden telefon kap egy számot (rendezés 100, színészek 201…, nézők 6 jegyű). Vedd fel a kagylót, és hívj.
 
-## A három korszak
+## Korszakok: három az appban, három elképzelt
 
 - **1985 · tárcsás** — valódi tárcsa, amit tekerni kell; az impulzusok hallhatók; két hosszú csengetés.
 - **1995 · gombos** — DTMF hangok, számjegyzet, csipogó-üzenetek.
 - **2003 · mobil** — nevek a telefonkönyvben, hívóazonosítás, legfeljebb 160 karakteres SMS.
+- **2025 · okostelefon** — *koncepció, még nincs az appban.* Csevegőbuborékok, hangüzenetek, olvasási visszajelzések és push‑értesítések; mindig elérhető, semmi sem csörög sokáig.
+- **2045 · viselhető eszközök** — *elképzelt.* Nincs kézibeszélő: a hívás fülhallgatóba suttogva érkezik, az arcok lebegő címkék a szemüvegben, egy bólintás a felvételhez.
+- **2080 · közös elme** — *elképzelt.* Egyáltalán nincs eszköz: a közös vonal egy gondolat, amit kihallgatunk, és a magánszféra a cselekmény.
 
 ## Hogyan működik a közös vonal
 

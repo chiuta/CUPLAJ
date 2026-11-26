@@ -43,11 +43,14 @@ CUPLAJ transforme une flotte de téléphones Android ordinaires en central tél�
 4. Sur les autres, choisissez **Spectateur** ou **Acteur**, sélectionnez le hub dans la liste (ou saisissez son adresse) et connectez‑vous.
 5. Chaque téléphone reçoit un numéro (régie 100, acteurs 201…, spectateurs 6 chiffres). Décrochez et appelez.
 
-## Les trois époques
+## Époques : trois dans l'application, trois imaginées
 
 - **1985 · cadran** — un vrai cadran qu'on tourne ; les impulsions s'entendent ; deux longues sonneries.
 - **1995 · touches** — tonalités DTMF, carnet de numéros, messages de bipeur.
 - **2003 · mobile** — noms dans le répertoire, identification de l'appelant, SMS limités à 160 caractères.
+- **2025 · smartphone** — *concept, pas encore dans l'application.* Bulles de discussion, messages vocaux, accusés de lecture et notifications push ; toujours connecté, rien ne sonne longtemps.
+- **2045 · objets portés** — *imaginé.* Pas de combiné : appels murmurés dans des écouteurs, visages en étiquettes flottantes dans des lunettes, un hochement de tête pour répondre.
+- **2080 · esprit partagé** — *imaginé.* Aucun appareil : la ligne partagée devient une pensée qu'on surprend, et l'intimité est l'intrigue.
 
 ## Comment fonctionne la ligne partagée
 

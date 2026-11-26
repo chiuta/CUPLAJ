@@ -6,7 +6,7 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SC = "file://" + os.path.join(ROOT, "tools", "scenes.html"); OUT = os.path.join(ROOT, "docs", "media"); TMP = "/tmp/clips"
 os.makedirs(OUT, exist_ok=True); shutil.rmtree(TMP, ignore_errors=True)
-SHOTS = ["spectator", "actor", "control", "cues", "air", "poll"] + ["f%d" % i for i in range(20)] + ["e0", "e1", "e2"]
+SHOTS = ["spectator", "actor", "control", "cues", "air", "poll"] + ["f%d" % i for i in range(20)] + ["e0", "e1", "e2", "e3", "e4", "e5"]
 POSTER = {"party": "3", "cues": "4", "air": "5", "poll": "6"}
 CLIPS = {"party": 13500, "cues": 13500, "air": 12000, "poll": 11000}
 async def main():

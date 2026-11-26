@@ -43,11 +43,14 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 4. On the other phones choose **Spectator** or **Actor**, pick the hub from the list (or type its address), and connect.
 5. Every phone gets a number (control 100, actors 201…, spectators 6 digits). Lift the handset and call.
 
-## The three eras
+## Eras: three in the app, three imagined
 
 - **1985 · rotary** — a round dial you really turn; the pulses are audible; two long rings.
 - **1995 · keypad** — DTMF tones, notebook of numbers, pager messages.
 - **2003 · mobile** — names in the contact list, caller ID, SMS limited to 160 characters.
+- **2025 · smartphone** — *concept, not in the app yet.* Chat bubbles, voice notes, read receipts and push notifications; always connected, nothing rings for long.
+- **2045 · wearables** — *imagined.* No handset: calls whispered into earbuds, faces as floating labels in glasses, a nod to answer.
+- **2080 · shared mind** — *imagined.* No device at all: the party line becomes a thought you overhear, and privacy is the plot.
 
 ## How the party line works
 

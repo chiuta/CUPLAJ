@@ -43,11 +43,14 @@ CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală te
 4. Pe celelalte alege **Spectator** sau **Actor**, selectează hubul din listă (sau scrie adresa lui) și conectează-te.
 5. Fiecare telefon primește un număr (regia 100, actorii 201…, spectatorii 6 cifre). Ridică receptorul și sună.
 
-## Cele trei epoci
+## Epoci: trei în aplicație, trei imaginate
 
 - **1985 · disc** — un disc rotund pe care îl rotești de-adevăratelea; impulsurile se aud; două sunete lungi de apel.
 - **1995 · taste** — tonuri DTMF, carnet cu numere, mesaje de biper.
 - **2003 · mobil** — nume în agendă, identificarea apelantului, SMS limitat la 160 de caractere.
+- **2025 · smartphone** — *concept, încă nu e în aplicație.* Baloane de chat, mesaje vocale, confirmări de citire și notificări push; mereu conectat, nimic nu sună mult.
+- **2045 · dispozitive purtabile** — *imaginat.* Fără telefon: apeluri șoptite în căști, fețe ca etichete plutitoare în ochelari, o înclinare din cap ca să răspunzi.
+- **2080 · minte comună** — *imaginat.* Niciun dispozitiv: linia comună devine un gând pe care îl asculți pe furiș, iar intimitatea este intriga.
 
 ## Cum funcționează cuplajul
 

@@ -43,11 +43,14 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 4. Auf den anderen **Zuschauer** oder **Schauspieler** wählen, den Hub in der Liste auswählen (oder seine Adresse eingeben) und verbinden.
 5. Jedes Telefon erhält eine Nummer (Regie 100, Schauspieler 201…, Zuschauer 6 Ziffern). Hörer abheben und anrufen.
 
-## Die drei Epochen
+## Epochen: drei in der App, drei erdacht
 
 - **1985 · Wählscheibe** — eine echte Scheibe zum Drehen; die Impulse sind hörbar; zwei lange Klingeltöne.
 - **1995 · Tasten** — DTMF-Töne, Notizbuch mit Nummern, Pager-Nachrichten.
 - **2003 · Handy** — Namen im Adressbuch, Anruferkennung, SMS auf 160 Zeichen begrenzt.
+- **2025 · Smartphone** — *Konzept, noch nicht in der App.* Chat‑Blasen, Sprachnachrichten, Lesebestätigungen und Push‑Benachrichtigungen; immer verbunden, nichts klingelt lange.
+- **2045 · Wearables** — *erdacht.* Kein Handapparat: Anrufe als Flüstern im Ohrstöpsel, Gesichter als schwebende Etiketten in der Brille, ein Nicken zum Abnehmen.
+- **2080 · geteilter Geist** — *erdacht.* Gar kein Gerät: Der Gemeinschaftsanschluss wird zu einem Gedanken, den man belauscht, und die Privatsphäre ist die Handlung.
 
 ## So funktioniert der Gemeinschaftsanschluss
 

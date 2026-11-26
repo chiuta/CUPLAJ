@@ -43,11 +43,14 @@ O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefó
 4. Nos outros escolhe **Espectador** ou **Ator**, seleciona o hub na lista (ou escreve o endereço) e liga-te.
 5. Cada telemóvel recebe um número (régie 100, atores 201…, espectadores 6 dígitos). Levanta o auscultador e chama.
 
-## As três épocas
+## Épocas: três na app, três imaginadas
 
 - **1985 · disco** — um disco que se roda a sério; os impulsos ouvem-se; dois toques longos.
 - **1995 · teclas** — tons DTMF, caderneta de números, mensagens de pager.
 - **2003 · telemóvel** — nomes na agenda, identificação de chamadas, SMS limitados a 160 carateres.
+- **2025 · smartphone** — *conceito, ainda não está na app.* Balões de chat, mensagens de voz, confirmações de leitura e notificações push; sempre ligado, nada toca por muito tempo.
+- **2045 · dispositivos vestíveis** — *imaginado.* Sem telefone: chamadas sussurradas em auriculares, rostos como etiquetas flutuantes nos óculos, um aceno de cabeça para atender.
+- **2080 · mente partilhada** — *imaginado.* Nenhum aparelho: a linha partilhada torna-se um pensamento que se escuta às escondidas, e a privacidade é o enredo.
 
 ## Como funciona a linha partilhada
 

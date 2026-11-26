@@ -43,11 +43,14 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 4. Sugli altri scegli **Spettatore** o **Attore**, seleziona l'hub dall'elenco (o scrivi il suo indirizzo) e connettiti.
 5. Ogni telefono riceve un numero (regia 100, attori 201…, spettatori 6 cifre). Alza la cornetta e chiama.
 
-## Le tre epoche
+## Epoche: tre nell'app, tre immaginate
 
 - **1985 · disco** — un vero disco da far girare; gli impulsi si sentono; due squilli lunghi.
 - **1995 · tasti** — toni DTMF, rubrica di numeri, messaggi del cercapersone.
 - **2003 · cellulare** — nomi in rubrica, identificazione del chiamante, SMS limitati a 160 caratteri.
+- **2025 · smartphone** — *concetto, non ancora nell'app.* Fumetti di chat, messaggi vocali, conferme di lettura e notifiche push; sempre connesso, nulla squilla a lungo.
+- **2045 · dispositivi indossabili** — *immaginato.* Niente telefono: chiamate sussurrate negli auricolari, volti come etichette fluttuanti negli occhiali, un cenno del capo per rispondere.
+- **2080 · mente condivisa** — *immaginato.* Nessun dispositivo: la linea condivisa diventa un pensiero che si origlia, e la riservatezza è la trama.
 
 ## Come funziona la linea condivisa
 

@@ -103,5 +103,12 @@ e1:S('1995','keypad',`<div class="ctl" style="text-align:center;font:26px monosp
 e2:S('2003','mobile',R('👤','Mama','mobile','talk')+R('👤','Doctor Ion','mobile')+R('👤','Unknown','+40…','busy')+C('✉ SMS <span style="color:var(--dim)">0 / 160</span>')+C('<b>Caller ID</b> shown on every ring'))
 });
 
+const RIB=t=>`<div style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:var(--gold);color:#222;font:bold 11px sans-serif;padding:4px 14px;border-radius:999px;letter-spacing:.15em;white-space:nowrap">${t}</div>`;
+Object.assign(shots,{
+e3:S('2025','smartphone',`<div style="overflow:hidden">${RIB('CONCEPT')}</div><div class="ctl" style="margin-left:30px;background:#2a1d18">Are you in the cellar?</div><div class="ctl" style="margin-right:60px">🎙 ▂▃▅▂▃▆▂ 0:07</div><div class="ctl" style="margin-left:60px;background:#2a1d18">Yes — he is listening ✓✓</div><div class="ctl" style="margin-right:30px">📍 Cellar · 3 people</div><div class="ctl" style="text-align:center;color:var(--dim)">🔔 push · always connected</div>`),
+e4:S('2045','wearables',`<div style="overflow:hidden">${RIB('IMAGINED')}</div><div style="position:relative;height:300px;margin:6px 0;border-radius:18px;background:radial-gradient(circle at 50% 40%,#1b2a3a,#080d12);border:1px solid #2f4a63"><div style="position:absolute;left:30px;top:50px;border:1px solid #6fb7ff;color:#9fd0ff;border-radius:8px;padding:4px 8px;font:12px sans-serif">Ana · actor ◉</div><div style="position:absolute;right:26px;top:120px;border:1px solid #6fb7ff;color:#9fd0ff;border-radius:8px;padding:4px 8px;font:12px sans-serif">Spectator 07 · whisper ◉</div><div style="position:absolute;left:0;right:0;bottom:16px;text-align:center;color:#9fd0ff;font:13px sans-serif">nod to answer ⟲</div></div>`+R('🎧','Earbuds','whisper call','talk')),
+e5:S('2080','shared mind',`<div style="overflow:hidden">${RIB('IMAGINED')}</div><div style="position:relative;height:280px;margin:10px 0">${[260,200,140,80].map((d,i)=>`<div style="position:absolute;left:${(358-d)/2}px;top:${(280-d)/2}px;width:${d}px;height:${d}px;border-radius:50%;border:2px solid rgba(231,184,102,${.25+i*.2})"></div>`).join('')}<div style="position:absolute;inset:0;display:grid;place-items:center;font-size:44px">🧠</div></div>`+C('<b>No device.</b> The party line is a thought you overhear.')+C('<span style="color:var(--dim)">Privacy is the plot.</span>'))
+});
+
 if(q.get('shot'))A.innerHTML=shots[q.get('shot')];else sc[q.get('s')||'party']();
 </script></body></html>

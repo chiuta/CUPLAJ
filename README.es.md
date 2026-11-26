@@ -43,11 +43,14 @@ CUPLAJ convierte una flota de teléfonos Android corrientes en una centralita te
 4. En los demás elige **Espectador** o **Actor**, selecciona el hub de la lista (o escribe su dirección) y conéctate.
 5. Cada teléfono recibe un número (regiduría 100, actores 201…, espectadores 6 cifras). Descuelga y llama.
 
-## Las tres épocas
+## Épocas: tres en la app, tres imaginadas
 
 - **1985 · disco** — un disco que se gira de verdad; los pulsos se oyen; dos timbrazos largos.
 - **1995 · teclas** — tonos DTMF, libreta de números, mensajes de busca.
 - **2003 · móvil** — nombres en la agenda, identificación de llamada, SMS limitados a 160 caracteres.
+- **2025 · smartphone** — *concepto, aún no está en la app.* Burbujas de chat, notas de voz, confirmaciones de lectura y notificaciones push; siempre conectado, nada suena mucho tiempo.
+- **2045 · dispositivos vestibles** — *imaginado.* Sin teléfono: llamadas susurradas en auriculares, rostros como etiquetas flotantes en las gafas, un cabeceo para contestar.
+- **2080 · mente compartida** — *imaginado.* Ningún aparato: la línea compartida se vuelve un pensamiento que se escucha a escondidas, y la privacidad es la trama.
 
 ## Cómo funciona la línea compartida
 
