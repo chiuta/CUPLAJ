@@ -6,6 +6,7 @@ from docs_src import D, LANGS, NAMES
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION, DATE = "1.9.0", "2026-11-25"
+RELEASE = "1.9.1"  # GitHub release whose files the download links point to (APK/IPA signed/packaged after 1.9.0)
 REPO = "https://github.com/chiuta/CUPLAJ"
 
 # ---- generated: full cue reference from the app's own strings (always matches the app)
@@ -157,7 +158,7 @@ def readme(l):
     s = ["# CUPLAJ", "", bar("README", l, ".md"), "", "<p align=\"center\"><img src=\"docs/logo.svg\" width=\"160\" alt=\"CUPLAJ\"></p>", "",
          "> **%s**" % d["tag"], "", "_%s_" % (d["ver"] % (VERSION, DATE)), "", d["intro"], "",
          "**[%s](%s/releases/download/v%s/CUPLAJ-%s.apk) · [%s](%s/releases/download/v%s/CUPLAJ-%s-ios-unsigned.ipa) · [%s](%s/releases)**" % (
-             d["site"]["get"], REPO, VERSION, VERSION, d["site"]["get_ios"], REPO, VERSION, VERSION, d["site"]["all_rel"], REPO), "",
+             d["site"]["get"], REPO, RELEASE, RELEASE, d["site"]["get_ios"], REPO, RELEASE, RELEASE, d["site"]["all_rel"], REPO), "",
          "## " + d["h_feat"], ""]
     s += ["- " + x for x in d["feat"]]
     s += ["", "## " + d["h_quick"], ""]
@@ -206,6 +207,6 @@ for l in LANGS:
     site[l]["roles"] = site_roles.R[l]; site[l]["rs"] = site_roles.S[l]
     site[l]["kinds"] = len(_kinds); site[l]["checks"] = (_checks // 50) * 50
 tpl = open(os.path.join(os.path.dirname(__file__), "site_template.html"), encoding="utf8").read()
-html = tpl.replace("/*__DATA__*/", "const DATA=" + json.dumps(site, ensure_ascii=False) + ";").replace("__VERSION__", VERSION).replace("__REPO__", REPO)
+html = tpl.replace("/*__DATA__*/", "const DATA=" + json.dumps(site, ensure_ascii=False) + ";").replace("__RELEASE__", RELEASE).replace("__VERSION__", VERSION).replace("__REPO__", REPO)
 open(os.path.join(ROOT, "docs", "index.html"), "w", encoding="utf8").write(html)
 print("generated", len(LANGS), "readmes,", len(LANGS), "guides, site")
