@@ -181,7 +181,7 @@ header.top .langbar button{padding:.3rem .65rem;min-width:44px}
 /* ---- media: screens and clips ---- */
 .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:1rem}
 .shots figure{margin:0;background:var(--card);border:1px solid #2b2620;border-radius:16px;padding:.6rem;text-align:center}
-.shots img{width:100%;border-radius:12px;display:block;aspect-ratio:39/54;object-fit:cover;object-position:top;background:#0b0908}
+.shots img{width:100%;border-radius:12px;display:block;aspect-ratio:39/47;object-fit:cover;object-position:top;background:#0b0908}
 .clips{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1.2rem}
 .clips figure{margin:0;background:var(--card);border:1px solid #2b2620;border-radius:16px;padding:.6rem}
 .clips video{width:100%;aspect-ratio:39/70;border-radius:12px;background:#0b0908;display:block}
@@ -190,6 +190,25 @@ figcaption b{color:var(--gold);display:block}
 .mnote{color:var(--dim);font-size:.9rem;text-align:center}
 @media(max-width:700px){.shots{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.7rem;-webkit-overflow-scrolling:touch}.shots figure{flex:0 0 62%;scroll-snap-align:start}.clips{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.8rem}.clips figure{flex:0 0 72%;scroll-snap-align:start}}
 @media(min-width:1100px){.clips{grid-template-columns:repeat(4,1fr)}.shots{grid-template-columns:repeat(6,1fr)}}
+
+.cs{width:100%;border-radius:12px;display:block;margin:0 0 .7rem;aspect-ratio:39/47;object-fit:cover;object-position:top;background:#0b0908;border:1px solid #2b2620}
+#dg{display:grid;gap:1.4rem;margin:1rem 0 1.4rem;grid-template-columns:minmax(0,1fr)}
+#dg>*{min-width:0}
+.dgc{background:var(--card);border:1px solid #2b2620;border-radius:14px;padding:1rem}
+.dgc h3{margin:.1rem 0 .7rem;font-size:1.05rem;color:var(--gold)}
+.mx{width:100%;border-collapse:collapse;font-size:.92rem;min-width:30rem}
+.mx th{font-weight:normal;color:var(--dim);font-size:.8rem;text-align:center;padding:.3rem .4rem;border-bottom:1px solid #3a2f28}
+.mx th:first-child,.mx td:first-child{text-align:left}
+.mx td{padding:.45rem .4rem;border-bottom:1px solid #2b2620;text-align:center}
+.mx td.k{font-size:1.15rem}
+.k-y{color:#5fc08a}.k-p{color:#e0a26a}.k-n{color:#d9604f}.k-x{color:#6b6459}
+.mxw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin-top:.7rem;font-size:.85rem;color:var(--dim)}
+.ladder{display:grid;gap:.5rem}
+.rung{display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;border-radius:10px;border:1px solid #3a2f28;background:#1a1512}
+.rung i{font-style:normal;width:1.7rem;height:1.7rem;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;font:bold .85rem sans-serif;background:#2b2f36;color:var(--dim)}
+.rung.done{border-color:#2e7d4f;background:#15261c}.rung.done i{background:#2e7d4f;color:#fff}
+.rung.todo{border-style:dashed;border-color:#a33a32;background:#241513}.rung.todo i{background:#a33a32;color:#fff}
 </style>
 </head>
 <body>
@@ -234,12 +253,12 @@ figcaption b{color:var(--gold);display:block}
  <h2 id="h_party"></h2><ol id="party"></ol>
  <p style="text-align:center"><img src="partyline.svg" alt="" style="max-width:100%"></p>
  <h2 id="h_quick"></h2><ol id="quick"></ol>
- <h2 id="h_status"></h2><p id="status"></p>
+ <h2 id="h_status"></h2><div id="dg"></div><p id="status"></p>
  <h2 id="h_priv"></h2><p id="priv"></p>
  <h2 id="h_docs"></h2><ul id="docs"></ul>
  <h2 id="h_support"></h2><p><a href="https://buymeacoffee.com/echo.of.the.strings" id="coffee"></a></p>
 </main>
-<footer><span id="lic"></span> · © Alexandru‑Ionuț Chiuță (Alexio) · v__VERSION__</footer>
+<footer><span id="lic"></span> · v__VERSION__</footer>
 <button id="up" aria-label="↑">▲</button>
 <script>
 /*__DATA__*/
@@ -334,8 +353,9 @@ function render(){
  $('h_demo').textContent=s.demo;$('demo_hint').textContent=s.demo_hint;$('h_log').textContent=s.log;$('reset').textContent=s.reset;
  $('h_feat').textContent=d.h_feat;$('h_eras').textContent=d.h_eras;$('h_party').textContent=d.h_party;$('h_quick').textContent=d.h_quick;
  $('h_status').textContent=d.h_status;$('h_priv').textContent=d.h_priv;$('h_docs').textContent=d.h_docs;$('h_support').textContent=d.h_support;
- $('feat').innerHTML=d.feat.map(x=>'<div class="card">'+md(x)+'</div>').join('');
- $('eras').innerHTML=d.eras.map(x=>'<div class="card">'+md(x)+'</div>').join('');
+ const fi=(k,x)=>'<img class="cs" loading="lazy" src="media/screen-'+k+'.webp" alt="'+esc(x.replace(/\*\*/g,'').split(' — ')[0])+'" width="390" height="470">';
+ $('feat').innerHTML=d.feat.map((x,i)=>'<div class="card">'+fi('f'+i,x)+md(x)+'</div>').join('');
+ $('eras').innerHTML=d.eras.map((x,i)=>'<div class="card">'+fi('e'+i,x)+md(x)+'</div>').join('');
  $('party').innerHTML=d.party.map(x=>'<li>'+md(x)+'</li>').join('');
  $('quick').innerHTML=d.quick.map(x=>'<li>'+md(x)+'</li>').join('');
  $('status').innerHTML=md(d.status);$('priv').innerHTML=md(d.priv);$('lic').textContent=d.lic;
@@ -347,8 +367,12 @@ function render(){
 
  const SH=['spectator','actor','control','cues','air','poll'],CL=['party','cues','air','poll'];
  $('h_shots').textContent=s.m_shots;$('shots_note').textContent=s.m_note;$('h_clips').textContent=s.m_clips;$('clips_note').textContent=s.m_note;
- $('shots').innerHTML=SH.map((k,i)=>'<figure><img loading="lazy" src="media/screen-'+k+'.webp" alt="'+esc(s.m_sc[i])+'" width="390" height="540"><figcaption><b>'+esc(s.m_sc[i])+'</b></figcaption></figure>').join('');
+ $('shots').innerHTML=SH.map((k,i)=>'<figure><img loading="lazy" src="media/screen-'+k+'.webp" alt="'+esc(s.m_sc[i])+'" width="390" height="470"><figcaption><b>'+esc(s.m_sc[i])+'</b></figcaption></figure>').join('');
  $('clips').innerHTML=CL.map((k,i)=>'<figure><video controls muted loop playsinline preload="none" poster="media/clip-'+k+'.webp" aria-label="'+esc(s.m_cl[i][0])+'"><source src="media/clip-'+k+'.mp4" type="video/mp4"></video><figcaption><b>'+esc(s.m_cl[i][0])+'</b>'+esc(s.m_cl[i][1])+'</figcaption></figure>').join('');
+
+ const dg=d.dg||s.dg,M=[['y','y','n'],['n','y','n'],['y','y','n'],['p','y','n'],['p','y','n'],['y','y','n'],['y','y','n'],['y','y','n'],['y','y','n'],['p','y','n'],['y','y','n']],SY={y:'✓',p:'◐',n:'✗'};
+ $('dg').innerHTML='<div class="dgc"><h3>'+esc(dg.t1)+'</h3><div class="mxw"><table class="mx"><thead><tr><th></th>'+dg.cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+dg.rows.map((r,i)=>'<tr><td>'+esc(r)+'</td>'+M[i].map(k=>'<td class="k k-'+k+'" aria-label="'+esc(dg.leg[k==='y'?0:k==='p'?1:2])+'">'+SY[k]+'</td>').join('')+'</tr>').join('')+'</tbody></table></div><div class="legend"><span><b class="k-y">✓</b> '+esc(dg.leg[0])+'</span><span><b class="k-p">◐</b> '+esc(dg.leg[1])+'</span><span><b class="k-n">✗</b> '+esc(dg.leg[2])+'</span></div></div>'+
+ '<div class="dgc"><h3>'+esc(dg.t2)+'</h3><div class="ladder">'+dg.steps.map((t,i)=>'<div class="rung '+(i<4?'done':'todo')+'"><i>'+(i<4?'✓':'✗')+'</i><span>'+esc(t)+'</span></div>').join('')+'</div></div>';
  /* device-aware download order + section nav */
  const ua=navigator.userAgent||'',isIos=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const cta=document.querySelector('.cta'),gA=$('get'),gI=$('getios');

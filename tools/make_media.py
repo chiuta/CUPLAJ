@@ -6,14 +6,14 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SC = "file://" + os.path.join(ROOT, "tools", "scenes.html"); OUT = os.path.join(ROOT, "docs", "media"); TMP = "/tmp/clips"
 os.makedirs(OUT, exist_ok=True); shutil.rmtree(TMP, ignore_errors=True)
-SHOTS = ["spectator", "actor", "control", "cues", "air", "poll"]
+SHOTS = ["spectator", "actor", "control", "cues", "air", "poll"] + ["f%d" % i for i in range(20)] + ["e0", "e1", "e2"]
 POSTER = {"party": "3", "cues": "4", "air": "5", "poll": "6"}
 CLIPS = {"party": 13500, "cues": 13500, "air": 12000, "poll": 11000}
 async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
         for n in SHOTS:
-            c = await b.new_context(viewport={"width": 390, "height": 540}, device_scale_factor=2)
+            c = await b.new_context(viewport={"width": 390, "height": 470}, device_scale_factor=2)
             pg = await c.new_page(); await pg.goto(SC + "?shot=" + n); await pg.wait_for_timeout(300)
             await pg.screenshot(path=f"/tmp/{n}.png"); await c.close()
             Image.open(f"/tmp/{n}.png").save(os.path.join(OUT, f"screen-{n}.webp"), quality=82)
