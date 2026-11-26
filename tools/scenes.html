@@ -1,0 +1,74 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:390px;background:#14110f;color:#e8d9b8;font:15px Georgia,serif;overflow:hidden}
+:root{--gold:#e7b866;--acc:#b5452f;--ok:#2e7d4f;--blue:#4a7fb0;--red:#a33a32;--card:#1e1915;--dim:#a39883}
+#stage{position:relative;width:390px;height:700px;padding:16px;background:radial-gradient(500px 300px at 50% 0,#3a0f0e,#14110f 70%)}
+.shot{height:540px}
+h1{font-size:13px;letter-spacing:.25em;color:var(--gold);text-align:center;margin-bottom:10px}
+.sb{display:flex;justify-content:space-between;font:11px sans-serif;color:var(--dim);margin-bottom:10px}
+.ph{background:#2b2f36;border-radius:12px;padding:10px 12px;margin:8px 0;border-left:6px solid #555;display:flex;align-items:center;gap:10px;transition:all .25s}
+.ph b{font-size:18px}.ph .ic{font-size:22px;width:28px;text-align:center}.ph .st{margin-left:auto;font:12px sans-serif;color:var(--dim)}
+.ph.ring{border-color:#e0a26a;background:#3b3328;animation:sh .5s infinite}
+.ph.talk{border-color:#3fa56a;background:#1f3328}.ph.listen{border-color:var(--blue);background:#1d2a38}.ph.busy{border-color:var(--red);background:#3a1f1d}
+@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.line{border:1px dashed #5a5246;border-radius:14px;padding:6px 10px;margin:10px 0}.line h4{font:12px sans-serif;color:var(--dim);font-weight:normal;margin-top:4px}
+.ctl{background:var(--card);border:1px solid #3a2f28;border-radius:14px;padding:10px;margin:6px 0}
+.btns{display:flex;gap:8px;flex-wrap:wrap}.btn{background:#2b2f36;border-radius:999px;padding:8px 14px;font:14px sans-serif;transition:all .2s}
+.btn.on{background:var(--acc);color:#fff;transform:scale(1.08);box-shadow:0 0 18px #b5452f}
+.cap{position:absolute;left:16px;right:16px;bottom:14px;text-align:center;font:13px sans-serif;color:var(--gold);min-height:20px}
+.big{font-size:26px;text-align:center;margin:30px 0;color:#fff;text-shadow:0 0 18px var(--gold)}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mini{background:#2b2f36;border-radius:14px;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:all .3s;border:2px solid #3a3f47;font:12px sans-serif;text-align:center;padding:6px}
+.mini .ic{font-size:34px}
+.mini.ring{animation:sh .4s infinite;border-color:#e0a26a;background:#3b3328}.mini.dark{background:#050403;border-color:#222;color:#555}
+.mini.glow{background:#fff6d0;color:#222;box-shadow:0 0 40px #ffe9a0}.mini.msg{border-color:var(--gold)}
+.bar{height:20px;border-radius:6px;background:var(--acc);transition:width 1.2s;margin:4px 0}.bar.b{background:var(--blue)}
+.wave{display:flex;gap:4px;justify-content:center;align-items:center;height:60px}.wave i{width:6px;background:var(--gold);border-radius:3px;animation:w 0.6s infinite alternate}
+@keyframes w{from{height:8px}to{height:54px}}
+.big2{font-size:60px;text-align:center}
+.nonet{font:14px sans-serif;text-align:center;color:#e0a26a;margin:6px 0}
+</style></head><body>
+<div id="app"></div>
+<script>
+const q=new URLSearchParams(location.search),A=document.getElementById('app');
+const $=id=>document.getElementById(id),at=(ms,f)=>setTimeout(f,ms);
+const set=(id,cls,ic,st)=>{const e=$(id);e.className='ph '+cls;if(ic)e.querySelector('.ic').textContent=ic;if(st!=null)e.querySelector('.st').textContent=st;};
+const ph=(id,n)=>`<div class="ph" id="${id}"><span class="ic">📱</span><b>${n}</b><span class="st">idle</span></div>`;
+const cap=t=>{const c=$('cap');if(c)c.textContent=t;};
+const sc={
+party(){A.innerHTML=`<div id="stage"><h1>CUPLAJ · PARTY LINE</h1><div class="line"><h4>LINE 1</h4>${ph('A1','A1')}${ph('B1','B1')}</div><div class="line"><h4>LINE 2</h4>${ph('A2','A2')}${ph('B2','B2')}</div><div class="ctl" id="ctl"><div class="btns"><span class="btn" id="cb">🎛 Control</span></div></div><div class="cap" id="cap"></div></div>`;
+ at(800,()=>{set('A1','talk','📞','calling');cap('A1 dials B1')});
+ at(1800,()=>{set('B1','ring','🔔','long ring');set('B2','ring','🔔','short ring');cap('B1 rings long, its line-mate B2 rings short')});
+ at(5000,()=>{set('B1','talk','🗣','talking');set('B2','idle','📱','idle');set('A1','talk','🗣','talking');cap('B1 answers')});
+ at(7000,()=>{set('A2','listen','🎧','listening');cap('A2 overhears the party line')});
+ at(9000,()=>{$('cb').classList.add('on');['A1','B1'].forEach(x=>set(x,'busy','🎛','control'));cap('Control phone cuts in')});
+ at(11500,()=>{$('cb').classList.remove('on');['A1','B1','A2','B2'].forEach(x=>set(x,'','📱','idle'));cap('')});},
+cues(){A.innerHTML=`<div id="stage"><h1>CUPLAJ · CUES</h1><div class="ctl"><div class="btns"><span class="btn" id="c1">🔔 Ring</span><span class="btn" id="c2">💬 Whisper</span><span class="btn" id="c3">🌑 Blackout</span><span class="btn" id="c4">🔊 Sound</span></div></div><div class="row3" style="margin-top:16px"><div class="mini" id="p1"><span class="ic">📱</span>Audience 1</div><div class="mini" id="p2"><span class="ic">📱</span>Audience 2</div><div class="mini" id="p3"><span class="ic">📱</span>Audience 3</div></div><div class="cap" id="cap"></div></div>`;
+ const p=(i,c,ic,t)=>{const e=$('p'+i);e.className='mini '+c;e.querySelector('.ic').textContent=ic;if(t!=null)e.lastChild.textContent=t;};
+ const on=n=>{for(let i=1;i<=4;i++)$('c'+i).classList.toggle('on',i===n)};
+ at(700,()=>{on(1);[1,2,3].forEach(i=>p(i,'ring','🔔','Incoming'));cap('Ring cue: every phone rings')});
+ at(3200,()=>{on(2);[1,2,3].forEach(i=>p(i,'',  '📱','Audience '+i));p(2,'msg','💬','“Look behind you…”');cap('Whisper cue: one phone gets a secret')});
+ at(6200,()=>{on(3);[1,2,3].forEach(i=>p(i,'dark','🌑','')); cap('Blackout cue: screens go dark')});
+ at(8600,()=>{on(4);[1,2,3].forEach(i=>p(i,'','🔊','Playing'));cap('Sound cue: all phones play together')});
+ at(11200,()=>{on(0);[1,2,3].forEach(i=>p(i,'','📱','Audience '+i));cap('')});},
+air(){A.innerHTML=`<div id="stage"><h1>CUPLAJ-AIR · NO NETWORK</h1><div class="nonet">📵 Wi‑Fi off · no data · no server</div><div class="row3" style="margin-top:10px"><div class="mini" id="l"><span class="ic">🔦</span>LUMEN<br>light</div><div class="mini" id="s"><span class="ic">🔈</span>SONUS<br>sound</div><div class="mini" id="t"><span class="ic">📳</span>TACTUS<br>touch</div></div><div class="ctl" style="margin-top:16px"><div class="wave" id="w" style="opacity:0"></div></div><div class="cap" id="cap"></div></div>`;
+ $('w').innerHTML='<i></i>'.repeat(14);[...$('w').children].forEach((e,i)=>e.style.animationDelay=(i*.07)+'s');
+ at(800,()=>{$('l').className='mini glow';cap('LUMEN: a flashing light carries the cue');});
+ at(3500,()=>{$('l').className='mini';$('s').className='mini msg';$('w').style.opacity=1;cap('SONUS: inaudible tones carry the cue');});
+ at(6500,()=>{$('s').className='mini';$('w').style.opacity=0;$('t').className='mini ring';cap('TACTUS: vibration pattern carries the cue');});
+ at(9500,()=>{$('t').className='mini';cap('Every phone reacts — no network needed')});},
+poll(){A.innerHTML=`<div id="stage"><h1>CUPLAJ · POLL</h1><div class="ctl"><b>Who opens the door?</b></div><div class="ctl">A · The maid<div class="bar" id="a" style="width:0"></div></div><div class="ctl">B · The stranger<div class="bar b" id="b" style="width:0"></div></div><div class="ctl">C · Nobody<div class="bar" id="c" style="width:0;background:#6a5a3a"></div></div><div class="cap" id="cap"></div></div>`;
+ at(800,()=>cap('Audience phones vote'));at(1800,()=>{$('a').style.width='20%'});at(3500,()=>{$('b').style.width='45%';$('a').style.width='35%'});
+ at(5500,()=>{$('b').style.width='70%';$('c').style.width='15%';$('a').style.width='40%'});at(8000,()=>{$('b').style.width='85%';cap('Control sees the result live and calls the cue')});}
+};
+const shots={
+spectator:`<div id="stage" class="shot"><div class="sb"><span>CUPLAJ</span><span>● connected</span></div><div class="big">📞<br>Incoming call</div><div class="ctl" style="text-align:center">Pick up and listen</div><div class="btns" style="justify-content:center;margin-top:30px"><span class="btn on" style="background:var(--ok)">Answer</span><span class="btn">Hang up</span></div></div>`,
+actor:`<div id="stage" class="shot"><div class="sb"><span>CUPLAJ · actor</span><span>line 1 · slot A</span></div>${ph('x1','Spectator 12')}${ph('x2','Spectator 07')}${ph('x3','Spectator 21')}<div class="ctl">Script: <b>Scene 3 — the call</b></div><div class="btns"><span class="btn on">GO</span><span class="btn">Hold</span><span class="btn">Whisper</span></div></div>`,
+control:`<div id="stage" class="shot"><div class="sb"><span>CUPLAJ · control</span><span>24 phones</span></div><div class="ctl"><b>Cues</b><div class="btns" style="margin-top:8px"><span class="btn">🔔 Ring</span><span class="btn">💬 Whisper</span><span class="btn">🌑 Blackout</span><span class="btn">🔊 Sound</span><span class="btn">📊 Poll</span></div></div><div class="ctl"><b>Meter</b><div class="bar" style="width:62%"></div><div class="bar b" style="width:35%"></div></div><div class="ctl"><b>Lines</b><br><span style="color:var(--dim)">A1 ↔ B1 talking · A2 listening</span></div></div>`,
+air:`<div id="stage" class="shot"><div class="sb"><span>CUPLAJ-AIR</span><span>📵 offline</span></div><div class="row3"><div class="mini glow"><span class="ic">🔦</span>LUMEN</div><div class="mini msg"><span class="ic">🔈</span>SONUS</div><div class="mini ring"><span class="ic">📳</span>TACTUS</div></div><div class="ctl" style="margin-top:14px">Zone <b>Cellar</b><br><span style="color:var(--dim)">follows the audience by sound</span></div></div>`,
+cues:`<div id="stage" class="shot"><div class="sb"><span>CUPLAJ · script</span><span>cue 14 / 40</span></div>${['Ring the lighthouse','Whisper to Spectator 07','Blackout 5 s','Ghost tape — corridor','Poll: who opens the door?'].map((t,i)=>`<div class="ph ${i==2?'talk':''}"><span class="ic">${['🔔','💬','🌑','👻','📊'][i]}</span><b style="font-size:15px">${t}</b></div>`).join('')}<div class="btns" style="margin-top:12px"><span class="btn on">▶ GO</span><span class="btn">Skip</span></div></div>`,
+poll:`<div id="stage" class="shot"><div class="sb"><span>CUPLAJ · poll</span><span>31 votes</span></div><div class="ctl"><b>Who opens the door?</b></div><div class="ctl">A · The maid<div class="bar" style="width:40%"></div></div><div class="ctl">B · The stranger<div class="bar b" style="width:85%"></div></div><div class="ctl">C · Nobody<div class="bar" style="width:15%;background:#6a5a3a"></div></div></div>`
+};
+if(q.get('shot'))A.innerHTML=shots[q.get('shot')];else sc[q.get('s')||'party']();
+</script></body></html>

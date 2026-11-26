@@ -177,6 +177,19 @@ header.top .langbar button{padding:.3rem .65rem;min-width:44px}
 @media(min-width:1700px){html{font-size:calc(18px*var(--fs))}}
 @media(hover:none){.cta a:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cta a{transition:none}}
+
+/* ---- media: screens and clips ---- */
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:1rem}
+.shots figure{margin:0;background:var(--card);border:1px solid #2b2620;border-radius:16px;padding:.6rem;text-align:center}
+.shots img{width:100%;border-radius:12px;display:block;aspect-ratio:39/54;object-fit:cover;object-position:top;background:#0b0908}
+.clips{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1.2rem}
+.clips figure{margin:0;background:var(--card);border:1px solid #2b2620;border-radius:16px;padding:.6rem}
+.clips video{width:100%;aspect-ratio:39/70;border-radius:12px;background:#0b0908;display:block}
+figcaption{font-size:.9rem;color:var(--dim);margin-top:.5rem}
+figcaption b{color:var(--gold);display:block}
+.mnote{color:var(--dim);font-size:.9rem;text-align:center}
+@media(max-width:700px){.shots{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.7rem;-webkit-overflow-scrolling:touch}.shots figure{flex:0 0 62%;scroll-snap-align:start}.clips{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.8rem}.clips figure{flex:0 0 72%;scroll-snap-align:start}}
+@media(min-width:1100px){.clips{grid-template-columns:repeat(4,1fr)}.shots{grid-template-columns:repeat(6,1fr)}}
 </style>
 </head>
 <body>
@@ -214,6 +227,8 @@ header.top .langbar button{padding:.3rem .65rem;min-width:44px}
   <div id="log" aria-live="polite"></div>
   <p><button id="reset"></button></p>
  </div>
+ <h2 id="h_shots"></h2><p class="mnote" id="shots_note"></p><div class="shots" id="shots"></div>
+ <h2 id="h_clips"></h2><p class="mnote" id="clips_note"></p><div class="clips" id="clips"></div>
  <h2 id="h_feat"></h2><div class="grid" id="feat"></div>
  <h2 id="h_eras"></h2><div class="grid" id="eras"></div>
  <h2 id="h_party"></h2><ol id="party"></ol>
@@ -329,12 +344,17 @@ function render(){
  $('coffee').textContent=s.coffee+' ☕';
  [...bar.children].forEach(b=>b.style.borderColor=b.textContent.toLowerCase()===lang?'#b5452f':'');
  drawDemo();drawLog();drawRoles();
+
+ const SH=['spectator','actor','control','cues','air','poll'],CL=['party','cues','air','poll'];
+ $('h_shots').textContent=s.m_shots;$('shots_note').textContent=s.m_note;$('h_clips').textContent=s.m_clips;$('clips_note').textContent=s.m_note;
+ $('shots').innerHTML=SH.map((k,i)=>'<figure><img loading="lazy" src="media/screen-'+k+'.webp" alt="'+esc(s.m_sc[i])+'" width="390" height="540"><figcaption><b>'+esc(s.m_sc[i])+'</b></figcaption></figure>').join('');
+ $('clips').innerHTML=CL.map((k,i)=>'<figure><video controls muted loop playsinline preload="none" poster="media/clip-'+k+'.webp" aria-label="'+esc(s.m_cl[i][0])+'"><source src="media/clip-'+k+'.mp4" type="video/mp4"></video><figcaption><b>'+esc(s.m_cl[i][0])+'</b>'+esc(s.m_cl[i][1])+'</figcaption></figure>').join('');
  /* device-aware download order + section nav */
  const ua=navigator.userAgent||'',isIos=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const cta=document.querySelector('.cta'),gA=$('get'),gI=$('getios');
  gA.classList.toggle('primary',!isIos);gI.classList.toggle('primary',isIos);
  if(isIos)cta.insertBefore(gI,gA);else cta.insertBefore(gA,gI);
- $('sitenav').innerHTML=['h_who','h_demo','h_feat','h_quick','h_docs'].map(id=>'<a href="#'+id+'">'+esc($(id).textContent)+'</a>').join('');
+ $('sitenav').innerHTML=['h_who','h_demo','h_shots','h_feat','h_quick','h_docs'].map(id=>'<a href="#'+id+'">'+esc($(id).textContent)+'</a>').join('');
 }
 const up=$('up');up.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 addEventListener('scroll',()=>{up.style.display=scrollY>400?'block':'none';});
