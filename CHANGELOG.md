@@ -2,6 +2,13 @@
 
 Documentation: this changelog, PROTOCOL, AUDIT, COMPARISON and REVIEW are English only; README, the user guide and the presentation page are in 8 languages.
 
+## 1.9.1 — 2026‑11‑26
+
+* Release **v1.9.1** carries the APK and an **unsigned iOS .ipa** (workflow *iOS unsigned IPA*, for AltStore/Sideloadly). The code inside still reports 1.9.0.
+* The release build can be signed with a stable key from repository secrets (`CUPLAJ_KEYSTORE_BASE64`, `CUPLAJ_KEYSTORE_PASSWORD`, `CUPLAJ_KEY_ALIAS`, `CUPLAJ_KEY_PASSWORD`); without them it falls back to the debug key, which Play Protect flags.
+* Presentation page and READMEs (8 languages): download buttons for APK and iOS (device‑aware), Play Protect note, responsive layout for phone, tablet and desktop, section menu, screens and feature demo clips (illustrations, not device captures), a screenshot on every feature and era, two status diagrams, the review link, and three eras beyond the app's three: 2025 (concept), 2045 and 2080 (imagined). No app behaviour changed.
+* `tools/scenes.html` + `tools/make_media.py` regenerate `docs/media`.
+
 ## 1.9.0 — 2026‑11‑25
 
 - iOS client + Hub (Swift core, SwiftUI app, macOS CI) with direct P2P audio, SIP gateway, CUPLAJ-AIR and background audio session; see `ios/README.md` for what cannot be ported (Bluetooth RFCOMM, Wi-Fi Direct, silent SMS/calls) and that it is untested on real devices.
