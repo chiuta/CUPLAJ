@@ -6,7 +6,7 @@
 
 > **Telefonia de linha partilhada para teatro imersivo**
 
-_Versão: 1.9.0 · Última atualização: 2026-11-25_
+_Versão: 1.10.0 · Última atualização: 2026-11-26_
 
 O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefónica privada para teatro imersivo. Organizadores e atores falam com os espectadores (e entre si) pela rede Wi‑Fi local do espaço — sem nuvem, sem contas, sem anúncios. A sua função distintiva é o *cuplaj*: a **linha partilhada** dos telefones fixos dos anos 80 até cerca de 2006, em que dois assinantes partilhavam a mesma linha, tocavam com cadências diferentes e podiam ouvir-se um ao outro.
 
@@ -14,7 +14,7 @@ O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefó
 
 ## Funcionalidades
 
-- **Três épocas de telefone** — 1985 disco rotativo (impulsos audíveis), 1995 teclado (tons DTMF), 2003 telemóvel (SMS, 160 carateres). A régie pode mudar de época em direto.
+- **Seis épocas de telefone** — 1985 disco, 1995 teclas, 2003 telemóvel (SMS 160), 2025 smartphone, 2045 vestíveis (chamadas sussurradas, abanar para atender), 2080 mente partilhada (sem teclado). A régie muda a época em direto, ou envia uma *viagem no tempo* que passa por todas.
 - **Linha partilhada (cuplaj)** — dois telefones partilham uma linha; uma chamada para um faz tocar ambos com a cadência do assinante chamado; o vizinho que atender primeiro fica com a chamada; levantar o auscultador durante a conversa do vizinho permite ouvir e até intervir.
 - **Sem infraestrutura** — um telefone (a régie) é o hub. Os outros entram por Wi‑Fi ou pelo hotspot do hub; os hubs são encontrados automaticamente; código de sala e PIN opcionais.
 - **Voz** — chamadas reais (8 kHz), anúncio premir‑para‑falar a partir da régie, canal de bastidores para a equipa.
@@ -43,14 +43,14 @@ O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefó
 4. Nos outros escolhe **Espectador** ou **Ator**, seleciona o hub na lista (ou escreve o endereço) e liga-te.
 5. Cada telemóvel recebe um número (régie 100, atores 201…, espectadores 6 dígitos). Levanta o auscultador e chama.
 
-## Épocas: três na app, três imaginadas
+## As seis épocas
 
 - **1985 · disco** — um disco que se roda a sério; os impulsos ouvem-se; dois toques longos.
 - **1995 · teclas** — tons DTMF, caderneta de números, mensagens de pager.
 - **2003 · telemóvel** — nomes na agenda, identificação de chamadas, SMS limitados a 160 carateres.
-- **2025 · smartphone** — *conceito, ainda não está na app.* Balões de chat, mensagens de voz, confirmações de leitura e notificações push; sempre ligado, nada toca por muito tempo.
-- **2045 · dispositivos vestíveis** — *imaginado.* Sem telefone: chamadas sussurradas em auriculares, rostos como etiquetas flutuantes nos óculos, um aceno de cabeça para atender.
-- **2080 · mente partilhada** — *imaginado.* Nenhum aparelho: a linha partilhada torna-se um pensamento que se escuta às escondidas, e a privacidade é o enredo.
+- **2025 · smartphone** — as pessoas primeiro: toca num contacto recente para ligar; aspeto escuro moderno; chat até 500 carateres; um toque suave de marimba.
+- **2045 · dispositivos vestíveis** — sem teclado, liga-se escolhendo um nome; o toque é um tique quase inaudível; abana o telemóvel ou toca no ecrã para atender ou desligar; mensagens sussurradas até 200 carateres.
+- **2080 · mente partilhada** — sem telefone: sintonizas uma mente ao alcance; um tom que cresce devagar em vez do toque; pensamentos de, no máximo, 60 carateres.
 
 ## Como funciona a linha partilhada
 

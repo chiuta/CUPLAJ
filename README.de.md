@@ -6,7 +6,7 @@
 
 > **Gemeinschaftsanschluss-Telefonie für immersives Theater**
 
-_Version: 1.9.0 · Letzte Aktualisierung: 2026-11-25_
+_Version: 1.10.0 · Letzte Aktualisierung: 2026-11-26_
 
 CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Telefonanlage für immersives Theater. Organisatoren und Schauspieler sprechen über das lokale WLAN des Veranstaltungsorts mit den Zuschauern (und untereinander) — ohne Cloud, ohne Konten, ohne Werbung. Das Kernmerkmal ist der *Cuplaj*: der **Gemeinschaftsanschluss** der Festnetztelefone von den 1980er-Jahren bis etwa 2006, bei dem sich zwei Teilnehmer eine Leitung teilten, mit unterschiedlichem Rhythmus klingelten und einander mithören konnten.
 
@@ -14,7 +14,7 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 
 ## Funktionen
 
-- **Drei Telefon-Epochen** — 1985 Wählscheibe (hörbare Impulse), 1995 Tastatur (DTMF-Töne), 2003 Handy (SMS, 160 Zeichen). Die Regie kann die Epoche live wechseln.
+- **Sechs Telefon‑Epochen** — 1985 Wählscheibe, 1995 Tasten, 2003 Handy (SMS 160), 2025 Smartphone, 2045 Wearables (Flüsteranrufe, Schütteln zum Abnehmen), 2080 geteilter Geist (ohne Tastatur). Die Regie wechselt die Epoche live oder startet eine *Zeitreise* durch alle.
 - **Gemeinschaftsanschluss (Cuplaj)** — zwei Telefone teilen eine Leitung; ein Anruf bei einem lässt beide mit dem Rhythmus des gerufenen Teilnehmers klingeln; wer zuerst abhebt, nimmt das Gespräch an; wer während des Nachbargesprächs abhebt, hört mit und kann sogar eingreifen.
 - **Keine Infrastruktur** — ein Telefon (die Regie) ist der Hub. Die anderen verbinden sich per WLAN oder über dessen Hotspot; Hubs werden automatisch gefunden; Raumcode und PIN optional.
 - **Stimme** — echte Gespräche (8 kHz), Push-to-Talk-Durchsagen von der Regie, Backstage-Kanal für das Team.
@@ -43,14 +43,14 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 4. Auf den anderen **Zuschauer** oder **Schauspieler** wählen, den Hub in der Liste auswählen (oder seine Adresse eingeben) und verbinden.
 5. Jedes Telefon erhält eine Nummer (Regie 100, Schauspieler 201…, Zuschauer 6 Ziffern). Hörer abheben und anrufen.
 
-## Epochen: drei in der App, drei erdacht
+## Die sechs Epochen
 
 - **1985 · Wählscheibe** — eine echte Scheibe zum Drehen; die Impulse sind hörbar; zwei lange Klingeltöne.
 - **1995 · Tasten** — DTMF-Töne, Notizbuch mit Nummern, Pager-Nachrichten.
 - **2003 · Handy** — Namen im Adressbuch, Anruferkennung, SMS auf 160 Zeichen begrenzt.
-- **2025 · Smartphone** — *Konzept, noch nicht in der App.* Chat‑Blasen, Sprachnachrichten, Lesebestätigungen und Push‑Benachrichtigungen; immer verbunden, nichts klingelt lange.
-- **2045 · Wearables** — *erdacht.* Kein Handapparat: Anrufe als Flüstern im Ohrstöpsel, Gesichter als schwebende Etiketten in der Brille, ein Nicken zum Abnehmen.
-- **2080 · geteilter Geist** — *erdacht.* Gar kein Gerät: Der Gemeinschaftsanschluss wird zu einem Gedanken, den man belauscht, und die Privatsphäre ist die Handlung.
+- **2025 · Smartphone** — Menschen zuerst: ein letzter Kontakt antippen zum Anrufen; modernes dunkles Aussehen; Chat bis 500 Zeichen; ein sanfter Marimba‑Klingelton.
+- **2045 · Wearables** — keine Tastatur, man ruft an, indem man einen Namen wählt; der Klingelton ist ein kaum hörbares Ticken; Telefon schütteln oder Bildschirm antippen zum Abnehmen und Auflegen; Flüsternachrichten bis 200 Zeichen.
+- **2080 · geteilter Geist** — kein Hörer: man stimmt sich auf einen Geist in Reichweite ein; ein langsam anschwellender Ton statt Klingeln; Gedanken mit höchstens 60 Zeichen.
 
 ## So funktioniert der Gemeinschaftsanschluss
 

@@ -6,7 +6,7 @@
 
 > **Közös vonalas telefonálás immerzív színházhoz**
 
-_Verzió: 1.9.0 · Utolsó frissítés: 2026-11-25_
+_Verzió: 1.10.0 · Utolsó frissítés: 2026-11-26_
 
 A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonközponttá immerzív színház számára. A szervezők és a színészek a helyszín helyi Wi‑Fi hálózatán beszélnek a nézőkkel (és egymással) — felhő, fiók és reklám nélkül. Névadó funkciója a *cuplaj*: az 1980-as évektől nagyjából 2006-ig használt vezetékes telefonok **közös vonala**, amelyen két előfizető osztozott, eltérő ritmusban csengettek, és hallhatták egymást.
 
@@ -14,7 +14,7 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 
 ## Funkciók
 
-- **Három telefonkorszak** — 1985 tárcsás (hallható impulzusok), 1995 gombos (DTMF hangok), 2003 mobil (SMS, 160 karakter). A rendezés élőben válthat korszakot.
+- **Hat telefonkorszak** — 1985 tárcsás, 1995 gombos, 2003 mobil (SMS 160), 2025 okostelefon, 2045 viselhető (suttogó hívások, rázással felvétel), 2080 közös elme (billentyűzet nélkül). A rendezői élőben vált korszakot, vagy *időutazást* indít, amely mindegyiken végigmegy.
 - **Közös vonal (cuplaj)** — két telefon osztozik egy vonalon; az egyiknek szóló hívás mindkettőt csörgeti a hívott előfizető ritmusában; aki előbb felveszi, azé a hívás; ha a szomszéd beszélgetése közben felveszed a kagylót, belehallgathatsz, sőt közbe is szólhatsz.
 - **Infrastruktúra nélkül** — egy telefon (a rendezés) a hub. A többiek Wi‑Fi-n vagy a hub hotspotján csatlakoznak; a hubot automatikusan megtalálják; teremkód és PIN választható.
 - **Hang** — valódi hívások (8 kHz), nyomva-tartásos hangosbemondás a rendezéstől, kulissza-csatorna a stábnak.
@@ -43,14 +43,14 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 4. A többin válaszd a **Néző** vagy **Színész** szerepet, jelöld ki a hubot a listában (vagy írd be a címét), és csatlakozz.
 5. Minden telefon kap egy számot (rendezés 100, színészek 201…, nézők 6 jegyű). Vedd fel a kagylót, és hívj.
 
-## Korszakok: három az appban, három elképzelt
+## A hat korszak
 
 - **1985 · tárcsás** — valódi tárcsa, amit tekerni kell; az impulzusok hallhatók; két hosszú csengetés.
 - **1995 · gombos** — DTMF hangok, számjegyzet, csipogó-üzenetek.
 - **2003 · mobil** — nevek a telefonkönyvben, hívóazonosítás, legfeljebb 160 karakteres SMS.
-- **2025 · okostelefon** — *koncepció, még nincs az appban.* Csevegőbuborékok, hangüzenetek, olvasási visszajelzések és push‑értesítések; mindig elérhető, semmi sem csörög sokáig.
-- **2045 · viselhető eszközök** — *elképzelt.* Nincs kézibeszélő: a hívás fülhallgatóba suttogva érkezik, az arcok lebegő címkék a szemüvegben, egy bólintás a felvételhez.
-- **2080 · közös elme** — *elképzelt.* Egyáltalán nincs eszköz: a közös vonal egy gondolat, amit kihallgatunk, és a magánszféra a cselekmény.
+- **2025 · okostelefon** — az emberek az elsők: koppints egy legutóbbi névjegyre a híváshoz; modern, sötét megjelenés; csevegés legfeljebb 500 karakterrel; lágy marimba‑csengőhang.
+- **2045 · viselhető eszközök** — nincs billentyűzet, névválasztással hívsz; a csengés alig hallható tikkelés; rázd meg a telefont vagy koppints a képernyőre a felvételhez és a letevéshez; suttogott üzenetek legfeljebb 200 karakterrel.
+- **2080 · közös elme** — nincs kézibeszélő: egy hatókörön belüli elmére hangolódsz; csengés helyett lassan erősödő hang; legfeljebb 60 karakteres gondolatok.
 
 ## Hogyan működik a közös vonal
 

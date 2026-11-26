@@ -6,7 +6,7 @@
 
 > **Telefonie cu cuplaj pentru teatru imersiv**
 
-_Versiune: 1.9.0 · Ultima actualizare: 2026-11-25_
+_Versiune: 1.10.0 · Ultima actualizare: 2026-11-26_
 
 CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală telefonică privată pentru teatrul imersiv. Organizatorii și actorii vorbesc cu spectatorii (și între ei) prin Wi‑Fi-ul local al locației — fără cloud, fără conturi, fără reclame. Funcția lui de bază este *cuplajul*: **linia comună** a telefoanelor fixe din anii '80 până pe la 2006, în care doi abonați împărțeau aceeași linie, sunau cu cadențe diferite și se puteau auzi unul pe altul.
 
@@ -14,7 +14,7 @@ CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală te
 
 ## Funcții
 
-- **Trei epoci de telefon** — 1985 disc rotativ (impulsuri audibile), 1995 taste (tonuri DTMF), 2003 mobil (SMS, 160 de caractere). Regia poate schimba epoca în direct.
+- **Șase epoci de telefon** — 1985 disc rotativ, 1995 taste, 2003 mobil (SMS 160), 2025 smartphone, 2045 dispozitive purtabile (apeluri șoptite, scuturi ca să răspunzi), 2080 minte comună (fără tastatură). Regia schimbă epoca în direct sau trimite o *călătorie în timp* care le parcurge pe toate.
 - **Linie cuplată** — două telefoane împart o linie; un apel către unul sună pe ambele cu cadența abonatului chemat; vecinul care ridică primul preia apelul; dacă ridici receptorul în timpul convorbirii vecinului, asculți și poți chiar interveni.
 - **Fără infrastructură** — un telefon (Regia) este hubul. Ceilalți intră prin Wi‑Fi sau prin hotspotul hubului; hubul se găsește automat; cod de cameră și PIN opționale.
 - **Voce** — apeluri reale (8 kHz), anunț apasă‑și‑vorbește de la regie, canal backstage pentru echipă.
@@ -43,14 +43,14 @@ CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală te
 4. Pe celelalte alege **Spectator** sau **Actor**, selectează hubul din listă (sau scrie adresa lui) și conectează-te.
 5. Fiecare telefon primește un număr (regia 100, actorii 201…, spectatorii 6 cifre). Ridică receptorul și sună.
 
-## Epoci: trei în aplicație, trei imaginate
+## Cele șase epoci
 
 - **1985 · disc** — un disc rotund pe care îl rotești de-adevăratelea; impulsurile se aud; două sunete lungi de apel.
 - **1995 · taste** — tonuri DTMF, carnet cu numere, mesaje de biper.
 - **2003 · mobil** — nume în agendă, identificarea apelantului, SMS limitat la 160 de caractere.
-- **2025 · smartphone** — *concept, încă nu e în aplicație.* Baloane de chat, mesaje vocale, confirmări de citire și notificări push; mereu conectat, nimic nu sună mult.
-- **2045 · dispozitive purtabile** — *imaginat.* Fără telefon: apeluri șoptite în căști, fețe ca etichete plutitoare în ochelari, o înclinare din cap ca să răspunzi.
-- **2080 · minte comună** — *imaginat.* Niciun dispozitiv: linia comună devine un gând pe care îl asculți pe furiș, iar intimitatea este intriga.
+- **2025 · smartphone** — oamenii pe primul loc: atingi un contact recent ca să suni; aspect modern, închis la culoare; chat până la 500 de caractere; un sunet blând de marimba.
+- **2045 · dispozitive purtabile** — fără tastatură, suni alegând un nume; soneria e un ticăit abia auzit; scuturi telefonul sau atingi ecranul ca să răspunzi sau să închizi; mesaje șoptite până la 200 de caractere.
+- **2080 · minte comună** — fără telefon: te conectezi la o minte din rază; un ton care crește lent în loc de sonerie; gânduri de cel mult 60 de caractere.
 
 ## Cum funcționează cuplajul
 

@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · **Deutsch** · [Magyar](GUIDE.hu.md)
 
-_Version: 1.9.0 · Letzte Aktualisierung: 2026-11-25_
+_Version: 1.10.0 · Letzte Aktualisierung: 2026-11-26_
 
 ## 1. Vor der Vorstellung
 
@@ -125,7 +125,7 @@ _Version: 1.9.0 · Letzte Aktualisierung: 2026-11-25_
 - **`flash`** — Blitz: Dauer in ms (z. B. 1500)
 - **`speaker`** — Lautsprecher: 1 = an, 0 = aus
 - **`contact`** — Kontakt hinzufügen: Name;Nummer (z. B. Mutter;204455)
-- **`era`** — Epoche wechseln: 1985, 1995 oder 2003
+- **`era`** — Epoche wechseln: 1985, 1995, 2003, 2025, 2045 oder 2080 (oder eine Liste: 1985,2080;4000)
 - **`say`** — Gesprochene Stimme: Zu sprechender Text
 - **`sound`** — Klangeffekt: bell, siren, knock, static (Glocke, Sirene, Klopfen, Rauschen)
 - **`blackout`** — Schwarzer Bildschirm: 1;Text oder 0

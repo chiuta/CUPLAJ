@@ -60,6 +60,7 @@ class PhoneTab(a: MainActivity) : Tab(a) {
     private var dial: RotaryDialView? = null
     private var inter: Button? = null
     private var agenda: LinearLayout? = null
+    private var shake: ShakeToAnswer? = null
 
     init {
         col.orientation = LinearLayout.VERTICAL
@@ -71,7 +72,10 @@ class PhoneTab(a: MainActivity) : Tab(a) {
     private fun pal(): IntArray = when {
         App.era < 1990 -> intArrayOf(c("#2B1D14"), c("#1B1410"), c("#E8D9B8"), c("#D8C9A3"), c("#2B1D14"))
         App.era < 2000 -> intArrayOf(c("#2A2D33"), c("#16221B"), c("#7CFFB0"), c("#D9D4C5"), c("#2A2D33"))
-        else -> intArrayOf(c("#101810"), c("#8FA876"), c("#1E2A14"), c("#3B3F3B"), c("#E6E6E6"))
+        App.era < 2020 -> intArrayOf(c("#101810"), c("#8FA876"), c("#1E2A14"), c("#3B3F3B"), c("#E6E6E6"))
+        App.era < 2040 -> intArrayOf(c("#0E1116"), c("#1A1F27"), c("#E6EAF0"), c("#2A3140"), c("#E6EAF0"))
+        App.era < 2060 -> intArrayOf(c("#05080C"), c("#0B1622"), c("#9FD0FF"), c("#11202F"), c("#9FD0FF"))
+        else -> intArrayOf(c("#0A0710"), c("#150F24"), c("#E7B866"), c("#20163A"), c("#E7B866"))
     }
 
     private fun build() {
@@ -79,12 +83,18 @@ class PhoneTab(a: MainActivity) : Tab(a) {
         val p = pal()
         sv.setBackgroundColor(p[0])
         val era = App.era
-        val title = when {
-            era < 1990 -> L.t("era_title_80")
-            era < 2000 -> L.t("era_title_90")
-            else -> L.t("era_title_00")
+        val k = Era.kind(era)
+        val title = when (k) {
+            Era.ROTARY -> L.t("era_title_80")
+            Era.KEYPAD -> L.t("era_title_90")
+            Era.MOBILE -> L.t("era_title_00")
+            Era.SMART -> L.t("era_title_25")
+            Era.WEAR -> L.t("era_title_45")
+            else -> L.t("era_title_mind")
         }
-        col.addView(a.tv(title, 12f, if (era >= 2000) IVORY else p[2]))
+        col.addView(a.tv(title, 12f, if (k == Era.MOBILE) IVORY else p[2]))
+        shake?.stop()
+        shake = null
         val d = a.tv("", 22f, p[2])
         d.typeface = Typeface.MONOSPACE
         d.background = a.box(p[1])
@@ -96,7 +106,20 @@ class PhoneTab(a: MainActivity) : Tab(a) {
 
         dial = null
         recBtn = null
-        if (era < 1990) {
+        if (k >= Era.SMART) {
+            // modern eras: people first; the display answers or hangs up with a tap
+            val ag0 = LinearLayout(a)
+            ag0.orientation = LinearLayout.VERTICAL
+            agenda = ag0
+            col.addView(ag0, lpw(top = 10, a = a))
+            refreshAgenda()
+            d.setOnClickListener { if (App.ph == "ringing") App.lift() else if (App.ph == "talking") App.hang() }
+            if (k == Era.WEAR) {
+                col.addView(a.tv(L.t("btn_nod"), 12f, DIM), lpw(top = 6, a = a))
+                shake = ShakeToAnswer(a) { if (App.ph == "ringing") App.lift() else if (App.ph == "talking") App.hang() }.also { it.start() }
+            }
+        }
+        if (k == Era.ROTARY) {
             val size = min(a.resources.displayMetrics.widthPixels - a.dp(40), a.dp(340))
             val dv = RotaryDialView(a, { ch -> App.digit(ch) }, { n -> App.playout.effect(Fx.pulses(n)) })
             dial = dv
@@ -104,11 +127,11 @@ class PhoneTab(a: MainActivity) : Tab(a) {
                 gravity = Gravity.CENTER_HORIZONTAL
                 topMargin = a.dp(12)
             })
-        } else {
+        } else if (Era.hasDigits(era)) {
             col.addView(keypad(p))
         }
 
-        if (era < 2000) {
+        if (era < 2000 || k >= Era.WEAR) {
             val r = a.btn("", GREEN) { App.lift() }
             r.textSize = 18f
             recBtn = r
@@ -136,11 +159,13 @@ class PhoneTab(a: MainActivity) : Tab(a) {
         inter = ib
         col.addView(ib, lpw(h = a.dp(52), top = 8, a = a))
 
-        val ag = LinearLayout(a)
-        ag.orientation = LinearLayout.VERTICAL
-        agenda = ag
-        col.addView(ag, lpw(top = 14, a = a))
-        refreshAgenda()
+        if (k < Era.SMART) {
+            val ag = LinearLayout(a)
+            ag.orientation = LinearLayout.VERTICAL
+            agenda = ag
+            col.addView(ag, lpw(top = 14, a = a))
+            refreshAgenda()
+        }
         refresh()
     }
 
@@ -165,15 +190,22 @@ class PhoneTab(a: MainActivity) : Tab(a) {
         val ag = agenda ?: return
         ag.removeAllViews()
         val p = pal()
-        val label = when {
-            App.era < 1990 -> L.t("agenda_80")
-            App.era < 2000 -> L.t("agenda_90")
-            else -> L.t("agenda_00")
+        val label = when (Era.kind(App.era)) {
+            Era.ROTARY -> L.t("agenda_80")
+            Era.KEYPAD -> L.t("agenda_90")
+            Era.MOBILE -> L.t("agenda_00")
+            Era.SMART -> L.t("agenda_25")
+            Era.WEAR -> L.t("agenda_45")
+            else -> L.t("agenda_mind")
         }
-        ag.addView(a.tv(label, 13f, if (App.era >= 2000) IVORY else p[2]))
+        ag.addView(a.tv(label, 13f, if (Era.kind(App.era) == Era.MOBILE) IVORY else p[2]))
         if (App.contacts.isEmpty()) ag.addView(a.tv(L.t("agenda_empty"), 13f, DIM))
         for (ct in App.contacts) {
-            ag.addView(a.btn(ct.first + " · " + fmtNum(ct.second), p[3], p[4]) { App.callNumber(ct.second) })
+            val mind = Era.kind(App.era) == Era.MIND
+            val txt = if (mind) "◎  " + ct.first else ct.first + " · " + fmtNum(ct.second)
+            val bt = a.btn(txt, p[3], p[4]) { App.callNumber(ct.second) }
+            if (Era.kind(App.era) >= Era.SMART) bt.textSize = 18f
+            ag.addView(bt)
         }
     }
 
@@ -206,8 +238,10 @@ class PhoneTab(a: MainActivity) : Tab(a) {
         val ph = App.ph
         dial?.active = ph == "dialtone" || ph == "dialing"
         recBtn?.let {
+            val quiet = Era.kind(App.era) >= Era.WEAR
+            it.visibility = if (quiet && ph == "idle") View.GONE else View.VISIBLE
             it.text = when (ph) {
-                "ringing" -> L.t("btn_answer_big")
+                "ringing" -> if (Era.kind(App.era) == Era.WEAR) L.t("btn_nod") else L.t("btn_answer_big")
                 "idle" -> L.t("btn_lift")
                 else -> L.t("btn_hang")
             }
@@ -280,12 +314,15 @@ class MsgTab(a: MainActivity) : Tab(a) {
     }
 
     private fun applyEra() {
-        title.text = when {
-            App.era < 1990 -> L.t("msg_title_80")
-            App.era < 2000 -> L.t("msg_title_90")
-            else -> L.t("msg_title_00")
+        title.text = when (Era.kind(App.era)) {
+            Era.ROTARY -> L.t("msg_title_80")
+            Era.KEYPAD -> L.t("msg_title_90")
+            Era.MOBILE -> L.t("msg_title_00")
+            Era.SMART -> L.t("msg_title_25")
+            Era.WEAR -> L.t("msg_title_45")
+            else -> L.t("msg_title_mind")
         }
-        input.filters = arrayOf(InputFilter.LengthFilter(if (App.era >= 2000) 160 else 500))
+        input.filters = arrayOf(InputFilter.LengthFilter(Era.msgLimit(App.era)))
     }
 
     private fun target(): String = when (keys[sp.selectedItemPosition]) {
@@ -501,6 +538,12 @@ class RegieTab(a: MainActivity) : Tab(a) {
             a.btn(L.t("btn_era", 1995), BTN) { sendCue("era", "1995") },
             a.btn(L.t("btn_era", 2003), BTN) { sendCue("era", "2003") }
         ))
+        col.addView(row(
+            a.btn(L.t("btn_era", 2025), BTN) { sendCue("era", "2025") },
+            a.btn(L.t("btn_era", 2045), BTN) { sendCue("era", "2045") },
+            a.btn(L.t("btn_era", 2080), BTN) { sendCue("era", "2080") }
+        ))
+        col.addView(a.btn(L.t("btn_era_sweep"), ACC) { sendCue("era", "1985,1995,2003,2025,2045,2080;4000") })
         refreshList()
         App.send(jo("t" to "peers"))
     }
@@ -612,7 +655,7 @@ class RegieTab(a: MainActivity) : Tab(a) {
             return
         }
         for (t in ts) App.sendCue(t, k, text)
-        if (k == "era" && tgt.selectedItemPosition == 0) text.toIntOrNull()?.let { App.changeEra(it) }
+        if (k == "era" && tgt.selectedItemPosition == 0) App.applyEraCue(text)
         a.toast(L.t("sent"))
     }
 

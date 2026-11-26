@@ -754,7 +754,7 @@ final class AppModel: ObservableObject {
             }
         case "flash": Torch.flash(ms: Int(text) ?? 1500)
         case "speaker": changeSpeaker(text == "1")
-        case "era": if let e = Int(text) { era = e }
+        case "era": applyEraCue(text)
         case "contact":
             if let i = text.firstIndex(of: ";") {
                 addContact(String(text[..<i]).trimmingCharacters(in: .whitespaces), String(text[text.index(after: i)...].filter { $0.isASCII && $0.isNumber }))
@@ -869,11 +869,29 @@ final class AppModel: ObservableObject {
         if script.indices.contains(i) && script.indices.contains(j) { script.swapAt(i, j); saveScript() }
     }
 
+    private var sweepWork: DispatchWorkItem?
+
+    /// An era cue: a single year, or a "time travel" sweep such as `1985,1995,2003,2025,2045,2080;4000`.
+    func applyEraCue(_ text: String) {
+        sweepWork?.cancel(); sweepWork = nil
+        guard let sw = Era.parseSweep(text) else { if let e = Era.firstEra(text) { era = e }; return }
+        var i = 0
+        func step() {
+            era = sw.eras[i]; i += 1
+            if i < sw.eras.count {
+                let w = DispatchWorkItem { step() }
+                sweepWork = w
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(sw.stepMs) / 1000, execute: w)
+            }
+        }
+        step()
+    }
+
     func runStep(_ s: Step) {
         if s.kind == "msg" { sendMsg(to: s.to, text: s.text) }
         else {
             sendCue(to: s.to, kind: s.kind, text: s.text)
-            if s.kind == "era" && s.to == "all", let e = Int(s.text) { era = e }
+            if s.kind == "era" && s.to == "all" { applyEraCue(s.text) }
         }
     }
 

@@ -174,3 +174,36 @@ class RotaryDialView(ctx: Context, private val onDigit: (Char) -> Unit, private 
         pull.start()
     }
 }
+
+
+/** Shake the phone to answer or hang up (2045 wearables era). Two strong jolts within 700 ms. */
+class ShakeToAnswer(private val a: android.content.Context, private val onShake: () -> Unit) : android.hardware.SensorEventListener {
+    private var last = 0L
+    private var running = false
+
+    fun start() {
+        if (running) return
+        val sm = a.getSystemService(android.content.Context.SENSOR_SERVICE) as? android.hardware.SensorManager ?: return
+        val s = sm.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER) ?: return
+        sm.registerListener(this, s, android.hardware.SensorManager.SENSOR_DELAY_GAME)
+        running = true
+    }
+
+    fun stop() {
+        if (!running) return
+        (a.getSystemService(android.content.Context.SENSOR_SERVICE) as? android.hardware.SensorManager)?.unregisterListener(this)
+        running = false
+    }
+
+    override fun onSensorChanged(e: android.hardware.SensorEvent) {
+        val g = Math.sqrt((e.values[0] * e.values[0] + e.values[1] * e.values[1] + e.values[2] * e.values[2]).toDouble()) / 9.81
+        if (g < 2.6) return
+        val now = System.currentTimeMillis()
+        if (now - last in 120..700) {
+            last = 0
+            onShake()
+        } else if (now - last > 700) last = now
+    }
+
+    override fun onAccuracyChanged(s: android.hardware.Sensor?, accuracy: Int) {}
+}

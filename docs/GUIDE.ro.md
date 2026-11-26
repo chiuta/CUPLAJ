@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · **Română** · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versiune: 1.9.0 · Ultima actualizare: 2026-11-25_
+_Versiune: 1.10.0 · Ultima actualizare: 2026-11-26_
 
 ## 1. Înainte de spectacol
 
@@ -125,7 +125,7 @@ _Versiune: 1.9.0 · Ultima actualizare: 2026-11-25_
 - **`flash`** — Bliț: Durata în ms (ex. 1500)
 - **`speaker`** — Difuzor: 1 = pornit, 0 = oprit
 - **`contact`** — Adaugă contact: Nume;număr (ex. Mama;204455)
-- **`era`** — Schimbă epoca: 1985, 1995 sau 2003
+- **`era`** — Schimbă epoca: 1985, 1995, 2003, 2025, 2045 sau 2080 (sau o listă: 1985,2080;4000)
 - **`say`** — Voce vorbită: Textul de rostit
 - **`sound`** — Efect sonor: bell, siren, knock, static (clopot, sirenă, ciocănit, statică)
 - **`blackout`** — Ecran negru: 1;text sau 0

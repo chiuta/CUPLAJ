@@ -6,7 +6,7 @@
 
 > **Telefonia a linea condivisa per il teatro immersivo**
 
-_Versione: 1.9.0 · Ultimo aggiornamento: 2026-11-25_
+_Versione: 1.10.0 · Ultimo aggiornamento: 2026-11-26_
 
 CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefonica privata per il teatro immersivo. Organizzatori e attori parlano con gli spettatori (e tra loro) tramite il Wi‑Fi locale del luogo — senza cloud, senza account, senza pubblicità. La sua funzione distintiva è il *cuplaj*: la **linea condivisa** dei telefoni fissi dagli anni '80 fino al 2006 circa, in cui due abbonati dividevano la stessa linea, squillavano con cadenze diverse e potevano ascoltarsi a vicenda.
 
@@ -14,7 +14,7 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 
 ## Funzioni
 
-- **Tre epoche di telefono** — 1985 disco rotante (impulsi udibili), 1995 tastiera (toni DTMF), 2003 cellulare (SMS, 160 caratteri). La regia può cambiare epoca in diretta.
+- **Sei epoche di telefono** — 1985 disco, 1995 tasti, 2003 cellulare (SMS 160), 2025 smartphone, 2045 indossabili (chiamate sussurrate, scuoti per rispondere), 2080 mente condivisa (senza tastiera). La regia cambia epoca dal vivo, o invia un *viaggio nel tempo* che le attraversa tutte.
 - **Linea condivisa (cuplaj)** — due telefoni dividono una linea; una chiamata a uno fa squillare entrambi con la cadenza dell'abbonato chiamato; il vicino che risponde per primo prende la chiamata; alzando la cornetta durante la conversazione del vicino si ascolta, e si può persino intervenire.
 - **Nessuna infrastruttura** — un telefono (la regia) è l'hub. Gli altri entrano via Wi‑Fi o tramite il suo hotspot; gli hub si trovano da soli; codice sala e PIN facoltativi.
 - **Voce** — vere chiamate (8 kHz), annuncio push‑to‑talk dalla regia, canale backstage per la squadra.
@@ -43,14 +43,14 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 4. Sugli altri scegli **Spettatore** o **Attore**, seleziona l'hub dall'elenco (o scrivi il suo indirizzo) e connettiti.
 5. Ogni telefono riceve un numero (regia 100, attori 201…, spettatori 6 cifre). Alza la cornetta e chiama.
 
-## Epoche: tre nell'app, tre immaginate
+## Le sei epoche
 
 - **1985 · disco** — un vero disco da far girare; gli impulsi si sentono; due squilli lunghi.
 - **1995 · tasti** — toni DTMF, rubrica di numeri, messaggi del cercapersone.
 - **2003 · cellulare** — nomi in rubrica, identificazione del chiamante, SMS limitati a 160 caratteri.
-- **2025 · smartphone** — *concetto, non ancora nell'app.* Fumetti di chat, messaggi vocali, conferme di lettura e notifiche push; sempre connesso, nulla squilla a lungo.
-- **2045 · dispositivi indossabili** — *immaginato.* Niente telefono: chiamate sussurrate negli auricolari, volti come etichette fluttuanti negli occhiali, un cenno del capo per rispondere.
-- **2080 · mente condivisa** — *immaginato.* Nessun dispositivo: la linea condivisa diventa un pensiero che si origlia, e la riservatezza è la trama.
+- **2025 · smartphone** — prima le persone: tocca un contatto recente per chiamare; aspetto scuro moderno; chat fino a 500 caratteri; una morbida suoneria di marimba.
+- **2045 · dispositivi indossabili** — niente tastiera, si chiama scegliendo un nome; la suoneria è un tic appena udibile; scuoti il telefono o tocca lo schermo per rispondere o chiudere; messaggi sussurrati fino a 200 caratteri.
+- **2080 · mente condivisa** — niente telefono: ti sintonizzi su una mente nel raggio; un suono che cresce lentamente al posto della suoneria; pensieri di al massimo 60 caratteri.
 
 ## Come funziona la linea condivisa
 

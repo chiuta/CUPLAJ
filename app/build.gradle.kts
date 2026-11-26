@@ -11,8 +11,8 @@ android {
         applicationId = "ro.trom.cuplaj"
         minSdk = 24
         targetSdk = 34
-        versionCode = 190
-        versionName = "1.9.0"
+        versionCode = 1100
+        versionName = "1.10.0"
     }
 
     // Stable release key: set CUPLAJ_KEYSTORE (path), CUPLAJ_KEYSTORE_PASSWORD, CUPLAJ_KEY_ALIAS, CUPLAJ_KEY_PASSWORD.

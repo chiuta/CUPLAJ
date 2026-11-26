@@ -6,7 +6,7 @@
 
 > **Party-line telephony for immersive theatre**
 
-_Version: 1.9.0 · Last update: 2026-11-25_
+_Version: 1.10.0 · Last update: 2026-11-26_
 
 CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchange for immersive theatre. Organisers and actors talk to spectators (and to each other) over the venue's local Wi‑Fi — no cloud, no accounts, no ads. Its signature feature is the *cuplaj*: the shared **party line** of fixed telephones from the 1980s to about 2006, where two subscribers shared one line, rang with different cadences, and could overhear each other.
 
@@ -14,7 +14,7 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 
 ## Features
 
-- **Three telephone eras** — 1985 rotary dial (audible pulses), 1995 keypad (DTMF tones), 2003 mobile (SMS, 160 characters). The control can switch the era live.
+- **Six telephone eras** — 1985 rotary, 1995 keypad, 2003 mobile (SMS 160), 2025 smartphone, 2045 wearables (whispered calls, shake to answer), 2080 shared mind (no keypad). The control switches the era live, or sends a *time travel* that steps through them all.
 - **Party line (cuplaj)** — two phones share one line; a call to one rings both with the called subscriber's cadence; the neighbour who picks up first takes the call; lifting the handset during a neighbour's call lets you listen in, and even break in.
 - **No infrastructure** — one phone (the control) is the hub. Others join via Wi‑Fi or the hub's hotspot; hubs are found automatically; optional room code and PIN.
 - **Voice** — real calls (8 kHz), push‑to‑talk public address from the control, backstage channel for the crew.
@@ -43,14 +43,14 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 4. On the other phones choose **Spectator** or **Actor**, pick the hub from the list (or type its address), and connect.
 5. Every phone gets a number (control 100, actors 201…, spectators 6 digits). Lift the handset and call.
 
-## Eras: three in the app, three imagined
+## The six eras
 
 - **1985 · rotary** — a round dial you really turn; the pulses are audible; two long rings.
 - **1995 · keypad** — DTMF tones, notebook of numbers, pager messages.
 - **2003 · mobile** — names in the contact list, caller ID, SMS limited to 160 characters.
-- **2025 · smartphone** — *concept, not in the app yet.* Chat bubbles, voice notes, read receipts and push notifications; always connected, nothing rings for long.
-- **2045 · wearables** — *imagined.* No handset: calls whispered into earbuds, faces as floating labels in glasses, a nod to answer.
-- **2080 · shared mind** — *imagined.* No device at all: the party line becomes a thought you overhear, and privacy is the plot.
+- **2025 · smartphone** — people first: tap a recent contact to call; modern dark look; chat up to 500 characters; a soft marimba ring.
+- **2045 · wearables** — no keypad, you call by choosing a name; the ring is a barely audible whisper tick; shake the phone or tap the screen to answer or hang up; whisper messages up to 200 characters.
+- **2080 · shared mind** — no handset: you tune in to a mind in range; a slow swelling tone instead of a ring; thoughts of at most 60 characters.
 
 ## How the party line works
 

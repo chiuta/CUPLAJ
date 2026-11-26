@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · **Magyar**
 
-_Verzió: 1.9.0 · Utolsó frissítés: 2026-11-25_
+_Verzió: 1.10.0 · Utolsó frissítés: 2026-11-26_
 
 ## 1. Az előadás előtt
 
@@ -125,7 +125,7 @@ _Verzió: 1.9.0 · Utolsó frissítés: 2026-11-25_
 - **`flash`** — Vaku: Időtartam ms-ban (pl. 1500)
 - **`speaker`** — Hangszóró: 1 = be, 0 = ki
 - **`contact`** — Névjegy hozzáadása: Név;szám (pl. Anya;204455)
-- **`era`** — Korszakváltás: 1985, 1995 vagy 2003
+- **`era`** — Korszakváltás: 1985, 1995, 2003, 2025, 2045 vagy 2080 (vagy lista: 1985,2080;4000)
 - **`say`** — Beszélt hang: Felolvasandó szöveg
 - **`sound`** — Hangeffekt: bell, siren, knock, static (csengő, sziréna, kopogás, zaj)
 - **`blackout`** — Fekete képernyő: 1;szöveg vagy 0

@@ -72,19 +72,68 @@ struct PhoneTab: View {
         }
     }
 
+    @StateObject private var shake = ShakeDetector()
+    private var k: Int { Era.kind(m.era) }
+
+    private var eraTitle: String {
+        switch k {
+        case Era.rotary: return L.t("era_title_80")
+        case Era.keypad: return L.t("era_title_90")
+        case Era.mobile: return L.t("era_title_00")
+        case Era.smart: return L.t("era_title_25")
+        case Era.wear: return L.t("era_title_45")
+        default: return L.t("era_title_mind")
+        }
+    }
+
+    private var eraBg: Color {
+        switch k {
+        case Era.smart: return Color(red: 0.055, green: 0.067, blue: 0.086)
+        case Era.wear: return Color(red: 0.02, green: 0.03, blue: 0.05)
+        case Era.mind: return Color(red: 0.04, green: 0.03, blue: 0.06)
+        default: return Color.clear
+        }
+    }
+
+    private var eraInk: Color {
+        switch k {
+        case Era.wear: return Color(red: 0.62, green: 0.82, blue: 1)
+        case Era.mind: return gold
+        default: return Color.primary
+        }
+    }
+
+    private func tapAnswer() { if m.ph == "ringing" { m.lift() } else if m.ph == "talking" { m.hang() } }
+
+    private var people: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L.t(k == Era.smart ? "agenda_25" : (k == Era.wear ? "agenda_45" : "agenda_mind"))).font(.footnote).foregroundColor(eraInk)
+            if m.contacts.isEmpty { Text(L.t("agenda_empty")).font(.footnote).foregroundColor(.secondary) }
+            ForEach(Array(m.contacts.enumerated()), id: \.offset) { _, c in
+                Button { m.callNumber(c.1) } label: {
+                    Text(k == Era.mind ? "◎  " + c.0 : c.0 + " · " + c.1).font(.title3).foregroundColor(eraInk)
+                        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading).padding(.horizontal, 12).background(Color(white: 0.16)).cornerRadius(12)
+                }
+            }
+        }.padding(.horizontal, 20)
+    }
+
     var body: some View {
         VStack(spacing: 12) {
+            Text(eraTitle).font(.caption).foregroundColor(eraInk)
             Text(m.status).font(.footnote).foregroundColor(.secondary)
             Text(L.t("hdr_num", m.number)).font(.system(.title, design: .monospaced)).foregroundColor(gold)
             Text(phaseText).font(.headline).multilineTextAlignment(.center).frame(minHeight: 44)
             Text(m.dialed.isEmpty ? " " : m.dialed).font(.system(size: 34, design: .monospaced))
-            ForEach(0..<4, id: \.self) { r in
+            if k >= Era.smart { people }
+            if k == Era.wear { Text(L.t("btn_nod")).font(.footnote).foregroundColor(.secondary) }
+            if Era.hasDigits(m.era) { ForEach(0..<4, id: \.self) { r in
                 HStack(spacing: 14) {
                     ForEach(keys[r], id: \.self) { k in
                         Button { m.digit(k) } label: { Text(String(k)).font(.title).frame(width: 76, height: 56).background(Color(white: 0.16)).cornerRadius(12) }
                     }
                 }
-            }
+            } }
             HStack(spacing: 14) {
                 Button { m.backspace() } label: { Image(systemName: "delete.left").frame(width: 56, height: 48) }
                 if m.ph == "ringing" {
@@ -103,6 +152,12 @@ struct PhoneTab: View {
             Toggle(m.speaker ? L.t("spk_on") : L.t("spk_off"), isOn: Binding(get: { m.speaker }, set: { m.changeSpeaker($0) })).padding(.horizontal, 30)
             Spacer()
         }.padding(.top, 8)
+        .background(eraBg.ignoresSafeArea())
+        .contentShape(Rectangle())
+        .onTapGesture { if k >= Era.wear { tapAnswer() } }
+        .onAppear { shake.onShake = { tapAnswer() }; if k == Era.wear { shake.start() } }
+        .onChange(of: m.era) { _ in if Era.kind(m.era) == Era.wear { shake.onShake = { tapAnswer() }; shake.start() } else { shake.stop() } }
+        .onDisappear { shake.stop() }
     }
 }
 
@@ -140,6 +195,7 @@ struct MsgsTab: View {
             }
             HStack {
                 TextField(L.t("msg_hint"), text: $text).textFieldStyle(.roundedBorder)
+                    .onChange(of: text) { t in let lim = Era.msgLimit(m.era); if t.count > lim { text = String(t.prefix(lim)) } }
                 Button(L.t("btn_send")) { m.sendMsg(to: to, text: text); text = "" }
             }.padding()
         }
@@ -198,6 +254,7 @@ struct RegieTab: View {
                         Button("PANIC") { m.sendCue(to: "all", kind: "panic", text: "") }.buttonStyle(.borderedProminent).tint(.red)
                     }
                     if Media.KINDS[kind] != nil { Button(L.t("media_send")) { picking = kind; pickTarget = to } }
+                    Button(L.t("btn_era_sweep")) { m.sendCue(to: "all", kind: "era", text: "1985,1995,2003,2025,2045,2080;4000") }
                 }
                 Section(header: Text(L.t("tools18"))) {
                     Button(L.t("tool_chain")) { showTools = true }
@@ -381,7 +438,9 @@ struct SettingsTab: View {
             Form {
                 Section {
                     Picker(L.t("set_lang"), selection: $m.lang) { ForEach(0..<L.codes.count, id: \.self) { Text(L.names[$0]).tag(L.codes[$0]) } }
-                    Picker(L.t("era_pick"), selection: $m.era) { Text("1980").tag(1980); Text("1990").tag(1990); Text("2000").tag(2000) }.pickerStyle(.segmented)
+                    Picker(L.t("era_pick"), selection: $m.era) {
+                        ForEach([(1985, "era_btn_80"), (1995, "era_btn_90"), (2003, "era_btn_00"), (2025, "era_btn_25"), (2045, "era_btn_45"), (2080, "era_btn_mind")], id: \.0) { Text(L.t($0.1)).tag($0.0) }
+                    }
                     Toggle(L.t("duck_on"), isOn: $m.duckOn)
                 }
                 if m.role == "regie" {

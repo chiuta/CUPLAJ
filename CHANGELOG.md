@@ -2,6 +2,17 @@
 
 Documentation: this changelog, PROTOCOL, AUDIT, COMPARISON and REVIEW are English only; README, the user guide and the presentation page are in 8 languages.
 
+## 1.10.0 — 2026‑11‑26
+
+* **Three new telephone eras on Android and iPhone**, picked on the start screen or switched live by the control:
+  * **2025 · smartphone**: contacts first (tap to call), modern dark look, chat up to 500 characters, soft marimba ring.
+  * **2045 · wearables**: no keypad, call by choosing a name; the ring is a barely audible whisper tick; **shake the phone or tap the screen** to answer or hang up (accelerometer); whisper messages up to 200 characters.
+  * **2080 · shared mind**: no keypad, "tune in" to a contact; a slow swelling tone instead of a ring; thoughts of at most 60 characters.
+* **Time travel** cue: era text `1985,1995,2003,2025,2045,2080;4000` steps every phone through the listed eras (up to 12, 1.5–30 s step, default 4 s). A button in the control's cue tab sends the full sweep.
+* New `Era` logic (Kotlin `Era.kt`, Swift `Era.swift`) with unit tests; 14 new translated strings; the era cue hint now lists all six eras.
+* Not tested on real devices: the new screens, ringtones and the shake detector. Shake is a plain accelerometer jolt, not nod detection.
+* The presentation page and READMEs (8 languages) now describe six real eras; the status matrix has a row for them.
+
 ## 1.9.1 — 2026‑11‑26
 
 * Release **v1.9.1** carries the APK and an **unsigned iOS .ipa** (workflow *iOS unsigned IPA*, for AltStore/Sideloadly). The code inside still reports 1.9.0.

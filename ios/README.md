@@ -15,3 +15,7 @@ Everything that has a public iOS API: calls and party lines, cues (incl. timed/w
 - Cannot be ported (platform limits, not omissions): **Bluetooth RFCOMM** (no public API on iOS), **Wi-Fi Direct** (no API to create/join groups; use the iPhone Personal Hotspot or any shared Wi-Fi instead), **silent SMS gateway and silent phone calls** (iOS only lets the user confirm; the `realcall` cue opens the dialler). **Wi-Fi Aware** needs iOS 26 and cross-platform behaviour that cannot be verified here, so it is not included.
 - Background operation is best effort: iOS may still suspend the app, especially a Regie phone; keep it open, plugged in and with the screen on during a show.
 - No signed build or App Store/TestFlight pipeline yet (needs an Apple developer account).
+
+## Eras (1.10)
+
+All six eras (1985, 1995, 2003, 2025, 2045, 2080) exist on iOS: era‑specific phone screen, ringtones, message limits, the *time travel* cue and shake‑to‑answer for 2045 (CoreMotion). Logic is in `CuplajCore/Era.swift` with tests; the screens and shake detector are untested on a real iPhone.

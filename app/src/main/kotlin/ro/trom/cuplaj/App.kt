@@ -573,6 +573,29 @@ object App {
         notify("era")
     }
 
+    private var eraSweepRun: Runnable? = null
+
+    /** An era cue: a single year, or a "time travel" sweep such as `1985,1995,2003,2025,2045,2080;4000`. */
+    fun applyEraCue(text: String) {
+        eraSweepRun?.let { ui.removeCallbacks(it) }
+        eraSweepRun = null
+        val sw = Era.parseSweep(text)
+        if (sw == null) {
+            Era.firstEra(text)?.let { changeEra(it) }
+            return
+        }
+        var i = 0
+        val r = object : Runnable {
+            override fun run() {
+                changeEra(sw.eras[i])
+                i++
+                if (i < sw.eras.size) ui.postDelayed(this, sw.stepMs) else eraSweepRun = null
+            }
+        }
+        eraSweepRun = r
+        ui.post(r)
+    }
+
     private val statTick = object : Runnable {
         override fun run() {
             sendStat()
@@ -1058,10 +1081,7 @@ object App {
             }
             "flash" -> torch(text.toLongOrNull() ?: 1500L)
             "speaker" -> changeSpeaker(text == "1")
-            "era" -> {
-                val e = text.toIntOrNull()
-                if (e != null) changeEra(e)
-            }
+            "era" -> applyEraCue(text)
             "contact" -> {
                 val i = text.indexOf(';')
                 if (i > 0) addContact(text.substring(0, i).trim(), text.substring(i + 1).filter { it.isDigit() })
@@ -1368,7 +1388,7 @@ object App {
             sendMsg(s.to, s.text)
         } else {
             sendCue(s.to, s.kind, s.text)
-            if (s.kind == "era" && s.to == "all") s.text.toIntOrNull()?.let { changeEra(it) }
+            if (s.kind == "era" && s.to == "all") applyEraCue(s.text)
         }
     }
 

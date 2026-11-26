@@ -6,7 +6,7 @@
 
 > **Téléphonie à ligne partagée pour le théâtre immersif**
 
-_Version : 1.9.0 · Dernière mise à jour : 2026-11-25_
+_Version : 1.10.0 · Dernière mise à jour : 2026-11-26_
 
 CUPLAJ transforme une flotte de téléphones Android ordinaires en central téléphonique privé pour le théâtre immersif. Organisateurs et acteurs parlent aux spectateurs (et entre eux) via le Wi‑Fi local du lieu — sans cloud, sans compte, sans publicité. Sa fonction phare est le *cuplaj* : la **ligne partagée** des téléphones fixes des années 1980 jusqu'à environ 2006, où deux abonnés se partageaient une même ligne, sonnaient avec des cadences différentes et pouvaient s'entendre l'un l'autre.
 
@@ -14,7 +14,7 @@ CUPLAJ transforme une flotte de téléphones Android ordinaires en central tél�
 
 ## Fonctionnalités
 
-- **Trois époques de téléphone** — 1985 cadran rotatif (impulsions audibles), 1995 clavier (tonalités DTMF), 2003 mobile (SMS, 160 caractères). La régie peut changer d'époque en direct.
+- **Six époques de téléphone** — 1985 cadran, 1995 touches, 2003 mobile (SMS 160), 2025 smartphone, 2045 objets portés (appels murmurés, secouer pour répondre), 2080 esprit partagé (sans clavier). La régie change l'époque en direct, ou lance un *voyage dans le temps* qui les parcourt toutes.
 - **Ligne partagée (cuplaj)** — deux téléphones se partagent une ligne ; un appel à l'un fait sonner les deux avec la cadence de l'abonné appelé ; le voisin qui décroche le premier prend l'appel ; décrocher pendant la conversation du voisin permet d'écouter, voire d'intervenir.
 - **Aucune infrastructure** — un téléphone (la régie) est le hub. Les autres le rejoignent par Wi‑Fi ou par son point d'accès ; les hubs sont détectés automatiquement ; code de salle et PIN facultatifs.
 - **Voix** — vrais appels (8 kHz), annonce push‑to‑talk depuis la régie, canal coulisses pour l'équipe.
@@ -43,14 +43,14 @@ CUPLAJ transforme une flotte de téléphones Android ordinaires en central tél�
 4. Sur les autres, choisissez **Spectateur** ou **Acteur**, sélectionnez le hub dans la liste (ou saisissez son adresse) et connectez‑vous.
 5. Chaque téléphone reçoit un numéro (régie 100, acteurs 201…, spectateurs 6 chiffres). Décrochez et appelez.
 
-## Époques : trois dans l'application, trois imaginées
+## Les six époques
 
 - **1985 · cadran** — un vrai cadran qu'on tourne ; les impulsions s'entendent ; deux longues sonneries.
 - **1995 · touches** — tonalités DTMF, carnet de numéros, messages de bipeur.
 - **2003 · mobile** — noms dans le répertoire, identification de l'appelant, SMS limités à 160 caractères.
-- **2025 · smartphone** — *concept, pas encore dans l'application.* Bulles de discussion, messages vocaux, accusés de lecture et notifications push ; toujours connecté, rien ne sonne longtemps.
-- **2045 · objets portés** — *imaginé.* Pas de combiné : appels murmurés dans des écouteurs, visages en étiquettes flottantes dans des lunettes, un hochement de tête pour répondre.
-- **2080 · esprit partagé** — *imaginé.* Aucun appareil : la ligne partagée devient une pensée qu'on surprend, et l'intimité est l'intrigue.
+- **2025 · smartphone** — les personnes d'abord : touchez un contact récent pour appeler ; look sombre moderne ; chat jusqu'à 500 caractères ; une sonnerie douce de marimba.
+- **2045 · objets portés** — pas de clavier, on appelle en choisissant un nom ; la sonnerie est un tic-tac à peine audible ; secouez le téléphone ou touchez l'écran pour répondre ou raccrocher ; messages murmurés jusqu'à 200 caractères.
+- **2080 · esprit partagé** — pas de combiné : on s'accorde à un esprit à portée ; un son qui enfle lentement au lieu d'une sonnerie ; pensées de 60 caractères au plus.
 
 ## Comment fonctionne la ligne partagée
 

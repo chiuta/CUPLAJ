@@ -2,7 +2,7 @@
 
 **English** · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Version: 1.9.0 · Last update: 2026-11-25_
+_Version: 1.10.0 · Last update: 2026-11-26_
 
 ## 1. Before the show
 
@@ -125,7 +125,7 @@ _Version: 1.9.0 · Last update: 2026-11-25_
 - **`flash`** — Flash: Duration in ms (e.g. 1500)
 - **`speaker`** — Loudspeaker: 1 = on, 0 = off
 - **`contact`** — Add contact: Name;number (e.g. Mother;204455)
-- **`era`** — Change era: 1985, 1995 or 2003
+- **`era`** — Change era: 1985, 1995, 2003, 2025, 2045 or 2080 (or a list: 1985,2080;4000)
 - **`say`** — Spoken voice: Text to be spoken
 - **`sound`** — Sound effect: bell, siren, knock, static
 - **`blackout`** — Black screen: 1;text or 0

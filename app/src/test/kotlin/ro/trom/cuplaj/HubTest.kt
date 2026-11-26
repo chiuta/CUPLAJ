@@ -1359,3 +1359,33 @@ fun runV18(): Int {
     println(if (fails == 0) "V18 OK" else "$fails ESECURI V18")
     return fails
 }
+
+fun runEra(): Int {
+    var fails = 0
+    fun ck(n: String, c: Boolean) { if (!c) { fails++; println("FAIL era $n") } }
+    ck("kind 1985", Era.kind(1985) == Era.ROTARY)
+    ck("kind 1989", Era.kind(1989) == Era.ROTARY)
+    ck("kind 1995", Era.kind(1995) == Era.KEYPAD)
+    ck("kind 2003", Era.kind(2003) == Era.MOBILE)
+    ck("kind 2025", Era.kind(2025) == Era.SMART)
+    ck("kind 2045", Era.kind(2045) == Era.WEAR)
+    ck("kind 2080", Era.kind(2080) == Era.MIND)
+    ck("every listed era has its own kind", Era.ALL.map { Era.kind(it) }.toSet().size == 6)
+    ck("limit mobile", Era.msgLimit(2003) == 160)
+    ck("limit mind", Era.msgLimit(2080) == 60)
+    ck("digits", Era.hasDigits(1985) && Era.hasDigits(2025) && !Era.hasDigits(2045) && !Era.hasDigits(2080))
+    ck("single is no sweep", Era.parseSweep("2025") == null)
+    val s = Era.parseSweep("1985,1995,2003,2025,2045,2080;3000")
+    ck("sweep parsed", s != null && s.eras == listOf(1985, 1995, 2003, 2025, 2045, 2080) && s.stepMs == 3000L)
+    ck("default step", Era.parseSweep("1985,2080")?.stepMs == 4000L)
+    ck("step clamp low", Era.parseSweep("1985,2080;10")?.stepMs == 1500L)
+    ck("step clamp high", Era.parseSweep("1985,2080;999999")?.stepMs == 30000L)
+    ck("junk years dropped", Era.parseSweep("1985,abc,9999,2045")?.eras == listOf(1985, 2045))
+    ck("one valid year is no sweep", Era.parseSweep("abc,2045") == null)
+    ck("max 12", Era.parseSweep((1..30).joinToString(",") { (1980 + it).toString() })?.eras?.size == 12)
+    ck("firstEra single", Era.firstEra("2045") == 2045)
+    ck("firstEra sweep", Era.firstEra("2025,2080;2000") == 2025)
+    ck("firstEra bad", Era.firstEra("x") == null && Era.firstEra("5") == null)
+    println(if (fails == 0) "ERA OK" else "$fails ESECURI ERA")
+    return fails
+}

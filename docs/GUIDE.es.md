@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · [Italiano](GUIDE.it.md) · **Español** · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versión: 1.9.0 · Última actualización: 2026-11-25_
+_Versión: 1.10.0 · Última actualización: 2026-11-26_
 
 ## 1. Antes de la función
 
@@ -125,7 +125,7 @@ _Versión: 1.9.0 · Última actualización: 2026-11-25_
 - **`flash`** — Flash: Duración en ms (p. ej. 1500)
 - **`speaker`** — Altavoz: 1 = activado, 0 = desactivado
 - **`contact`** — Añadir contacto: Nombre;número (p. ej. Mamá;204455)
-- **`era`** — Cambiar época: 1985, 1995 o 2003
+- **`era`** — Cambiar época: 1985, 1995, 2003, 2025, 2045 o 2080 (o una lista: 1985,2080;4000)
 - **`say`** — Voz hablada: Texto a pronunciar
 - **`sound`** — Efecto de sonido: bell, siren, knock, static (campana, sirena, golpes, estática)
 - **`blackout`** — Pantalla negra: 1;texto o 0

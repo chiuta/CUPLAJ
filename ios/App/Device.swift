@@ -6,6 +6,7 @@ import UIKit
 import UserNotifications
 import AudioToolbox
 import CuplajCore
+import CoreMotion
 #if canImport(Darwin)
 import Darwin
 #endif
@@ -325,4 +326,26 @@ final class Bonjour {
         svc = s
     }
     func stop() { svc?.stop(); svc = nil }
+}
+
+
+/// Shake the phone to answer or hang up (2045 wearables era). Two strong jolts within 700 ms.
+final class ShakeDetector {
+    private let mm = CMMotionManager()
+    private var last = Date.distantPast
+    var onShake: () -> Void = {}
+
+    func start() {
+        guard mm.isAccelerometerAvailable, !mm.isAccelerometerActive else { return }
+        mm.accelerometerUpdateInterval = 0.02
+        mm.startAccelerometerUpdates(to: OperationQueue.main) { [weak self] d, _ in
+            guard let self = self, let a = d?.acceleration else { return }
+            let g = (a.x * a.x + a.y * a.y + a.z * a.z).squareRoot()
+            if g < 2.6 { return }
+            let now = Date(), dt = now.timeIntervalSince(self.last)
+            if dt > 0.12 && dt < 0.7 { self.last = .distantPast; self.onShake() } else if dt >= 0.7 { self.last = now }
+        }
+    }
+
+    func stop() { mm.stopAccelerometerUpdates() }
 }

@@ -375,7 +375,13 @@ enum Ringer {
                 let v: Double
                 if era < 1990 { v = (sin(2 * .pi * 1400 * t) * 0.5 + sin(2 * .pi * 2000 * t) * 0.3) * (0.55 + 0.45 * sin(2 * .pi * 22 * t)) }
                 else if era < 2000 { v = sin(2 * .pi * ((Int(local * 20) % 2 == 0) ? 880.0 : 1175.0) * t) * 0.6 }
-                else { v = sin(2 * .pi * notes[Int(local / 0.12) % 4] * t) * 0.6 }
+                else if era < 2020 { v = sin(2 * .pi * notes[Int(local / 0.12) % 4] * t) * 0.6 }
+                else if era < 2040 {   // marimba-like arpeggio with a decaying tone
+                    let n = Int(local / 0.16) % 4, ln = local - Double(Int(local / 0.16)) * 0.16
+                    v = (sin(2 * .pi * notes[n] * 2 * t) * 0.6 + sin(2 * .pi * notes[n] * 4 * t) * 0.15) * exp(-ln * 14)
+                }
+                else if era < 2060 { v = sin(2 * .pi * 1000 * t) * 0.12 * (0.5 + 0.5 * sin(2 * .pi * 6 * t)) }   // barely audible whisper tick
+                else { v = (sin(2 * .pi * 220 * t) + sin(2 * .pi * 329.63 * t) * 0.7) * 0.3 * (0.5 - 0.5 * cos(2 * .pi * local / 1.3)) }   // slow swell
                 out[i] = Float(v * env * 0.95)
             }
         }

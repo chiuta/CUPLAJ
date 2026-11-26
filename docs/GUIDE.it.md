@@ -2,7 +2,7 @@
 
 [English](GUIDE.md) · [Română](GUIDE.ro.md) · [Français](GUIDE.fr.md) · **Italiano** · [Español](GUIDE.es.md) · [Português](GUIDE.pt.md) · [Deutsch](GUIDE.de.md) · [Magyar](GUIDE.hu.md)
 
-_Versione: 1.9.0 · Ultimo aggiornamento: 2026-11-25_
+_Versione: 1.10.0 · Ultimo aggiornamento: 2026-11-26_
 
 ## 1. Prima dello spettacolo
 
@@ -125,7 +125,7 @@ _Versione: 1.9.0 · Ultimo aggiornamento: 2026-11-25_
 - **`flash`** — Flash: Durata in ms (es. 1500)
 - **`speaker`** — Altoparlante: 1 = acceso, 0 = spento
 - **`contact`** — Aggiungi contatto: Nome;numero (es. Mamma;204455)
-- **`era`** — Cambia epoca: 1985, 1995 o 2003
+- **`era`** — Cambia epoca: 1985, 1995, 2003, 2025, 2045 o 2080 (o un elenco: 1985,2080;4000)
 - **`say`** — Voce parlata: Testo da pronunciare
 - **`sound`** — Effetto sonoro: bell, siren, knock, static (campana, sirena, bussare, disturbo)
 - **`blackout`** — Schermo nero: 1;testo oppure 0

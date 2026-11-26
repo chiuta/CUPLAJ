@@ -10,6 +10,7 @@ import java.nio.ByteOrder
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.PI
+import kotlin.math.cos
 import kotlin.math.exp
 import kotlin.math.max
 import kotlin.math.min
@@ -426,7 +427,14 @@ class Ringer {
                 val v = when {
                     era < 1990 -> (sin(2 * PI * 1400 * t) * 0.5 + sin(2 * PI * 2000 * t) * 0.3) * (0.55 + 0.45 * sin(2 * PI * 22 * t))
                     era < 2000 -> sin(2 * PI * (if ((local * 20).toInt() % 2 == 0) 880.0 else 1175.0) * t) * 0.6
-                    else -> sin(2 * PI * notes[(local / 0.12).toInt() % 4] * t) * 0.6
+                    era < 2020 -> sin(2 * PI * notes[(local / 0.12).toInt() % 4] * t) * 0.6
+                    era < 2040 -> { // marimba-like arpeggio with a decaying tone
+                        val n = (local / 0.16).toInt() % 4
+                        val ln = local - (local / 0.16).toInt() * 0.16
+                        (sin(2 * PI * notes[n] * 2 * t) * 0.6 + sin(2 * PI * notes[n] * 4 * t) * 0.15) * Math.exp(-ln * 14)
+                    }
+                    era < 2060 -> sin(2 * PI * 1000 * t) * 0.12 * (0.5 + 0.5 * sin(2 * PI * 6 * t)) // barely audible whisper tick
+                    else -> (sin(2 * PI * 220.0 * t) + sin(2 * PI * 329.63 * t) * 0.7) * 0.3 * (0.5 - 0.5 * cos(2 * PI * local / 1.3)) // slow swell
                 }
                 out[i] = (v * env * 0.95 * 32767).toInt().toShort()
             }

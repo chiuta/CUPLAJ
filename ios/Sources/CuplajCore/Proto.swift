@@ -3,7 +3,7 @@ import Foundation
 import Darwin
 #endif
 
-public let VERSION = "1.9.0"
+public let VERSION = "1.10.0"
 public let PORT = 8470
 public let BEACON_PORT = 8471
 public let T_JSON = 1

@@ -687,18 +687,21 @@ class MainActivity : Activity() {
         }
 
         col.addView(tv(L.t("era_pick"), 13f, DIM), lp().apply { topMargin = dp(14) })
-        val er = LinearLayout(this)
-        for ((e, key) in listOf(1985 to "era_btn_80", 1995 to "era_btn_90", 2003 to "era_btn_00")) {
-            er.addView(
-                btn(L.t(key), if (App.era == e) ACC else BTN) {
-                    saveFields()
-                    App.era = e
-                    showStart()
-                },
-                LinearLayout.LayoutParams(0, WRAP, 1f)
-            )
+        val eraKeys = listOf(1985 to "era_btn_80", 1995 to "era_btn_90", 2003 to "era_btn_00", 2025 to "era_btn_25", 2045 to "era_btn_45", 2080 to "era_btn_mind")
+        for (rowEras in eraKeys.chunked(3)) {
+            val er = LinearLayout(this)
+            for ((e, key) in rowEras) {
+                er.addView(
+                    btn(L.t(key), if (Era.kind(App.era) == Era.kind(e)) ACC else BTN) {
+                        saveFields()
+                        App.era = e
+                        showStart()
+                    },
+                    LinearLayout.LayoutParams(0, WRAP, 1f)
+                )
+            }
+            col.addView(er)
         }
-        col.addView(er)
 
         col.addView(
             btn(if (App.role == "regie") L.t("btn_start_hub") else L.t("btn_connect"), GREEN) {
