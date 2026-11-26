@@ -6,7 +6,7 @@ from docs_src import D, LANGS, NAMES
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION, DATE = "1.10.0", "2026-11-26"
-RELEASE = "1.9.1"  # GitHub release whose files the download links point to (APK/IPA signed/packaged after 1.9.0)
+RELEASE = "1.10.0"  # GitHub release whose files the download links point to (APK/IPA signed/packaged after 1.9.0)
 REPO = "https://github.com/chiuta/CUPLAJ"
 
 # ---- generated: full cue reference from the app's own strings (always matches the app)

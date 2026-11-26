@@ -10,7 +10,7 @@ _Verzió: 1.10.0 · Utolsó frissítés: 2026-11-26_
 
 A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonközponttá immerzív színház számára. A szervezők és a színészek a helyszín helyi Wi‑Fi hálózatán beszélnek a nézőkkel (és egymással) — felhő, fiók és reklám nélkül. Névadó funkciója a *cuplaj*: az 1980-as évektől nagyjából 2006-ig használt vezetékes telefonok **közös vonala**, amelyen két előfizető osztozott, eltérő ritmusban csengettek, és hallhatták egymást.
 
-**[APK letöltése](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.1/CUPLAJ-1.9.1.apk) · [Letöltés iPhone/iPad-re (.ipa)](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.1/CUPLAJ-1.9.1-ios-unsigned.ipa) · [Minden kiadás](https://github.com/chiuta/CUPLAJ/releases)**
+**[APK letöltése](https://github.com/chiuta/CUPLAJ/releases/download/v1.10.0/CUPLAJ-1.10.0.apk) · [Letöltés iPhone/iPad-re (.ipa)](https://github.com/chiuta/CUPLAJ/releases/download/v1.10.0/CUPLAJ-1.10.0-ios-unsigned.ipa) · [Minden kiadás](https://github.com/chiuta/CUPLAJ/releases)**
 
 ## Funkciók
 

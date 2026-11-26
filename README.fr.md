@@ -10,7 +10,7 @@ _Version : 1.10.0 · Dernière mise à jour : 2026-11-26_
 
 CUPLAJ transforme une flotte de téléphones Android ordinaires en central téléphonique privé pour le théâtre immersif. Organisateurs et acteurs parlent aux spectateurs (et entre eux) via le Wi‑Fi local du lieu — sans cloud, sans compte, sans publicité. Sa fonction phare est le *cuplaj* : la **ligne partagée** des téléphones fixes des années 1980 jusqu'à environ 2006, où deux abonnés se partageaient une même ligne, sonnaient avec des cadences différentes et pouvaient s'entendre l'un l'autre.
 
-**[Télécharger l'APK](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.1/CUPLAJ-1.9.1.apk) · [Télécharger pour iPhone/iPad (.ipa)](https://github.com/chiuta/CUPLAJ/releases/download/v1.9.1/CUPLAJ-1.9.1-ios-unsigned.ipa) · [Toutes les versions](https://github.com/chiuta/CUPLAJ/releases)**
+**[Télécharger l'APK](https://github.com/chiuta/CUPLAJ/releases/download/v1.10.0/CUPLAJ-1.10.0.apk) · [Télécharger pour iPhone/iPad (.ipa)](https://github.com/chiuta/CUPLAJ/releases/download/v1.10.0/CUPLAJ-1.10.0-ios-unsigned.ipa) · [Toutes les versions](https://github.com/chiuta/CUPLAJ/releases)**
 
 ## Fonctionnalités
 
