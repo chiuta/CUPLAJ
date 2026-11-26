@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14110f">
+<meta name="color-scheme" content="dark">
 <title>CUPLAJ</title>
 <meta name="description" content="Party-line telephony for immersive theatre — Android and iPhone, offline, 8 languages.">
 <link rel="icon" href="logo.svg">
@@ -99,11 +101,88 @@ body{background:radial-gradient(1200px 600px at 50% -10%,#3a0f0e 0%,#14110f 60%)
 .glink{display:inline-block;margin-top:1rem}
 @media(max-width:700px){header.top{position:static}}
 @media print{.curtain,.ringer i,#up,header.top{display:none}body{background:#fff;color:#000}}
+
+/* ---- v1.9 responsive polish: phone, tablet, desktop ---- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:4.2rem}
+body{overflow-x:hidden;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+img,svg{max-width:100%;height:auto}
+p,li,.card,.pitch{overflow-wrap:break-word}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
+button,select,.cta a{min-height:44px}
+header.top{padding-top:max(.5rem,env(safe-area-inset-top))}
+header.top .langbar button{padding:.3rem .65rem;min-width:44px}
+#up{right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));min-height:48px}
+.cta a{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1.25}
+.cta a.primary{background:linear-gradient(160deg,#d0553b,var(--acc));box-shadow:0 8px 28px #b5452f88;font-weight:bold}
+.cta a.alt{border:1px solid #3a3f47}
+#sitenav{display:none}
+/* phones */
+@media(max-width:700px){
+ html{scroll-padding-top:.5rem}
+ header.top{gap:.4rem;padding:.4rem .6rem}
+ header.top .brand{flex:1 0 100%;margin:0;letter-spacing:.3em}
+ .langbar{flex:1 1 auto;gap:.25rem}
+ header.top .langbar button{padding:.3rem .2rem;min-width:0;flex:1 1 0;font-size:.85rem}
+ header.top>span[role=group]{display:flex;gap:.25rem}
+ .hero{padding:3.2rem .9rem 2rem}
+ .curtain{display:none}
+ .ringer,.ringer img{width:110px;height:110px}
+ .hero h1{font-size:clamp(1.9rem,9vw,2.6rem)}
+ .hero p{font-size:1.02rem}
+ .cta{flex-direction:column;align-items:stretch;gap:.6rem;max-width:26rem;margin-left:auto;margin-right:auto}
+ .cta a{padding:.8rem 1rem}
+ .stats{grid-template-columns:repeat(2,1fr);gap:.8rem}
+ .stat b{font-size:2rem}
+ .tabs{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.5rem;padding-bottom:.4rem;margin-left:-.2rem;margin-right:-.2rem;-webkit-overflow-scrolling:touch}
+ .tabs button{flex:0 0 7.2rem;scroll-snap-align:start}
+ .panel{padding:1rem;gap:1rem;border-radius:14px}
+ .mock{width:min(15rem,70vw)}
+ .mock .scr{min-height:19rem}
+ .pitch h3{font-size:1.4rem}
+ .who h2{margin-top:1.4rem}
+ main{padding:0 .8rem 3rem}
+ h2{margin-top:2rem;font-size:1.35rem}
+ .grid{grid-template-columns:1fr}
+ .phone .row button{min-height:40px;padding:.3rem .7rem}
+ #log{max-height:9rem}
+ footer{padding-bottom:5rem}
+}
+/* tablets */
+@media(min-width:701px) and (max-width:1099px){
+ .hero{padding:5rem 2rem 2.5rem}
+ main,.who{padding-left:1.5rem;padding-right:1.5rem}
+ .tabs{grid-template-columns:repeat(4,1fr)}
+ .panel{grid-template-columns:minmax(13rem,15rem) 1fr;gap:1.4rem}
+ .grid{grid-template-columns:repeat(2,1fr)}
+}
+/* desktop */
+@media(min-width:1100px){
+ header.top{padding:.5rem max(1.5rem,calc((100vw - 72rem)/2))}
+ #sitenav{display:flex;gap:1.1rem;font-size:.9rem;margin:0 1rem;flex-wrap:wrap}
+ #sitenav a{color:var(--dim);text-decoration:none;padding:.3rem 0;border-bottom:2px solid transparent}
+ #sitenav a:hover{color:var(--gold);border-color:var(--gold)}
+ .hero{padding:7rem 2rem 3.5rem}
+ .hero h1{font-size:3.8rem}
+ .curtain{width:14%}
+ .hero p{font-size:1.25rem}
+ .hero #sub,.hero #tag{max-width:46rem;margin-left:auto;margin-right:auto}
+ .who{max-width:72rem}
+ main{max-width:68rem}
+ .panel{grid-template-columns:19rem 1fr;gap:2.4rem;padding:2.2rem}
+ .mock{position:sticky;top:5rem}
+ .grid{grid-template-columns:repeat(3,1fr)}
+ #eras.grid{grid-template-columns:repeat(2,1fr)}
+ .cta a{padding:.8rem 1.6rem;font-size:1.05rem}
+}
+@media(min-width:1700px){html{font-size:calc(18px*var(--fs))}}
+@media(hover:none){.cta a:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cta a{transition:none}}
 </style>
 </head>
 <body>
 <header class="top">
  <span class="brand">CUPLAJ</span>
+ <nav id="sitenav" aria-label="Sections"></nav>
  <span class="langbar" id="langbar" role="group" aria-label="Language"></span>
  <span role="group" aria-label="Aa"><button id="fm" aria-label="A−">A−</button><button id="fp" aria-label="A+">A+</button></span>
 </header>
@@ -246,10 +325,16 @@ function render(){
  $('quick').innerHTML=d.quick.map(x=>'<li>'+md(x)+'</li>').join('');
  $('status').innerHTML=md(d.status);$('priv').innerHTML=md(d.priv);$('lic').textContent=d.lic;
  const g=lang==='en'?'GUIDE.md':'GUIDE.'+lang+'.md',R='__REPO__/blob/main/';
- $('docs').innerHTML='<li><a href="'+R+'docs/'+g+'">'+esc(d.docs.guide)+'</a></li><li><a href="'+R+'docs/PROTOCOL.md">'+esc(d.docs.protocol)+' (EN)</a></li><li><a href="'+R+'docs/AUDIT.md">'+esc(d.docs.audit)+' (EN)</a></li><li><a href="'+R+'CHANGELOG.md">'+esc(d.docs.changelog)+' (EN)</a></li>';
+ $('docs').innerHTML='<li><a href="'+R+'docs/'+g+'">'+esc(d.docs.guide)+'</a></li><li><a href="'+R+'docs/PROTOCOL.md">'+esc(d.docs.protocol)+' (EN)</a></li><li><a href="'+R+'docs/AUDIT.md">'+esc(d.docs.audit)+' (EN)</a></li><li><a href="'+R+'docs/REVIEW.md">'+esc(s.review||'Review')+' (EN)</a></li><li><a href="'+R+'CHANGELOG.md">'+esc(d.docs.changelog)+' (EN)</a></li>';
  $('coffee').textContent=s.coffee+' ☕';
  [...bar.children].forEach(b=>b.style.borderColor=b.textContent.toLowerCase()===lang?'#b5452f':'');
  drawDemo();drawLog();drawRoles();
+ /* device-aware download order + section nav */
+ const ua=navigator.userAgent||'',isIos=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const cta=document.querySelector('.cta'),gA=$('get'),gI=$('getios');
+ gA.classList.toggle('primary',!isIos);gI.classList.toggle('primary',isIos);
+ if(isIos)cta.insertBefore(gI,gA);else cta.insertBefore(gA,gI);
+ $('sitenav').innerHTML=['h_who','h_demo','h_feat','h_quick','h_docs'].map(id=>'<a href="#'+id+'">'+esc($(id).textContent)+'</a>').join('');
 }
 const up=$('up');up.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 addEventListener('scroll',()=>{up.style.display=scrollY>400?'block':'none';});
