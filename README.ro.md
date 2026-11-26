@@ -43,6 +43,18 @@ CUPLAJ transformă o flotă de telefoane Android obișnuite într-o centrală te
 4. Pe celelalte alege **Spectator** sau **Actor**, selectează hubul din listă (sau scrie adresa lui) și conectează-te.
 5. Fiecare telefon primește un număr (regia 100, actorii 201…, spectatorii 6 cifre). Ridică receptorul și sună.
 
+> Android poate avertiza pentru aplicațiile instalate din afara Google Play (Play Protect): apasă „Mai multe detalii”, apoi „Instalează oricum”. Actualizările merg doar între versiuni semnate cu aceeași cheie.
+
+### Pornire rapidă pe iPhone și iPad
+
+1. Descarcă `CUPLAJ-<versiune>-ios-unsigned.ipa` de pe pagina *Releases*. Nu este semnat, deci iOS nu îl deschide direct.
+2. Instalează-l cu **AltStore** sau **Sideloadly** folosind Apple ID-ul tău (un ID gratuit ține 7 zile și permite 3 aplicații; reinstalezi când expiră) sau construiește-l singur: deschide `ios/` în Xcode (`xcodegen generate`), alege echipa și rulează.
+3. Pe iOS 16 și mai nou activează *Setări → Confidențialitate și securitate → Mod dezvoltator* și repornește. Dacă iOS spune că dezvoltatorul nu e de încredere, acordă încredere la *Setări → General → VPN și gestionarea dispozitivului*.
+4. La prima pornire permite **Rețea locală** (ca să găsești hubul), **Microfon** (apeluri) și **Notificări** (alerte de apel). Permite camera doar pentru cue-urile de lumină.
+5. Intră în același Wi‑Fi cu telefonul de regie sau în hotspotul lui. Și un iPhone poate fi regia: pornește *Hotspot personal*, alege **Regie** → *Pornește hubul* și lasă-i pe ceilalți să se conecteze la acel hotspot.
+6. Alege hubul din listă (sau scrie adresa lui) și conectează-te. Ține aplicația deschisă, cu ecranul pornit (*Ecran și luminozitate → Blocare automată → Niciodată* pe durata spectacolului); telefonul de regie să rămână la încărcător.
+7. Indisponibile pe iOS: legătura Bluetooth, Wi‑Fi Direct și gateway-ul silențios de SMS și apeluri. Aplicația pentru iPhone nu a fost încă încercată pe telefoane reale.
+
 ## Cele șase epoci
 
 - **1985 · disc** — un disc rotund pe care îl rotești de-adevăratelea; impulsurile se aud; două sunete lungi de apel.

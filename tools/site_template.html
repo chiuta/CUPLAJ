@@ -253,7 +253,7 @@ figcaption b{color:var(--gold);display:block}
  <h2 id="h_eras"></h2><div class="grid" id="eras"></div>
  <h2 id="h_party"></h2><ol id="party"></ol>
  <p style="text-align:center"><img src="partyline.svg" alt="" style="max-width:100%"></p>
- <h2 id="h_quick"></h2><ol id="quick"></ol>
+ <h2 id="h_quick"></h2><ol id="quick"></ol><h3 id="h_quick_ios" style="margin-top:1.6rem"></h3><ol id="quick_ios"></ol>
  <h2 id="h_status"></h2><div id="dg"></div><p id="status"></p>
  <h2 id="h_priv"></h2><p id="priv"></p>
  <h2 id="h_docs"></h2><ul id="docs"></ul>
@@ -358,7 +358,7 @@ function render(){
  $('feat').innerHTML=d.feat.map((x,i)=>'<div class="card">'+fi('f'+i,x)+md(x)+'</div>').join('');
  $('eras').innerHTML=d.eras.map((x,i)=>'<div class="card">'+fi('e'+i,x)+md(x)+'</div>').join('');
  $('party').innerHTML=d.party.map(x=>'<li>'+md(x)+'</li>').join('');
- $('quick').innerHTML=d.quick.map(x=>'<li>'+md(x)+'</li>').join('');
+ $('quick').innerHTML=d.quick.map(x=>'<li>'+md(x)+'</li>').join('');$('h_quick_ios').textContent=d.h_quick_ios;$('quick_ios').innerHTML=d.quick_ios.map(x=>'<li>'+md(x)+'</li>').join('');
  $('status').innerHTML=md(d.status);$('priv').innerHTML=md(d.priv);$('lic').textContent=d.lic;
  const g=lang==='en'?'GUIDE.md':'GUIDE.'+lang+'.md',R='__REPO__/blob/main/';
  $('docs').innerHTML='<li><a href="'+R+'docs/'+g+'">'+esc(d.docs.guide)+'</a></li><li><a href="'+R+'docs/PROTOCOL.md">'+esc(d.docs.protocol)+' (EN)</a></li><li><a href="'+R+'docs/AUDIT.md">'+esc(d.docs.audit)+' (EN)</a></li><li><a href="'+R+'docs/REVIEW.md">'+esc(s.review||'Review')+' (EN)</a></li><li><a href="'+R+'CHANGELOG.md">'+esc(d.docs.changelog)+' (EN)</a></li>';

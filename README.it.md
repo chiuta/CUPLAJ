@@ -43,6 +43,18 @@ CUPLAJ trasforma una flotta di normali telefoni Android in una centralina telefo
 4. Sugli altri scegli **Spettatore** o **Attore**, seleziona l'hub dall'elenco (o scrivi il suo indirizzo) e connettiti.
 5. Ogni telefono riceve un numero (regia 100, attori 201…, spettatori 6 cifre). Alza la cornetta e chiama.
 
+> Android può avvisare per le app installate fuori da Google Play (Play Protect): tocca Maggiori dettagli, poi Installa comunque. Gli aggiornamenti funzionano solo tra versioni firmate con la stessa chiave.
+
+### Avvio rapido su iPhone e iPad
+
+1. Scarica `CUPLAJ-<versione>-ios-unsigned.ipa` dalla pagina *Releases*. Non è firmato, quindi iOS non lo apre direttamente.
+2. Installalo con **AltStore** o **Sideloadly** usando il tuo Apple ID (uno gratuito dura 7 giorni e consente 3 app; reinstalla alla scadenza), oppure compilalo: apri `ios/` in Xcode (`xcodegen generate`), scegli il team ed esegui.
+3. Su iOS 16 e successivi attiva *Impostazioni → Privacy e sicurezza → Modalità sviluppatore* e riavvia. Se iOS dice che lo sviluppatore non è attendibile, autorizzalo in *Impostazioni → Generali → VPN e gestione dispositivo*.
+4. Al primo avvio consenti **Rete locale** (per trovare l'hub), **Microfono** (chiamate) e **Notifiche** (avvisi di chiamata). Consenti la fotocamera solo per i cue di luce.
+5. Entra nello stesso Wi‑Fi del telefono di regia o nel suo hotspot. Anche un iPhone può essere la regia: attiva *Hotspot personale*, scegli **Regia** → *Avvia l'hub* e fai collegare gli altri.
+6. Scegli l'hub dall'elenco (o scrivi l'indirizzo) e collegati. Tieni l'app aperta con lo schermo acceso (*Schermo e luminosità → Blocco automatico → Mai* durante lo spettacolo); il telefono di regia resta in carica.
+7. Non disponibili su iOS: collegamento Bluetooth, Wi‑Fi Direct e gateway silenzioso di SMS e chiamate. L'app per iPhone non è ancora stata provata su telefoni reali.
+
 ## Le sei epoche
 
 - **1985 · disco** — un vero disco da far girare; gli impulsi si sentono; due squilli lunghi.

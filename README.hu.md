@@ -43,6 +43,18 @@ A CUPLAJ hétköznapi Android-telefonok flottáját alakítja magán telefonköz
 4. A többin válaszd a **Néző** vagy **Színész** szerepet, jelöld ki a hubot a listában (vagy írd be a címét), és csatlakozz.
 5. Minden telefon kap egy számot (rendezés 100, színészek 201…, nézők 6 jegyű). Vedd fel a kagylót, és hívj.
 
+> Az Android figyelmeztethet a Google Playen kívül telepített appokra (Play Protect): koppints a További részletekre, majd a Telepítés mindenképp gombra. A frissítés csak azonos kulccsal aláírt verziók között működik.
+
+### Gyorsindítás iPhone‑on és iPaden
+
+1. Töltsd le a `CUPLAJ-<verzió>-ios-unsigned.ipa` fájlt a *Releases* oldalról. Nincs aláírva, ezért az iOS nem nyitja meg közvetlenül.
+2. Telepítsd **AltStore**‑ral vagy **Sideloadly**‑val az Apple ID‑ddal (az ingyenes 7 napig érvényes és 3 appot enged; lejáratkor telepítsd újra), vagy építsd meg magad: nyisd meg az `ios/` mappát Xcode‑ban (`xcodegen generate`), válaszd ki a csapatot és futtasd.
+3. iOS 16‑tól kapcsold be a *Beállítások → Adatvédelem és biztonság → Fejlesztői mód* opciót, és indítsd újra. Ha az iOS nem megbízható fejlesztőt jelez, bízz meg benne: *Beállítások → Általános → VPN és eszközkezelés*.
+4. Az első indításkor engedélyezd a **Helyi hálózatot** (a hub megtalálásához), a **Mikrofont** (hívások) és az **Értesítéseket** (hívásjelzés). A kamerát csak a fényjelzésekhez engedélyezd.
+5. Csatlakozz a rendezői telefon Wi‑Fi‑jéhez vagy hotspotjához. iPhone is lehet a rendezői: kapcsold be a *Személyes hotspotot*, válaszd a **Rendezői** → *Hub indítása* opciót, és a többiek csatlakozzanak ahhoz.
+6. Válaszd ki a hubot a listából (vagy írd be a címét) és csatlakozz. Tartsd nyitva az appot bekapcsolt képernyővel (*Kijelző és fényerő → Automatikus zárolás → Soha* az előadás alatt); a rendezői telefon maradjon töltőn.
+7. iOS‑en nem érhető el: Bluetooth‑kapcsolat, Wi‑Fi Direct és a néma SMS‑ és hívásátjáró. Az iPhone‑appot még nem próbálták ki valódi telefonon.
+
 ## A hat korszak
 
 - **1985 · tárcsás** — valódi tárcsa, amit tekerni kell; az impulzusok hallhatók; két hosszú csengetés.

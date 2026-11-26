@@ -43,6 +43,18 @@ CUPLAJ verwandelt eine Flotte gewöhnlicher Android-Telefone in eine private Tel
 4. Auf den anderen **Zuschauer** oder **Schauspieler** wählen, den Hub in der Liste auswählen (oder seine Adresse eingeben) und verbinden.
 5. Jedes Telefon erhält eine Nummer (Regie 100, Schauspieler 201…, Zuschauer 6 Ziffern). Hörer abheben und anrufen.
 
+> Android kann bei Apps außerhalb von Google Play warnen (Play Protect): auf Weitere Details tippen, dann Trotzdem installieren. Updates funktionieren nur zwischen Versionen mit demselben Signaturschlüssel.
+
+### Schnellstart auf iPhone und iPad
+
+1. Lade `CUPLAJ-<Version>-ios-unsigned.ipa` von der Seite *Releases* herunter. Sie ist nicht signiert, iOS öffnet sie daher nicht direkt.
+2. Installiere sie mit **AltStore** oder **Sideloadly** über deine Apple‑ID (eine kostenlose gilt 7 Tage und erlaubt 3 Apps; bei Ablauf neu installieren) oder baue sie selbst: `ios/` in Xcode öffnen (`xcodegen generate`), Team wählen und starten.
+3. Ab iOS 16 *Einstellungen → Datenschutz & Sicherheit → Entwicklermodus* aktivieren und neu starten. Meldet iOS einen nicht vertrauenswürdigen Entwickler, ihm unter *Einstellungen → Allgemein → VPN & Geräteverwaltung* vertrauen.
+4. Beim ersten Start **Lokales Netzwerk** (um den Hub zu finden), **Mikrofon** (Gespräche) und **Mitteilungen** (Anrufhinweise) erlauben. Die Kamera nur für Licht‑Cues erlauben.
+5. Tritt demselben WLAN wie das Regie‑Telefon bei oder seinem Hotspot. Auch ein iPhone kann die Regie sein: *Persönlicher Hotspot* einschalten, **Regie** → *Hub starten* wählen und die anderen beitreten lassen.
+6. Hub aus der Liste wählen (oder Adresse eintippen) und verbinden. App geöffnet und Bildschirm an lassen (*Anzeige & Helligkeit → Automatische Sperre → Nie* während der Vorstellung); das Regie‑Telefon bleibt am Ladegerät.
+7. Unter iOS nicht verfügbar: Bluetooth‑Verbindung, Wi‑Fi Direct und das stille SMS‑ und Anruf‑Gateway. Die iPhone‑App wurde noch nicht auf echten Telefonen ausprobiert.
+
 ## Die sechs Epochen
 
 - **1985 · Wählscheibe** — eine echte Scheibe zum Drehen; die Impulse sind hörbar; zwei lange Klingeltöne.

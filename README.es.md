@@ -43,6 +43,18 @@ CUPLAJ convierte una flota de teléfonos Android corrientes en una centralita te
 4. En los demás elige **Espectador** o **Actor**, selecciona el hub de la lista (o escribe su dirección) y conéctate.
 5. Cada teléfono recibe un número (regiduría 100, actores 201…, espectadores 6 cifras). Descuelga y llama.
 
+> Android puede avisar de las apps instaladas fuera de Google Play (Play Protect): pulsa Más detalles y luego Instalar de todos modos. Las actualizaciones solo funcionan entre versiones firmadas con la misma clave.
+
+### Inicio rápido en iPhone e iPad
+
+1. Descarga `CUPLAJ-<versión>-ios-unsigned.ipa` desde la página *Releases*. No está firmado, así que iOS no lo abre directamente.
+2. Instálalo con **AltStore** o **Sideloadly** usando tu Apple ID (uno gratuito dura 7 días y permite 3 apps; reinstala al caducar), o compílalo: abre `ios/` en Xcode (`xcodegen generate`), elige tu equipo y ejecuta.
+3. En iOS 16 y posteriores activa *Ajustes → Privacidad y seguridad → Modo de desarrollador* y reinicia. Si iOS dice que el desarrollador no es de confianza, confía en él en *Ajustes → General → VPN y gestión de dispositivos*.
+4. En el primer arranque permite **Red local** (para encontrar el hub), **Micrófono** (llamadas) y **Notificaciones** (avisos de llamada). Permite la cámara solo para las señales de luz.
+5. Únete al mismo Wi‑Fi que el teléfono de regiduría o a su punto de acceso. Un iPhone también puede ser la regiduría: activa *Punto de acceso personal*, elige **Regiduría** → *Iniciar el hub* y deja que los demás se unan.
+6. Elige el hub de la lista (o escribe su dirección) y conéctate. Mantén la app abierta con la pantalla encendida (*Pantalla y brillo → Bloqueo automático → Nunca* durante la función); el teléfono de regiduría, enchufado.
+7. No disponibles en iOS: enlace Bluetooth, Wi‑Fi Direct y pasarela silenciosa de SMS y llamadas. La app de iPhone aún no se ha probado en teléfonos reales.
+
 ## Las seis épocas
 
 - **1985 · disco** — un disco que se gira de verdad; los pulsos se oyen; dos timbrazos largos.

@@ -43,6 +43,18 @@ CUPLAJ turns a fleet of ordinary Android phones into a private telephone exchang
 4. On the other phones choose **Spectator** or **Actor**, pick the hub from the list (or type its address), and connect.
 5. Every phone gets a number (control 100, actors 201…, spectators 6 digits). Lift the handset and call.
 
+> Android may warn about apps installed from outside Google Play (Play Protect): tap More details, then Install anyway. Updates keep working only between builds signed with the same key.
+
+### Quick start on iPhone and iPad
+
+1. Download `CUPLAJ-<version>-ios-unsigned.ipa` from the *Releases* page. It is unsigned, so iOS will not open it directly.
+2. Install it with **AltStore** or **Sideloadly** using your Apple ID (a free ID lasts 7 days and allows 3 apps; reinstall when it expires), or build it yourself: open `ios/` in Xcode (`xcodegen generate`), choose your team and run.
+3. On iOS 16 and later turn on *Settings → Privacy & Security → Developer Mode* and restart. If iOS says the developer is untrusted, trust it under *Settings → General → VPN & Device Management*.
+4. On first launch allow **Local Network** (to find the hub), **Microphone** (calls) and **Notifications** (incoming‑call alerts). Allow the camera only for light cues.
+5. Join the same Wi‑Fi as the control phone, or its hotspot. An iPhone can be the control too: turn on *Personal Hotspot*, choose **Control** → *Start the hub*, and let the others join that hotspot.
+6. Pick the hub from the list (or type its address) and connect. Keep the app open with the screen on (*Display & Brightness → Auto‑Lock → Never* for the show); the control phone should stay plugged in.
+7. Not available on iOS: Bluetooth link, Wi‑Fi Direct and the silent SMS/call gateway. The iPhone app has not yet been tried on real phones.
+
 ## The six eras
 
 - **1985 · rotary** — a round dial you really turn; the pulses are audible; two long rings.

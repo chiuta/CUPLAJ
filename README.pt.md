@@ -43,6 +43,18 @@ O CUPLAJ transforma uma frota de telemóveis Android comuns numa central telefó
 4. Nos outros escolhe **Espectador** ou **Ator**, seleciona o hub na lista (ou escreve o endereço) e liga-te.
 5. Cada telemóvel recebe um número (régie 100, atores 201…, espectadores 6 dígitos). Levanta o auscultador e chama.
 
+> O Android pode avisar sobre apps instaladas fora do Google Play (Play Protect): toca em Mais detalhes e depois em Instalar mesmo assim. As atualizações só funcionam entre versões assinadas com a mesma chave.
+
+### Início rápido no iPhone e no iPad
+
+1. Descarrega `CUPLAJ-<versão>-ios-unsigned.ipa` na página *Releases*. Não está assinado, por isso o iOS não o abre diretamente.
+2. Instala‑o com o **AltStore** ou o **Sideloadly** usando o teu Apple ID (um gratuito dura 7 dias e permite 3 apps; reinstala quando expirar), ou compila‑o: abre `ios/` no Xcode (`xcodegen generate`), escolhe a tua equipa e executa.
+3. No iOS 16 e posteriores ativa *Definições → Privacidade e segurança → Modo de programador* e reinicia. Se o iOS disser que o programador não é de confiança, confia nele em *Definições → Geral → VPN e gestão de dispositivos*.
+4. No primeiro arranque permite **Rede local** (para encontrar o hub), **Microfone** (chamadas) e **Notificações** (avisos de chamada). Permite a câmara apenas para os sinais de luz.
+5. Entra no mesmo Wi‑Fi do telemóvel da régie ou no seu hotspot. Um iPhone também pode ser a régie: ativa *Hotspot pessoal*, escolhe **Régie** → *Iniciar o hub* e deixa os outros ligarem‑se.
+6. Escolhe o hub na lista (ou escreve o endereço) e liga‑te. Mantém a app aberta com o ecrã ligado (*Ecrã e brilho → Bloqueio automático → Nunca* durante o espetáculo); o telemóvel da régie fica ligado ao carregador.
+7. Indisponíveis no iOS: ligação Bluetooth, Wi‑Fi Direct e gateway silencioso de SMS e chamadas. A app do iPhone ainda não foi testada em telemóveis reais.
+
 ## As seis épocas
 
 - **1985 · disco** — um disco que se roda a sério; os impulsos ouvem-se; dois toques longos.

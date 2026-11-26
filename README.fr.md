@@ -43,6 +43,18 @@ CUPLAJ transforme une flotte de téléphones Android ordinaires en central tél�
 4. Sur les autres, choisissez **Spectateur** ou **Acteur**, sélectionnez le hub dans la liste (ou saisissez son adresse) et connectez‑vous.
 5. Chaque téléphone reçoit un numéro (régie 100, acteurs 201…, spectateurs 6 chiffres). Décrochez et appelez.
 
+> Android peut avertir pour les applications installées hors de Google Play (Play Protect) : touchez Plus de détails, puis Installer quand même. Les mises à jour ne fonctionnent qu'entre versions signées avec la même clé.
+
+### Démarrage rapide sur iPhone et iPad
+
+1. Téléchargez `CUPLAJ-<version>-ios-unsigned.ipa` depuis la page *Releases*. Il n'est pas signé : iOS ne l'ouvre pas directement.
+2. Installez‑le avec **AltStore** ou **Sideloadly** via votre identifiant Apple (un compte gratuit dure 7 jours et permet 3 apps ; réinstallez à l'expiration), ou compilez‑le : ouvrez `ios/` dans Xcode (`xcodegen generate`), choisissez votre équipe et lancez.
+3. Sous iOS 16 et suivants, activez *Réglages → Confidentialité et sécurité → Mode développeur* et redémarrez. Si iOS signale un développeur non approuvé, approuvez‑le dans *Réglages → Général → VPN et gestion de l'appareil*.
+4. Au premier lancement, autorisez **Réseau local** (pour trouver le hub), **Micro** (appels) et **Notifications** (alertes d'appel). N'autorisez la caméra que pour les signaux lumineux.
+5. Rejoignez le même Wi‑Fi que le téléphone de régie, ou son point d'accès. Un iPhone peut aussi être la régie : activez *Partage de connexion*, choisissez **Régie** → *Démarrer le hub* et faites rejoindre les autres.
+6. Choisissez le hub dans la liste (ou saisissez son adresse) et connectez‑vous. Gardez l'app ouverte, écran allumé (*Luminosité et affichage → Verrouillage auto → Jamais* pendant le spectacle) ; le téléphone de régie reste branché.
+7. Indisponibles sur iOS : liaison Bluetooth, Wi‑Fi Direct et passerelle silencieuse de SMS et d'appels. L'app iPhone n'a pas encore été essayée sur de vrais téléphones.
+
 ## Les six époques
 
 - **1985 · cadran** — un vrai cadran qu'on tourne ; les impulsions s'entendent ; deux longues sonneries.
